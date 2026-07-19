@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SUGGESTIONS, IMMERSION_CURRICULUM } from '../constants';
-import { base64ToBytes, createAudioBufferFromPCM, float32ToPcm16, bytesToBase64, resampleAudioBuffer } from '../services/audioUtils';
 import NycMap, { MapMarker, RouteInfo } from './NycMap';
 import { NycSubwayMap } from './NycSubwayMap';
 import { getAccessToken } from '../services/firebaseAuth';
@@ -8,410 +7,68 @@ import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 import { ProgressDashboard } from './ProgressDashboard';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
-import chatAvatarIcon from '../assets/images/chat_avatar_icon_1784421724522.jpg';
+import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
 import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare } from 'lucide-react';
 
-
-
-interface TravelDestination {
-  name: string;
-  nameEn: string;
-  lat: number;
-  lng: number;
-  subwayLines: string[];
-  subwayDirections: string;
-  subwayDirectionsEn: string;
-  taxiTime: string;
-  taxiFare: string;
-  walkTime: string;
-  walkDist: string;
-  bikeTime: string;
-  vocab: string[];
-  phrases: { en: string; es: string }[];
-}
-
-const TRAVEL_PRESETS: TravelDestination[] = [
-  {
-    name: "Diner Americano",
-    nameEn: "Classic Diner",
-    lat: 39.8283,
-    lng: -98.5795,
-    subwayLines: ['Diner Counter', 'Booth'],
-    subwayDirections: "Busca un diner con letrero de neón clásico y pide mesa o barra.",
-    subwayDirectionsEn: "Find a classic neon-lit diner and ask for a table or counter service.",
-    taxiTime: "5 mins",
-    taxiFare: "$8.50",
-    walkTime: "10 mins",
-    walkDist: "0.5 mi",
-    bikeTime: "3 mins",
-    vocab: ["Booth (Cabina)", "Counter (Barra)", "Daily specials (Especiales del día)", "Sunny-side up (Huevos fritos enteros)", "Refill (Rellenar bebida)"],
-    phrases: [
-      { en: "I'd like a table for two, please.", es: "Me gustaría una mesa para dos, por favor." },
-      { en: "Could I get a coffee refill?", es: "¿Me podría rellenar el café?" },
-      { en: "Can we have the check, please?", es: "¿Nos da la cuenta, por favor?" }
-    ]
-  },
-  {
-    name: "Supermercado",
-    nameEn: "Local Supermarket",
-    lat: 39.8285,
-    lng: -98.5790,
-    subwayLines: ['Produce Aisle', 'Checkout Lane'],
-    subwayDirections: "Entra, toma un carrito de compras (cart) y dirígete a los pasillos.",
-    subwayDirectionsEn: "Walk in, grab a shopping cart, and head to the aisles.",
-    taxiTime: "8 mins",
-    taxiFare: "$11.00",
-    walkTime: "15 mins",
-    walkDist: "0.8 mi",
-    bikeTime: "5 mins",
-    vocab: ["Shopping cart (Carrito)", "Aisle (Pasillo)", "Paper or plastic (Papel o plástico)", "Rewards card (Tarjeta de puntos)", "Receipt (Recibo/Ticket)"],
-    phrases: [
-      { en: "Excuse me, where can I find the milk?", es: "Disculpe, ¿dónde puedo encontrar la leche?" },
-      { en: "I don't need a bag, thank you.", es: "No necesito bolsa, gracias." },
-      { en: "Can I do twenty dollars cash back?", es: "¿Puedo retirar veintiún dólares en efectivo en caja?" }
-    ]
-  },
-  {
-    name: "Gasolinera",
-    nameEn: "Gas Station & Store",
-    lat: 39.8280,
-    lng: -98.5800,
-    subwayLines: ['Fuel Pump', 'Snack Aisle'],
-    subwayDirections: "Estaciónate junto a la bomba (pump) número 4 y paga adentro.",
-    subwayDirectionsEn: "Park next to fuel pump number 4 and pay inside.",
-    taxiTime: "12 mins",
-    taxiFare: "$16.00",
-    walkTime: "30 mins",
-    walkDist: "1.5 mi",
-    bikeTime: "10 mins",
-    vocab: ["Fuel pump (Bomba de gasolina)", "Regular / Premium (Tipos de gasolina)", "Windshield squeegee (Limpiaparabrisas)", "Restroom key (Llave del baño)", "Highway (Autopista)"],
-    phrases: [
-      { en: "Fifty dollars on pump number four, please.", es: "Cincuenta dólares en la bomba número cuatro, por favor." },
-      { en: "Do you have a public restroom?", es: "¿Tiene baño público?" },
-      { en: "Can I get a bottle of water and these chips?", es: "¿Me da una botella de agua y estas papas?" }
-    ]
-  },
-  {
-    name: "Recepción de Hotel",
-    nameEn: "Hotel Front Desk",
-    lat: 39.8290,
-    lng: -98.5780,
-    subwayLines: ['Lobby', 'Reception'],
-    subwayDirections: "Camina hacia la recepción en el vestíbulo principal del hotel.",
-    subwayDirectionsEn: "Head to the reception desk in the main hotel lobby.",
-    taxiTime: "15 mins",
-    taxiFare: "$22.00",
-    walkTime: "40 mins",
-    walkDist: "2.0 mi",
-    bikeTime: "12 mins",
-    vocab: ["Reservation (Reservación)", "Key card (Tarjeta llave)", "Check-out time (Hora de salida)", "Amenities (Servicios/Comodidades)", "Valet parking (Estacionamiento de servicio)"],
-    phrases: [
-      { en: "Hi, I have a reservation under Jane Doe.", es: "Hola, tengo una reservación a nombre de Jane Doe." },
-      { en: "What time is checkout tomorrow?", es: "¿A qué hora es la salida mañana?" },
-      { en: "Could we get some extra towels for our room?", es: "¿Podríamos tener algunas toallas extra para la habitación?" }
-    ]
-  }
-];
+import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
+import { TRAVEL_PRESETS } from './TravelPresets';
+import { translations, getTranslatedMessageText } from './Translations';
+import { CONVERSATION_MODES, ConversationMode } from './ConversationModes';
+import { useConversationEngine } from './useConversationEngine';
 
 interface LiveAgentProps {
   isWidgetMode: boolean;
   onClose?: () => void;
 }
 
-interface ChatMessage {
-  id: string;
-  sender: 'user' | 'splash' | 'system';
-  text: string;
-  timestamp: string;
-  timeMs: number;
-  showForm?: boolean;
-}
-
-interface Lead {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  phone: string;
-  notes: string;
-  createdAt: string;
-  chatTranscript: { sender: string; text: string; timestamp: string }[];
-}
-
-const translations = {
-  EN: {
-    standby: "EN ESPERA",
-    connecting: "Conectando...",
-    connect: "CONECTAR",
-    active: "ACTIVO",
-    disconnected: "Desconectado",
-    session: "Sesión",
-    disconnectBtn: "FINALIZAR",
-    connectionError: "Error de Conexión",
-    howToFix: "👉 How to fix this error:",
-    step1: "Open the Settings panel (⚙️ gear icon) in AI Studio.",
-    step2: "Input a valid GEMINI_API_KEY.",
-    step3: "Save and retry connecting.",
-    interactiveConsole: "Consola Interactiva",
-    liveConversation: "Conversación en Vivo",
-    leadsBtn: "Lugares Guardados",
-    collectLeadBtn: "Añadir Notas de Práctica",
-    databaseCapturedLeads: "Historial y Notas de Práctica en EE.UU.",
-    backToChat: "Volver al Chat",
-    noLeads: "No practice notes saved yet.",
-    fillFormTest: "Fill out the notes to save your favorite US daily scenarios and vocabulary learnings.",
-    viewSavedTranscript: "Ver Transcripción Guardada",
-    askPlaceholder: "Type your query or scenario here...",
-    blueprintRegistered: "Practice Plan Saved!",
-    proposalSuccessMsg: "Your American immersion practice plan and chat history have been successfully saved to the server database.",
-    backToConsole: "Volver al Panel de Voyager",
-    secureAgentBlueprint: "Guardar Plan de Práctica",
-    requestProposal: "Guardar Registro de Práctica",
-    formInstructions: "Enter your details to save your customized American life practice log, scenarios list, and transcript.",
-    fullName: "Your Name *",
-    fullNamePlaceholder: "e.g. Jane Doe",
-    emailAddress: "Email Address *",
-    emailPlaceholder: "e.g. jane@example.com",
-    company: "Primary Interest",
-    companyPlaceholder: "e.g. Shopping, Diner, Language",
-    phone: "Mobile Number",
-    phonePlaceholder: "e.g. +1 555-0199",
-    customReqs: "Practice Notes & Scenario Favorites",
-    textareaPlaceholder: "What everyday American scenarios or vocabulary topics do you want to keep in your log?",
-    submitBtn: "Guardar Diario de Práctica",
-    submittingBtn: "Guardando Diario...",
-    nameEmailRequired: "Name and Email are required fields.",
-    systemOnline: "Voyager American English Tutor system online.",
-    welcomeMsg: "Hello! I'm VOYAGER, your American English Tutor. Let's practice English or Spanish while exploring daily life in the US! Click Connect to begin.",
-    endConversation: "FINALIZAR",
-    reviewChat: "Califica tu Sesión con Voyager",
-    submitReview: "Enviar Calificación",
-    reviewPlaceholder: "Tell us how your conversation went...",
-    thankYouReview: "Thank you for practicing with Voyager!"
-  },
-  ES: {
-    standby: "EN ESPERA",
-    connecting: "Conectando...",
-    connect: "CONECTAR",
-    active: "ACTIVO",
-    disconnected: "Desconectado",
-    session: "Sesión",
-    disconnectBtn: "FINALIZAR",
-    connectionError: "Error de Conexión",
-    howToFix: "👉 Cómo solucionar este error:",
-    step1: "Abre el panel de Configuración (icono de engranaje ⚙️) en AI Studio.",
-    step2: "Introduce una clave GEMINI_API_KEY válida.",
-    step3: "Guarda los cambios y vuelve a intentar la conexión.",
-    interactiveConsole: "Consola Interactiva",
-    liveConversation: "Conversación en Vivo",
-    leadsBtn: "Lugares Guardados",
-    collectLeadBtn: "Añadir Notas de Práctica",
-    databaseCapturedLeads: "Historial y Notas de Práctica en EE.UU.",
-    backToChat: "Volver al Chat",
-    noLeads: "Aún no hay notas de práctica guardadas.",
-    fillFormTest: "Completa tus notas para guardar tus escenarios favoritos de EE.UU. y las palabras aprendidas.",
-    viewSavedTranscript: "Ver Transcripción Guardada",
-    askPlaceholder: "Escribe tu consulta o escenario aquí...",
-    blueprintRegistered: "¡Plan de Práctica Registrado!",
-    proposalSuccessMsg: "Tu plan de práctica personalizado y tu historial de conversación se han guardado con éxito.",
-    backToConsole: "Volver al Panel de Voyager",
-    secureAgentBlueprint: "Guardar Plan de Práctica",
-    requestProposal: "Guardar Registro de Práctica",
-    formInstructions: "Completa tus datos para guardar tu diario de práctica por EE.UU., tu lista de escenarios y tu transcripción de práctica.",
-    fullName: "Tu Nombre *",
-    fullNamePlaceholder: "ej. Jane Doe",
-    emailAddress: "Correo Electrónico *",
-    emailPlaceholder: "ej. jane@ejemplo.com",
-    company: "Interés Principal",
-    companyPlaceholder: "ej. Compras, Diner, Idioma",
-    phone: "Número de Teléfono",
-    phonePlaceholder: "ej. +1 555-0199",
-    customReqs: "Notas de Práctica y Escenarios Favoritos",
-    textareaPlaceholder: "¿Qué escenarios o temas de vocabulario deseas mantener en tu diario de práctica?",
-    submitBtn: "Guardar Diario de Práctica",
-    submittingBtn: "Guardando Diario...",
-    nameEmailRequired: "El nombre y el correo electrónico son campos obligatorios.",
-    systemOnline: "Sistema Voyager en línea. Tu Tutor de Inglés Americano está listo.",
-    welcomeMsg: "¡Hola! Soy VOYAGER, tu Tutor de Inglés Americano. ¡Practiquemos inglés mientras exploramos la vida diaria en EE.UU.! Haz clic en Conectar para empezar.",
-    endConversation: "FINALIZAR",
-    reviewChat: "Califica tu Sesión con Voyager",
-    submitReview: "Enviar Calificación",
-    reviewPlaceholder: "Cuéntanos sobre tu experiencia de práctica...",
-    thankYouReview: "¡Gracias por practicar con Voyager!"
-  }
-};
-
-const getTranslatedMessageText = (msg: ChatMessage, lang: 'EN' | 'ES') => {
-  if (msg.id === 'system_1') {
-    return translations[lang].systemOnline;
-  }
-  if (msg.id === 'welcome_1') {
-    return translations[lang].welcomeMsg;
-  }
-  return msg.text;
-};
-
 const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [isListenOnly, setIsListenOnly] = useState(false);
-  const isListenOnlyRef = useRef(isListenOnly);
-  
-  const [isTranslateMode, setIsTranslateMode] = useState(false);
-  const isTranslateModeRef = useRef(isTranslateMode);
-  
-  const [isBilingualMode, setIsBilingualMode] = useState(true);
-  const isBilingualModeRef = useRef(true);
-  
-  const [isSpanishOnlyMode, setIsSpanishOnlyMode] = useState(false);
-  const isSpanishOnlyModeRef = useRef(isSpanishOnlyMode);
-  
-  const [isEnglishOnlyMode, setIsEnglishOnlyMode] = useState(false);
-  const isEnglishOnlyModeRef = useRef(isEnglishOnlyMode);
-  
-  const [isPaused, setIsPaused] = useState(false);
-  const isPausedRef = useRef(isPaused);
-  const lastInteractionTimeRef = useRef(Date.now());
-  
-  const [volume, setVolume] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const [statusText, setStatusText] = useState("Disconnected");
+  const engine = useConversationEngine();
+  const {
+    isConnected,
+    statusText,
+    isPaused,
+    secondsElapsed,
+    volume,
+    error,
+    setError,
 
-  // NYC Map State
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 40.758895, lng: -73.985131 }); // Default: Times Square
-  const [mapZoom, setMapZoom] = useState<number>(13);
-  const [markers, setMarkers] = useState<MapMarker[]>([]);
-  const [routeInfo, setRouteInfo] = useState<RouteInfo | null>(null);
-  const [rightPanelTab, setRightPanelTab] = useState<'chat' | 'lessons' | 'trips'>('chat');
-  const [viajesSubTab, setViajesSubTab] = useState<'planner' | 'subway' | 'google_map'>('planner');
-  const [selectedTripDestination, setSelectedTripDestination] = useState<TravelDestination | null>(null);
-  const [customDestinationText, setCustomDestinationText] = useState("");
-  const [classroomSubTab, setClassroomSubTab] = useState<'map' | 'subway_map'>('map');
-  const [scores, setScores] = useState({ grammar: 0, pronunciation: 0, confidence: 0, naturalness: 0 });
-  const [learnedWords, setLearnedWords] = useState<string[]>([]);
-  const [accentPatterns, setAccentPatterns] = useState<string[]>([]);
+    selectedLang,
+    setSelectedLang,
+    isListenOnly,
+    setIsListenOnly,
+    isTranslateMode,
+    setIsTranslateMode,
+    isBilingualMode,
+    setIsBilingualMode,
+    isSpanishOnlyMode,
+    setIsSpanishOnlyMode,
+    isEnglishOnlyMode,
+    setIsEnglishOnlyMode,
 
+    scores,
+    setScores,
+    learnedWords,
+    setLearnedWords,
+    accentPatterns,
+    setAccentPatterns,
+    pronunciationEvents,
+    setPronunciationEvents,
 
+    chatMessages,
+    setChatMessages,
+    addSystemMessage,
+    addUserMessage,
+    addSplashMessage,
 
-  const handleSelectPresetDestination = (dest: TravelDestination) => {
-    setSelectedTripDestination(dest);
-    setMapCenter({ lat: dest.lat, lng: dest.lng });
-    setMarkers([{
-      id: 'dest_marker',
-      lat: dest.lat,
-      lng: dest.lng,
-      title: dest.name
-    }]);
-  };
+    wsRef
+  } = engine;
 
-  const handleCustomDestinationSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customDestinationText.trim()) return;
-    
-    const destName = customDestinationText.trim();
-    const mockDest: TravelDestination = {
-      name: destName,
-      nameEn: destName,
-      lat: 40.758895 + (Math.random() - 0.5) * 0.04,
-      lng: -73.985131 + (Math.random() - 0.5) * 0.04,
-      subwayLines: ['N', 'R', '1', '6'],
-      subwayDirections: `Toma las líneas N/R o 1/6 hacia la estación más cercana a ${destName}.`,
-      subwayDirectionsEn: `Take the N/R or 1/6 train to the station closest to ${destName}.`,
-      taxiTime: `${Math.floor(Math.random() * 15) + 8} mins`,
-      taxiFare: `$${(Math.random() * 15 + 10).toFixed(2)}`,
-      walkTime: `${Math.floor(Math.random() * 40) + 15} mins`,
-      walkDist: `${(Math.random() * 2 + 0.5).toFixed(1)} mi`,
-      bikeTime: `${Math.floor(Math.random() * 12) + 5} mins`,
-      vocab: ["Navigation (Navegación)", "Corner (Esquina)", "Subway entrance (Entrada del metro)", "Street sign (Letrero de la calle)", "Map routing (Ruta de mapa)"],
-      phrases: [
-        { en: `Excuse me, how do I get to ${destName}?`, es: `Disculpe, ¿cómo llego a ${destName}?` },
-        { en: `Is ${destName} within walking distance from here?`, es: `¿Está ${destName} a una de distancia caminable desde aquí?` },
-        { en: `Could you tell me which train goes to ${destName}?`, es: `¿Podrías decirme qué tren va a ${destName}?` }
-      ]
-    };
-    setSelectedTripDestination(mockDest);
-    setMapCenter({ lat: mockDest.lat, lng: mockDest.lng });
-    setMarkers([{
-      id: 'dest_marker',
-      lat: mockDest.lat,
-      lng: mockDest.lng,
-      title: mockDest.name
-    }]);
-    setCustomDestinationText("");
-  };
+  const session = engine;
 
-  const speakTravelPhrase = (phrase: string, lang: 'en-US' | 'es-ES') => {
-    const speech = new SpeechSynthesisUtterance(phrase);
-    speech.lang = lang;
-    window.speechSynthesis.speak(speech);
-  };
-
-  const parseImmersionTags = (text: string) => {
-    let cleaned = text;
-    let newScores = null;
-    let newLearnedWords: string[] = [];
-    let newAccentPattern = null;
-    let newCompletedMission = null;
-
-    // 1. Scores
-    const scoresMatch = cleaned.match(/\[SCORES:\s*grammar=(\d+),\s*pronunciation=(\d+),\s*confidence=(\d+),\s*naturalness=(\d+)\]/i);
-    if (scoresMatch) {
-      newScores = {
-        grammar: parseInt(scoresMatch[1], 10),
-        pronunciation: parseInt(scoresMatch[2], 10),
-        confidence: parseInt(scoresMatch[3], 10),
-        naturalness: parseInt(scoresMatch[4], 10)
-      };
-      cleaned = cleaned.replace(scoresMatch[0], "");
-    }
-
-    // 2. Learned Words
-    const learnedMatch = cleaned.match(/\[LEARNED_WORDS:\s*([^\]]+)\]/i);
-    if (learnedMatch) {
-      newLearnedWords = learnedMatch[1].split(',').map(w => w.trim()).filter(Boolean);
-      cleaned = cleaned.replace(learnedMatch[0], "");
-    }
-
-    // 3. Accent
-    const accentMatch = cleaned.match(/\[ACCENT:\s*([^\]]+)\]/i);
-    if (accentMatch) {
-      newAccentPattern = accentMatch[1].trim();
-      cleaned = cleaned.replace(accentMatch[0], "");
-    }
-
-    // 4. Mission
-    const missionMatch = cleaned.match(/\[MISSION_COMPLETE:\s*([^\]]+)\]/i);
-    if (missionMatch) {
-      newCompletedMission = missionMatch[1].trim();
-      cleaned = cleaned.replace(missionMatch[0], "");
-    }
-
-    return { cleaned, newScores, newLearnedWords, newAccentPattern, newCompletedMission };
-  };
-
-  const updateLearningState = (parsed: ReturnType<typeof parseImmersionTags>) => {
-    if (parsed.newScores) {
-      setScores(parsed.newScores);
-    }
-    if (parsed.newLearnedWords.length > 0) {
-      setLearnedWords(prev => {
-        const next = [...prev];
-        parsed.newLearnedWords.forEach(w => {
-          if (!next.includes(w)) next.push(w);
-        });
-        return next;
-      });
-    }
-    if (parsed.newAccentPattern) {
-      const pattern = parsed.newAccentPattern;
-      setAccentPatterns(prev => {
-        if (!prev.includes(pattern)) return [...prev, pattern];
-        return prev;
-      });
-    }
-  };
+  const [rightPanelTab, setRightPanelTab] = useState<'chat' | 'progress' | 'travel'>('chat');
+  const [classroomSubTab, setClassroomSubTab] = useState<'lessons' | 'subway_map'>('lessons');
 
   // Chat & Leads State
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
   const [serverLeads, setServerLeads] = useState<Lead[]>([]);
 
@@ -442,227 +99,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
-  // Session Elapsed Time
-  const [secondsElapsed, setSecondsElapsed] = useState(0);
-  const [selectedLang, setSelectedLang] = useState<'EN' | 'ES'>('ES');
-
-  useEffect(() => {
-    const wasListenOnly = isListenOnlyRef.current;
-    isListenOnlyRef.current = isListenOnly;
-    
-    if (wasListenOnly !== isListenOnly) {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        const msgText = isListenOnly 
-          ? "[SYSTEM MESSAGE: Mode changed. You are now in Monitor/Listen-only mode. However, BEFORE you go fully silent, you MUST immediately speak and write a brief explanation in Spanish (only one warm sentence) explaining what this mode does (that you will listen only and offer tips in the text chat, and won't speak unless given permission). End your sentence by saying that you will now be quiet and listen. Do NOT say 'Understood' or 'Entendido'. after saying this explanation, you must remain silent for subsequent turns and only respond via text unless asked '¿Puedo hablar?'.]"
-          : "[SYSTEM MESSAGE: Mode changed. Speak aloud a brief explanation in Spanish (one warm sentence) telling the user you are now back in normal voice mode and will speak and respond normally. Do NOT say 'Understood' or 'Entendido'.]";
-        
-        wsRef.current.send(JSON.stringify({ text: msgText }));
-      }
-      
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: `msg_sys_listen_${Date.now()}`,
-          sender: 'system',
-          text: isListenOnly 
-            ? (selectedLang === 'EN' 
-              ? 'ℹ️ Monitor mode active: VOYAGER is listening only and will not speak. Feedback will be provided via text.'
-              : 'ℹ️ Modo monitor activo: VOYAGER está solo escuchando y no hablará. Las correcciones se mostrarán por texto.')
-            : (selectedLang === 'EN'
-              ? 'ℹ️ Normal mode active: VOYAGER can speak and respond normally.'
-              : 'ℹ️ Modo normal activo: VOYAGER hablará y responderá con voz.'),
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          timeMs: Date.now()
-        }
-      ]);
-    }
-  }, [isListenOnly, selectedLang]);
-
-  useEffect(() => {
-    const wasTranslateMode = isTranslateModeRef.current;
-    isTranslateModeRef.current = isTranslateMode;
-    
-    if (wasTranslateMode !== isTranslateMode) {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        const msgText = isTranslateMode 
-          ? "[SYSTEM MESSAGE: Mode changed. You are now in INSTANT TRANSLATION MODE. From now on, whatever you hear in English, you must translate to Spanish. If the user speaks in Spanish, you must translate to English. Output ONLY the translated words and absolutely nothing else, both in your voice and in your text transcription. Do NOT say 'Understood' or 'Entendido'. In this very first response, translate this message to Spanish: 'Instant Translation Mode is now active. I am ready to translate.']"
-          : "[SYSTEM MESSAGE: Mode changed. Speak aloud a brief explanation in Spanish (one warm sentence) telling the user that you are now back in normal English tutor mode, teaching American English and offering cultural advice. Do NOT say 'Understood' or 'Entendido'.]";
-        
-        wsRef.current.send(JSON.stringify({ text: msgText }));
-      }
-      
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: `msg_sys_translate_${Date.now()}`,
-          sender: 'system',
-          text: isTranslateMode 
-            ? (selectedLang === 'EN' 
-              ? 'ℹ️ Instant Translation Mode active: VOYAGER will translate what you say immediately.'
-              : 'ℹ️ Modo Traducción Instantánea activo: VOYAGER traducirá lo que digas de inmediato.')
-            : (selectedLang === 'EN'
-              ? 'ℹ️ Normal mode active: VOYAGER is back as your American English tutor and cultural advisor.'
-              : 'ℹ️ Modo normal activo: VOYAGER vuelve a ser tu Tutor de Inglés Americano y asesor cultural.'),
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          timeMs: Date.now()
-        }
-      ]);
-    }
-  }, [isTranslateMode, selectedLang]);
-
-  useEffect(() => {
-    const wasBilingualMode = isBilingualModeRef.current;
-    isBilingualModeRef.current = isBilingualMode;
-    
-    if (wasBilingualMode !== isBilingualMode) {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        const msgText = isBilingualMode 
-          ? "[SYSTEM MESSAGE: Mode changed. You are now in BILINGUAL TRANSLATION MODE. You must immediately speak and write a brief explanation in Spanish (only one warm sentence) explaining what this mode does (that you will say all your responses first in Spanish, and then repeat them in English). Do NOT say 'Understood' or 'Entendido'.]"
-          : "[SYSTEM MESSAGE: Mode changed. Speak aloud a brief explanation in Spanish (one warm sentence) telling the user that you are now back in normal English tutor mode, teaching American English and offering cultural advice. Do NOT say 'Understood' or 'Entendido'.]";
-        
-        wsRef.current.send(JSON.stringify({ text: msgText }));
-      }
-      
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: `msg_sys_bilingual_${Date.now()}`,
-          sender: 'system',
-          text: isBilingualMode 
-            ? (selectedLang === 'EN' 
-              ? 'ℹ️ Bilingual Mode active: VOYAGER will respond in Spanish and repeat in English.'
-              : 'ℹ️ Modo Bilingüe activo: VOYAGER responderá en español y lo repetirá en inglés.')
-            : (selectedLang === 'EN'
-              ? 'ℹ️ Normal mode active: VOYAGER is back as your American English tutor and cultural advisor.'
-              : 'ℹ️ Modo normal activo: VOYAGER vuelve a ser tu Tutor de Inglés Americano y asesor cultural.'),
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          timeMs: Date.now()
-        }
-      ]);
-    }
-  }, [isBilingualMode, selectedLang]);
-
-  useEffect(() => {
-    const wasSpanishOnly = isSpanishOnlyModeRef.current;
-    isSpanishOnlyModeRef.current = isSpanishOnlyMode;
-    
-    if (wasSpanishOnly !== isSpanishOnlyMode) {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        const msgText = isSpanishOnlyMode 
-          ? "[SYSTEM MESSAGE: Mode changed. You are now in SPANISH ONLY MODE. You must speak and write strictly and purely in Spanish from now on. Discuss American English culture and language in Spanish. Do NOT teach English, evaluate grammar, or translate any text. Speak only in Spanish. Do NOT say 'Understood' or 'Entendido'.]"
-          : "[SYSTEM MESSAGE: Mode changed. Speak aloud a brief explanation in Spanish (one warm sentence) telling the user that you are now back in normal English tutor mode, teaching American English and offering cultural advice. Do NOT say 'Understood' or 'Entendido'.]";
-        
-        wsRef.current.send(JSON.stringify({ text: msgText }));
-      }
-      
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: `msg_sys_spanish_${Date.now()}`,
-          sender: 'system',
-          text: isSpanishOnlyMode 
-            ? (selectedLang === 'EN' 
-              ? 'ℹ️ Spanish Only Mode active: VOYAGER will converse with you strictly in Spanish.'
-              : 'ℹ️ Modo Solo Español activo: VOYAGER conversará contigo estrictamente en español.')
-            : (selectedLang === 'EN'
-              ? 'ℹ️ Normal mode active: VOYAGER is back as your American English tutor and cultural advisor.'
-              : 'ℹ️ Modo normal activo: VOYAGER vuelve a ser tu Tutor de Inglés Americano y asesor cultural.'),
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          timeMs: Date.now()
-        }
-      ]);
-    }
-  }, [isSpanishOnlyMode, selectedLang]);
-
-  useEffect(() => {
-    const wasEnglishOnly = isEnglishOnlyModeRef.current;
-    isEnglishOnlyModeRef.current = isEnglishOnlyMode;
-    
-    if (wasEnglishOnly !== isEnglishOnlyMode) {
-      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        const msgText = isEnglishOnlyMode 
-          ? "[SYSTEM MESSAGE: Mode changed. You are now in ENGLISH ONLY MODE. You must speak and write strictly and purely in English. Do NOT provide any Spanish translations, hints, corrections, or bilingual tips. Speak naturally as an American English speaker. This is a pure immersion practice mode for advanced students. Speak only in English. Do NOT say 'Understood' or 'Entendido'.]"
-          : "[SYSTEM MESSAGE: Mode changed. Speak aloud a brief explanation in Spanish (one warm sentence) telling the user that you are now back in normal English tutor mode, teaching American English and offering cultural advice. Do NOT say 'Understood' or 'Entendido'.]";
-        
-        wsRef.current.send(JSON.stringify({ text: msgText }));
-      }
-      
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: `msg_sys_english_${Date.now()}`,
-          sender: 'system',
-          text: isEnglishOnlyMode 
-            ? (selectedLang === 'EN' 
-              ? 'ℹ️ English Only Mode active: VOYAGER will speak strictly in English for advanced practice.'
-              : 'ℹ️ Modo Solo Inglés activo: VOYAGER hablará estrictamente en inglés para práctica avanzada.')
-            : (selectedLang === 'EN'
-              ? 'ℹ️ Normal mode active: VOYAGER is back as your American English tutor and cultural advisor.'
-              : 'ℹ️ Modo normal activo: VOYAGER vuelve a ser tu Tutor de Inglés Americano y asesor cultural.'),
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          timeMs: Date.now()
-        }
-      ]);
-    }
-  }, [isEnglishOnlyMode, selectedLang]);
-
-  useEffect(() => {
-    if (isTranslateMode) {
-      setIsListenOnly(false);
-      setIsBilingualMode(false);
-      setIsSpanishOnlyMode(false);
-      setIsEnglishOnlyMode(false);
-    }
-  }, [isTranslateMode]);
-
-  useEffect(() => {
-    if (isListenOnly) {
-      setIsTranslateMode(false);
-      setIsBilingualMode(false);
-      setIsSpanishOnlyMode(false);
-      setIsEnglishOnlyMode(false);
-    }
-  }, [isListenOnly]);
-
-  useEffect(() => {
-    if (isBilingualMode) {
-      setIsListenOnly(false);
-      setIsTranslateMode(false);
-      setIsSpanishOnlyMode(false);
-      setIsEnglishOnlyMode(false);
-    }
-  }, [isBilingualMode]);
-
-  useEffect(() => {
-    if (isSpanishOnlyMode) {
-      setIsListenOnly(false);
-      setIsTranslateMode(false);
-      setIsBilingualMode(false);
-      setIsEnglishOnlyMode(false);
-    }
-  }, [isSpanishOnlyMode]);
-
-  useEffect(() => {
-    if (isEnglishOnlyMode) {
-      setIsListenOnly(false);
-      setIsTranslateMode(false);
-      setIsBilingualMode(false);
-      setIsSpanishOnlyMode(false);
-    }
-  }, [isEnglishOnlyMode]);
-
   const hasInteracted = isConnected || statusText === "Connecting..." || chatMessages.length > 1;
-
-  useEffect(() => {
-    if (!isConnected) {
-      setSecondsElapsed(0);
-      return;
-    }
-    const interval = setInterval(() => {
-      setSecondsElapsed(prev => prev + 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [isConnected]);
 
   // Scroll ref for chat feed
   const chatEndRef = useRef<HTMLDivElement | null>(null);
@@ -1001,117 +438,32 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
     }
   };
 
-  // Refs for Audio Logic
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const inputAudioContextRef = useRef<AudioContext | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const processorRef = useRef<ScriptProcessorNode | null>(null);
-  const sourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const nextStartTimeRef = useRef<number>(0);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const inputAnalyserRef = useRef<AnalyserNode | null>(null);
-  const wsRef = useRef<WebSocket | null>(null);
-
-  const ensureAudioContexts = () => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-      analyserRef.current = audioContextRef.current.createAnalyser();
-      analyserRef.current.fftSize = 64;
-    }
-    if (!inputAudioContextRef.current) {
-      inputAudioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
-    }
-    if (!inputAnalyserRef.current && inputAudioContextRef.current) {
-      inputAnalyserRef.current = inputAudioContextRef.current.createAnalyser();
-      inputAnalyserRef.current.fftSize = 64;
-    }
-
-    if (audioContextRef.current.state === 'suspended') audioContextRef.current.resume();
-    if (inputAudioContextRef.current.state === 'suspended') inputAudioContextRef.current.resume();
-  };
-
-  useEffect(() => {
-    let animationFrameId: number;
-    const updateVolume = () => {
-      let outputVol = 0;
-      let inputVol = 0;
-
-      if (isConnected) {
-        if (analyserRef.current) {
-          const dataArray = new Uint8Array(analyserRef.current.frequencyBinCount);
-          analyserRef.current.getByteFrequencyData(dataArray);
-          outputVol = dataArray.reduce((a, b) => a + b) / dataArray.length;
-        }
-        if (inputAnalyserRef.current) {
-          const dataArray = new Uint8Array(inputAnalyserRef.current.frequencyBinCount);
-          inputAnalyserRef.current.getByteFrequencyData(dataArray);
-          inputVol = dataArray.reduce((a, b) => a + b) / dataArray.length;
-        }
-      }
-      
-      const combinedVol = Math.max(outputVol, inputVol);
-      setVolume(combinedVol);
-      animationFrameId = requestAnimationFrame(updateVolume);
-    };
-    updateVolume();
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isConnected]);
-
   const pauseSession = () => {
-    setIsPaused(true);
-    isPausedRef.current = true;
-    setVolume(0);
-    setChatMessages(prev => [
-      ...prev,
-      {
-        id: `msg_sys_pause_${Date.now()}`,
-        sender: 'system',
-        text: 'ℹ️ Sesión en pausa. Escribe un mensaje en el campo de texto de abajo para reanudar la sesión.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
-      }
-    ]);
+    session.pause();
+    addSystemMessage(
+      selectedLang === 'EN'
+        ? 'ℹ️ Session paused. Type a message below to resume.'
+        : 'ℹ️ Sesión en pausa. Escribe un mensaje en el campo de texto de abajo para reanudar la sesión.',
+      `msg_sys_pause_${Date.now()}`
+    );
   };
 
   const resumeSession = () => {
-    setIsPaused(false);
-    isPausedRef.current = false;
-    lastInteractionTimeRef.current = Date.now();
-    setChatMessages(prev => [
-      ...prev,
-      {
-        id: `msg_sys_resume_${Date.now()}`,
-        sender: 'system',
-        text: 'ℹ️ Sesión reanudada.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
-      }
-    ]);
+    session.resume();
+    addSystemMessage(
+      selectedLang === 'EN'
+        ? 'ℹ️ Session resumed.'
+        : 'ℹ️ Sesión reanudada.',
+      `msg_sys_resume_${Date.now()}`
+    );
   };
 
-  useEffect(() => {
-    if (!isConnected || isPaused) return;
-    const interval = setInterval(() => {
-      const inactiveMs = Date.now() - lastInteractionTimeRef.current;
-      if (inactiveMs > 60000) {
-        console.log("Auto-pausing session due to 60s inactivity");
-        pauseSession();
-      }
-    }, 2000);
-    return () => clearInterval(interval);
-  }, [isConnected, isPaused]);
-
   const connectToGemini = async (initialPrompt?: string, isVoiceConnection: boolean = false, langOverride?: 'EN' | 'ES') => {
-    setError(null);
     setShowReviewScreen(false);
     setRightPanelTab('chat');
-    setIsPaused(false);
-    isPausedRef.current = false;
-    lastInteractionTimeRef.current = Date.now();
     setScores({ grammar: 0, pronunciation: 0, confidence: 0, naturalness: 0 });
     setLearnedWords([]);
     setAccentPatterns([]);
-    ensureAudioContexts();
     
     if (initialPrompt && !isVoiceConnection) {
       setChatMessages([
@@ -1134,332 +486,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
         }
       ]);
     }
-    
-    try {
-      setStatusText("Connecting...");
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
 
-      const activeLang = langOverride || selectedLang;
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/api/live?lang=${activeLang}`;
-      const ws = new WebSocket(wsUrl);
-      wsRef.current = ws;
-
-      ws.onopen = () => {
-        setIsConnected(true);
-        setStatusText("Connected");
-        console.log("WebSocket connection to server established");
-        
-        setChatMessages(prev => [
-          ...prev,
-          {
-            id: `msg_sys_open_${Date.now()}`,
-            sender: 'system',
-            text: '🟢 Connected! Speaking is active with SPLASH.',
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            timeMs: Date.now()
-          }
-        ]);
-
-        if (!inputAudioContextRef.current) return;
-        const ctx = inputAudioContextRef.current;
-        const source = ctx.createMediaStreamSource(stream);
-        const processor = ctx.createScriptProcessor(4096, 1, 1);
-        
-        processor.onaudioprocess = (e) => {
-          if (ws.readyState !== WebSocket.OPEN) return;
-          if (isPausedRef.current) return;
-          // Update activity timer when audio is streaming from mic
-          lastInteractionTimeRef.current = Date.now();
-          const resampled = resampleAudioBuffer(e.inputBuffer, 16000);
-          const pcm16 = float32ToPcm16(resampled);
-          const pcmBytes = new Uint8Array(pcm16.buffer);
-          const base64Data = bytesToBase64(pcmBytes);
-          ws.send(JSON.stringify({ audio: base64Data }));
-        };
-
-        source.connect(processor);
-        if (inputAnalyserRef.current) {
-          source.connect(inputAnalyserRef.current);
-        }
-        processor.connect(ctx.destination);
-        
-        sourceRef.current = source;
-        processorRef.current = processor;
-      };
-
-      ws.onmessage = async (event) => {
-        try {
-          // Reset inactivity timer when server sends any message/audio/text
-          lastInteractionTimeRef.current = Date.now();
-          const msg = JSON.parse(event.data);
-          
-          if (msg.status === "connected") {
-            console.log("Gemini session is active on the backend. Dispatching welcome greeting.");
-            let greeting = initialPrompt || (
-              selectedLang === 'ES'
-                ? "Por favor preséntate en español como VOYAGER, dime que estás muy emocionado de ser mi tutor de inglés estadounidense y asesor cultural, y pregúntame cuál es mi nombre para saber cómo dirigirte a mí (y adaptar los adjetivos en español a mi género correctamente)."
-                : "Please greet me in English as VOYAGER, say you are excited to help me practice and master American English as my tutor, and ask for my name so you can address me properly."
-            );
-            if (isBilingualModeRef.current) {
-              greeting += "\n\n[SYSTEM MESSAGE: You are now in BILINGUAL TRANSLATION MODE. For EVERY SINGLE response, you must first speak and write your response in Spanish, and then immediately repeat the exact same response only in English. Separate the Spanish and English sentences with a slash '/'. Your entire response must consist of the Spanish version followed directly by the English translation, both in your voice output and in your text transcription.]";
-            } else if (isTranslateModeRef.current) {
-              greeting += "\n\n[SYSTEM MESSAGE: You are now in INSTANT TRANSLATION MODE. You must act strictly and purely as a speech translator. Do NOT hold a conversation, do NOT give tips, do NOT make small talk, and do NOT guide the user. Your ONLY job is to immediately translate whatever you hear: if you hear Spanish, translate it to English; if you hear English, translate it to Spanish. Output ONLY the translated words and absolutely nothing else, both in your voice and in your text transcription. Keep translations instantaneous, brief, and exact.]";
-            } else if (isListenOnlyRef.current) {
-              greeting += "\n\n[SYSTEM MESSAGE: You are now starting in Monitor/Listen-only mode. The user is practicing by talking to a real person. You must only listen and analyze their English interaction. Do NOT speak. You can only respond via text. In your text responses, offer helpful, subtle language corrections or tips about their conversation, and if you want to speak aloud, explicitly ask the user for permission to talk (e.g. '¿Puedo hablar?').]";
-            } else if (isSpanishOnlyModeRef.current) {
-              greeting += "\n\n[SYSTEM MESSAGE: You are now in SPANISH ONLY MODE. You must speak and write strictly and purely in Spanish from now on. Discuss daily life and scenarios in America in Spanish. Do NOT teach English, evaluate grammar, or translate any text. Speak only in Spanish.]";
-            } else if (isEnglishOnlyModeRef.current) {
-              greeting += "\n\n[SYSTEM MESSAGE: You are now in ENGLISH ONLY MODE. You must speak and write strictly and purely in English. Do NOT provide any Spanish translations, hints, corrections, or bilingual tips. Speak naturally as an American English speaker. This is a pure immersion practice mode for advanced students. Speak only in English.]";
-            }
-            
-            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-              wsRef.current.send(JSON.stringify({ text: greeting }));
-            }
-            return;
-          }
-          
-          if (msg.error) {
-             console.error("Server reported error:", msg.error);
-             setError(msg.error);
-             disconnect();
-             return;
-          }
-
-          if (msg.meetingBooked) {
-             console.log("Meeting booked successfully. Transitioning to end chat review screen.");
-             handleEndConversation();
-             return;
-          }
-
-          if (msg.languageSwitch) {
-            setSelectedLang(msg.languageSwitch);
-          }
-
-          if (msg.progressUpdate) {
-            console.log("Received progress update from tool:", msg.progressUpdate);
-            const { scores, learnedWords, accentTips, completedMissionId } = msg.progressUpdate;
-            
-            if (scores) {
-              setScores({
-                grammar: scores.grammar || 0,
-                pronunciation: scores.pronunciation || 0,
-                confidence: scores.confidence || 0,
-                naturalness: scores.naturalness || 0
-              });
-            }
-            
-            if (learnedWords && learnedWords.length > 0) {
-              setLearnedWords(prev => {
-                const updated = [...prev];
-                learnedWords.forEach((w: string) => {
-                  if (!updated.includes(w)) updated.push(w);
-                });
-                return updated;
-              });
-            }
-            
-            if (accentTips) {
-              setAccentPatterns(prev => {
-                if (!prev.includes(accentTips)) {
-                  return [...prev, accentTips];
-                }
-                return prev;
-              });
-            }
-            return;
-          }
-
-          if (msg.mapAction) {
-            console.log("Received mapAction:", msg.mapAction, msg.data);
-            if (msg.mapAction === "show_location") {
-              const { placeName, latitude, longitude, description } = msg.data;
-              setMapCenter({ lat: latitude, lng: longitude });
-              setMapZoom(15);
-              setMarkers(prev => [
-                ...prev,
-                {
-                  id: `marker_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
-                  lat: latitude,
-                  lng: longitude,
-                  title: placeName,
-                  description: description
-                }
-              ]);
-              setRouteInfo(null);
-            } else if (msg.mapAction === "draw_route") {
-              const { origin, destination, travelMode, description } = msg.data;
-              setRouteInfo({ origin, destination, travelMode, description });
-              setMarkers([]);
-            }
-          }
-
-          if (msg.userTranscription) {
-             setChatMessages(prev => {
-                const last = prev[prev.length - 1];
-                if (last && last.sender === 'user' && last.id.startsWith('msg_voice_trans_') && (Date.now() - last.timeMs < 6000)) {
-                   const updated = [...prev];
-                   updated[updated.length - 1] = {
-                      ...last,
-                      text: last.text + msg.userTranscription,
-                      timeMs: Date.now()
-                   };
-                   return updated;
-                } else {
-                   return [...prev, {
-                      id: `msg_voice_trans_${Date.now()}`,
-                      sender: 'user',
-                      text: msg.userTranscription,
-                      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                      timeMs: Date.now()
-                   }];
-                }
-             });
-          }
-
-          if (msg.text) {
-             setChatMessages(prev => {
-                const last = prev[prev.length - 1];
-                const formPattern = /\[SHOW[-_ ]FORM\]|\(SHOW[-_ ]FORM\)/gi;
-                if (last && last.sender === 'splash' && !last.id.startsWith('welcome_') && (Date.now() - last.timeMs < 10000)) {
-                   const updated = [...prev];
-                   const combinedText = last.text + msg.text;
-                   
-                   // Parse immersion tags
-                   const parsed = parseImmersionTags(combinedText);
-                   updateLearningState(parsed);
-
-                   // Handle subway map routing
-                   // if (/(subway\s*map|metro\s*map|network\s*grid|subway\s*grid|subway\s*system|mapa\s*de\s*metro|mapa\s*del\s*metro|red\s*de\s*metro|transit\s*map|mapa\s*de\s*tr[aá]nsito)/i.test(parsed.cleaned)) {
-                   //    setRightPanelTab('lessons');
-                   //    setClassroomSubTab('subway_map');
-                   // }
-
-                   const hasFormTag = formPattern.test(parsed.cleaned) || last.showForm || msg.showForm;
-                   const cleanedText = parsed.cleaned.replace(formPattern, "");
-                   updated[updated.length - 1] = {
-                      ...last,
-                      text: cleanedText,
-                      showForm: hasFormTag,
-                      timeMs: Date.now()
-                   };
-                   return updated;
-                } else {
-                   const parsed = parseImmersionTags(msg.text);
-                   updateLearningState(parsed);
-
-                   // Handle subway map routing
-                   // if (/(subway\s*map|metro\s*map|network\s*grid|subway\s*grid|subway\s*system|mapa\s*de\s*metro|mapa\s*del\s*metro|red\s*de\s*metro|transit\s*map|mapa\s*de\s*tr[aá]nsito)/i.test(parsed.cleaned)) {
-                   //    setRightPanelTab('lessons');
-                   //    setClassroomSubTab('subway_map');
-                   // }
-
-                   const hasFormTag = formPattern.test(parsed.cleaned) || msg.showForm;
-                   const cleanedText = parsed.cleaned.replace(formPattern, "");
-                   return [...prev, {
-                      id: `msg_${Date.now()}_${Math.random()}`,
-                      sender: 'splash',
-                      text: cleanedText,
-                      showForm: hasFormTag,
-                      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                      timeMs: Date.now()
-                   }];
-                }
-             });
-          }
-
-          if (msg.audio && audioContextRef.current && !isListenOnlyRef.current && !isPausedRef.current) {
-            const ctx = audioContextRef.current;
-            if (ctx.state === 'suspended') {
-              ctx.resume();
-            }
-            const pcmData = new Int16Array(base64ToBytes(msg.audio).buffer);
-            const audioBuffer = createAudioBufferFromPCM(ctx, pcmData, 24000);
-            
-            const source = ctx.createBufferSource();
-            source.buffer = audioBuffer;
-            
-            if (analyserRef.current) {
-              source.connect(analyserRef.current);
-              analyserRef.current.connect(ctx.destination);
-            } else {
-               source.connect(ctx.destination);
-            }
-
-            const now = ctx.currentTime;
-            const startTime = Math.max(now, nextStartTimeRef.current);
-            source.start(startTime);
-            nextStartTimeRef.current = startTime + audioBuffer.duration;
-          }
-        } catch (e) {
-          console.error("Error reading message:", e);
-        }
-      };
-
-      ws.onclose = () => {
-         console.log("WebSocket connection closed");
-         disconnect();
-      };
-
-      ws.onerror = (err) => {
-         console.error("WebSocket error:", err);
-         setError("Server connection error");
-         disconnect();
-      };
-
-    } catch (err: any) {
-        console.error("Connection Failed", err);
-        setError(err.message || "Error connecting or accessing microphone. Please ensure microphone permissions are granted.");
-        setStatusText("Disconnected");
-    }
+    session.connect(initialPrompt, isVoiceConnection, langOverride);
   };
 
   const disconnect = () => {
-    if (statusText === "Disconnected" && !wsRef.current) return;
-    setIsConnected(false);
-    setStatusText("Disconnected");
-    setVolume(0);
-    setIsPaused(false);
-    isPausedRef.current = false;
-    
-    setChatMessages(prev => [
-      ...prev,
-      {
-        id: `msg_sys_close_${Date.now()}`,
-        sender: 'system',
-        text: '🔴 Disconnected from VOYAGER Voice Agent.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
-      }
-    ]);
-    
-    if (wsRef.current) {
-       const ws = wsRef.current;
-       wsRef.current = null;
-       ws.onopen = null;
-       ws.onmessage = null;
-       ws.onerror = null;
-       ws.onclose = null;
-
-       if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
-         try {
-           ws.close();
-         } catch (e) {
-           console.error("Error closing WebSocket:", e);
-         }
-       }
-    }
-
-    if (streamRef.current) {
-        streamRef.current.getTracks().forEach(t => t.stop());
-        streamRef.current = null;
-    }
-    if (processorRef.current && inputAudioContextRef.current) {
-        processorRef.current.disconnect();
-        if (sourceRef.current) sourceRef.current.disconnect();
-    }
-    nextStartTimeRef.current = 0;
+    session.disconnect();
   };
 
   useEffect(() => {
@@ -1520,32 +552,23 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
     if (e) e.preventDefault();
     if (!inputText.trim()) return;
 
-    lastInteractionTimeRef.current = Date.now();
-    if (isPausedRef.current) {
+    session.recordInteraction();
+    if (session.isPaused) {
       resumeSession();
     }
 
     const textToSend = inputText.trim();
     setInputText("");
 
-    setChatMessages(prev => [
-      ...prev,
-      {
-        id: `msg_text_${Date.now()}`,
-        sender: 'user',
-        text: textToSend,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
-      }
-    ]);
+    addUserMessage(textToSend);
 
     // Automatically transition subtab on subway map keywords
     if (/(subway\s*map|metro\s*map|network\s*grid|subway\s*grid|subway\s*system|mapa\s*de\s*metro|mapa\s*del\s*metro|red\s*de\s*metro|transit\s*map|mapa\s*de\s*tr[aá]nsito)/i.test(textToSend)) {
       setClassroomSubTab('subway_map');
     }
 
-    if (isConnected && wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-       wsRef.current.send(JSON.stringify({ text: textToSend }));
+    if (isConnected) {
+       session.sendText(textToSend);
     } else {
        connectToGemini(textToSend, false);
     }
@@ -1884,16 +907,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
                                     <div className="flex items-center justify-center gap-2 flex-wrap max-w-full">
                                         {/* Bilingual Option Toggle */}
                                         <button 
-                                            onClick={() => {
-                                                const nextVal = !isBilingualMode;
-                                                setIsBilingualMode(nextVal);
-                                                if (nextVal) {
-                                                    setIsTranslateMode(false);
-                                                    setIsListenOnly(false);
-                                                    setIsSpanishOnlyMode(false);
-                                                    setIsEnglishOnlyMode(false);
-                                                }
-                                            }}
+                                            onClick={() => setIsBilingualMode(!isBilingualMode)}
                                             style={{ fontFamily: "'Allerta', sans-serif", color: isBilingualMode ? '#ffffff' : '#231d17' }}
                                             className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
                                                 isBilingualMode 
@@ -1906,16 +920,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
 
                                         {/* Translate Option Toggle */}
                                         <button 
-                                            onClick={() => {
-                                                const nextVal = !isTranslateMode;
-                                                setIsTranslateMode(nextVal);
-                                                if (nextVal) {
-                                                    setIsBilingualMode(false);
-                                                    setIsListenOnly(false);
-                                                    setIsSpanishOnlyMode(false);
-                                                    setIsEnglishOnlyMode(false);
-                                                }
-                                            }}
+                                            onClick={() => setIsTranslateMode(!isTranslateMode)}
                                             style={{ fontFamily: "'Allerta', sans-serif", color: isTranslateMode ? '#ffffff' : '#231d17' }}
                                             className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
                                                 isTranslateMode 
@@ -1928,16 +933,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
 
                                         {/* Listen Only Option Toggle */}
                                         <button 
-                                            onClick={() => {
-                                                const nextVal = !isListenOnly;
-                                                setIsListenOnly(nextVal);
-                                                if (nextVal) {
-                                                    setIsBilingualMode(false);
-                                                    setIsTranslateMode(false);
-                                                    setIsSpanishOnlyMode(false);
-                                                    setIsEnglishOnlyMode(false);
-                                                }
-                                            }}
+                                            onClick={() => setIsListenOnly(!isListenOnly)}
                                             style={{ fontFamily: "'Allerta', sans-serif", color: isListenOnly ? '#ffffff' : '#231d17' }}
                                             className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
                                                 isListenOnly 
@@ -1950,16 +946,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
 
                                         {/* Spanish Option Toggle */}
                                         <button 
-                                            onClick={() => {
-                                                const nextVal = !isSpanishOnlyMode;
-                                                setIsSpanishOnlyMode(nextVal);
-                                                if (nextVal) {
-                                                    setIsBilingualMode(false);
-                                                    setIsTranslateMode(false);
-                                                    setIsListenOnly(false);
-                                                    setIsEnglishOnlyMode(false);
-                                                }
-                                            }}
+                                            onClick={() => setIsSpanishOnlyMode(!isSpanishOnlyMode)}
                                             style={{ fontFamily: "'Allerta', sans-serif", color: isSpanishOnlyMode ? '#ffffff' : '#231d17' }}
                                             className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
                                                 isSpanishOnlyMode 
@@ -1972,16 +959,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
 
                                         {/* English Option Toggle */}
                                         <button 
-                                            onClick={() => {
-                                                const nextVal = !isEnglishOnlyMode;
-                                                setIsEnglishOnlyMode(nextVal);
-                                                if (nextVal) {
-                                                    setIsBilingualMode(false);
-                                                    setIsTranslateMode(false);
-                                                    setIsListenOnly(false);
-                                                    setIsSpanishOnlyMode(false);
-                                                }
-                                            }}
+                                            onClick={() => setIsEnglishOnlyMode(!isEnglishOnlyMode)}
                                             style={{ fontFamily: "'Allerta', sans-serif", color: isEnglishOnlyMode ? '#ffffff' : '#231d17' }}
                                             className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
                                                 isEnglishOnlyMode 
