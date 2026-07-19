@@ -1,0 +1,10 @@
+{
+  "name": "VOYAGER - American English Tutor",
+  "description": "VOYAGER: A real-time, bilingual Voice-and-Text AI Assistant serving as an American English tutor and cultural advisor, with interactive Google Maps integration.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

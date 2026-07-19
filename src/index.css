@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-tech: "Allerta Stencil", sans-serif;
+  --font-serif: "American Typewriter", "Courier New", Courier, serif;
+  --font-sans: "American Typewriter", "Courier New", Courier, Georgia, serif;
+  --font-mono: "American Typewriter", "Courier New", Courier, monospace;
+  
+  --animate-spin-slow: spin 8s linear infinite;
+  --animate-pulse-fast: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-marquee: marquee 120s linear infinite;
+  
+  @keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+}
+
+body {
+  margin: 0;
+  background-color: #000;
+  color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Allerta Stencil', sans-serif !important;
+}
