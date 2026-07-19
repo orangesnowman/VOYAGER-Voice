@@ -40,7 +40,9 @@ export function useConversationEngine() {
     pronunciationEvents,
     setPronunciationEvents,
     createPronunciationEvent,
-    updateLearningState
+    updateLearningState,
+    profile,
+    memory
   } = useConversationLearning();
 
   const [error, setError] = useState<string | null>(null);
@@ -65,8 +67,10 @@ export function useConversationEngine() {
     isListenOnly,
     isSpanishOnlyMode,
     isEnglishOnlyMode,
+    memory,
     onUserTranscription: (text) => {
       updateUserVoiceTranscription(text);
+      memory.extractLearnerContext(text);
     },
     onTextResponse: (text, showForm) => {
       updateAssistantResponse(text, showForm, (parsed) => {
@@ -273,6 +277,8 @@ export function useConversationEngine() {
     setPronunciationEvents,
     createPronunciationEvent,
     updateLearningState,
+    profile,
+    memory,
 
     // Transcript
     chatMessages,

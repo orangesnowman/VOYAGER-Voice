@@ -1,6 +1,6 @@
 {
   "name": "VOYAGER - American English Tutor",
-  "description": "VOYAGER: A real-time, bilingual Voice-and-Text AI Assistant serving as an American English tutor and cultural advisor, with interactive Google Maps integration.",
+  "description": "USA Voyager: An empathetic, real-time American English conversation companion featuring personalized onboarding, relational memory, tailored mode switches, and compact bilingual practice.",
   "requestFramePermissions": [
     "microphone"
   ],

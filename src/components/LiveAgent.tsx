@@ -810,11 +810,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
                                 <button
                                     onClick={() => {
                                         if (statusText === "Connecting...") return;
-                                        const isEn = selectedLang === 'EN';
-                                        const prompt = isEn 
-                                            ? "Hello! Please introduce yourself in one short sentence, and ask how you can help."
-                                            : "¡Hola! Por favor, preséntate en una frase corta y pregúntame cómo te puedo ayudar.";
-                                        connectToGemini(prompt, true);
+                                        connectToGemini(undefined, true);
                                     }}
                                     disabled={statusText === "Connecting..."}
                                     className={`px-7 py-2.5 text-[12.5px] font-mono font-bold tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer whitespace-nowrap ${

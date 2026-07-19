@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { AudioCapture, AudioPlayback, VoiceActivityDetector } from '../domain/AudioSystem';
 import { ConversationModePolicy } from '../domain/ConversationModePolicy';
+import { ConversationMemory } from '../domain/ConversationMemory';
 
 interface UseConversationSessionConfig {
   selectedLang: 'EN' | 'ES';
@@ -16,6 +17,7 @@ interface UseConversationSessionConfig {
   onError: (error: string) => void;
   onClose: () => void;
   onAutoPause?: () => void;
+  memory?: ConversationMemory;
 }
 
 export function useConversationSession(config: UseConversationSessionConfig) {
@@ -33,6 +35,7 @@ export function useConversationSession(config: UseConversationSessionConfig) {
     onError,
     onClose,
     onAutoPause,
+    memory,
   } = config;
 
   const [isConnected, setIsConnected] = useState(false);
@@ -210,10 +213,14 @@ export function useConversationSession(config: UseConversationSessionConfig) {
                               : isEnglishOnlyMode ? 'AMERICAN_ENGLISH'
                               : 'BILINGUAL';
 
-            const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(currentMode, {
+            let greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(currentMode, {
               initialPrompt,
               selectedLang
             });
+
+            if (memory) {
+              greetingPrompt += memory.getMemoryPayloadForPrompt();
+            }
             
             if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
               wsRef.current.send(JSON.stringify({ text: greetingPrompt }));

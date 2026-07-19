@@ -2,11 +2,16 @@ import { useState, useCallback } from 'react';
 import { PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { PronunciationCoach } from '../domain/PronunciationCoach';
 import { ConversationMode } from './ConversationModes';
+import { LearningProfile } from '../domain/LearningProfile';
+import { ConversationMemory } from '../domain/ConversationMemory';
 
 export function useConversationLearning() {
-  const [scores, setScores] = useState({ grammar: 0, pronunciation: 0, confidence: 0, naturalness: 0 });
-  const [learnedWords, setLearnedWords] = useState<string[]>([]);
-  const [accentPatterns, setAccentPatterns] = useState<string[]>([]);
+  const [profile] = useState(() => new LearningProfile());
+  const [memory] = useState(() => new ConversationMemory());
+
+  const [scores, setScores] = useState(() => profile.getCurrentScores());
+  const [learnedWords, setLearnedWords] = useState<string[]>(() => profile.getLearnedWords());
+  const [accentPatterns, setAccentPatterns] = useState<string[]>(() => profile.getAccentPatterns());
   const [pronunciationEvents, setPronunciationEvents] = useState<PronunciationFeedbackEvent[]>([]);
 
   const handleNewCoachingEvent = useCallback((newEvent: PronunciationFeedbackEvent) => {
@@ -41,10 +46,21 @@ export function useConversationLearning() {
       handleNewCoachingEvent
     );
 
+    // Synchronize to the domain model LearningProfile
+    profile.updateScores(
+      result.updatedScores.grammar,
+      result.updatedScores.pronunciation,
+      result.updatedScores.confidence,
+      result.updatedScores.naturalness
+    );
+    profile.addLearnedWords(result.updatedWords);
+    profile.addAccentPatterns(result.updatedPatterns);
+
+    // Sync back to local component states
     setScores(result.updatedScores);
-    setLearnedWords(result.updatedWords);
-    setAccentPatterns(result.updatedPatterns);
-  }, [scores, learnedWords, accentPatterns, pronunciationEvents, handleNewCoachingEvent]);
+    setLearnedWords(profile.getLearnedWords());
+    setAccentPatterns(profile.getAccentPatterns());
+  }, [scores, learnedWords, accentPatterns, pronunciationEvents, handleNewCoachingEvent, profile]);
 
   return {
     scores,
@@ -56,7 +72,9 @@ export function useConversationLearning() {
     pronunciationEvents,
     setPronunciationEvents,
     createPronunciationEvent,
-    updateLearningState
+    updateLearningState,
+    profile,
+    memory
   };
 }
 
