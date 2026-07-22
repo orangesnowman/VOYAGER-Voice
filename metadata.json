@@ -1,6 +1,6 @@
 {
-  "name": "VOYAGER - American English Tutor",
-  "description": "USA Voyager: An empathetic, real-time American English conversation companion featuring personalized onboarding, relational memory, tailored mode switches, and compact bilingual practice.",
+  "name": "USA Voyager",
+  "description": "USA Voyager is an AI-powered American English learning platform focused on natural conversation, personalized learning, and optional live lessons with human teachers.",
   "requestFramePermissions": [
     "microphone"
   ],

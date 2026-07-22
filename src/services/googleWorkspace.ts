@@ -225,7 +225,7 @@ export const googleWorkspace = {
   },
 
   /**
-   * Compiles and uploads a comprehensive system manual about SPLASH to Google Docs (Drive)
+   * Compiles and uploads a comprehensive system manual about USA VOYAGER to Google Docs (Drive)
    */
   async driveCreateSystemManual() {
     if (!drive) {
@@ -234,13 +234,13 @@ export const googleWorkspace = {
     }
 
     try {
-      const docTitle = `SPLASH System Manual - ${new Date().toLocaleDateString()}`;
+      const docTitle = `USA VOYAGER System Manual - ${new Date().toLocaleDateString()}`;
       
-      const manualContent = `SPLASH VOICE AGENT - SYSTEM MANUAL & REFERENCE GUIDE
+      const manualContent = `USA VOYAGER VOICE AGENT - SYSTEM MANUAL & REFERENCE GUIDE
 =====================================================
 
 1. INTRODUCTION & VISION
-SPLASH is a premium, real-time, voice-and-text marketing assistant built to engage visitors and capture leads seamlessly.
+USA VOYAGER is a premium, real-time voice-and-text tutor built to teach American English and cultural advice seamlessly.
 
 2. SYSTEM ARCHITECTURE
 - Frontend: React component (LiveAgent.tsx) utilizing Tailwind CSS.
@@ -252,14 +252,12 @@ SPLASH is a premium, real-time, voice-and-text marketing assistant built to enga
 A beautiful high-density HTML5 canvas visualizer that swirls 900 yellow-colored particles in an orbital ring. The particles breathe, pulse, and expand their radius dynamically based on active audio amplitudes.
 
 4. BILINGUAL LANGUAGE RULES
-- English Mode: Intercepts and triggers English transcriptions. If Spanish is detected, SPLASH conversationally queries if the client prefers to switch.
-- Spanish Mode: Intercepts and triggers Spanish transcriptions, checking if the client prefers English when English is spoken.
-- Tag Relays: Communicates switches to the client using '[SWITCH_LANG: ES]' and '[SWITCH_LANG: EN]' tags, automatically translating the UI.
+- English Mode: Intercepts and triggers English transcriptions.
+- Spanish Mode: Intercepts and triggers Spanish transcriptions as default.
 
 5. DATA ACCUMULATION PIPELINES
-- Leads: Pushed instantly to Google Sheets and generates Gmail alert notifications.
-- Transcripts: Formatted, rated, and written to Google Sheets at session termination.
-- Calendar: Books appointment invites on the fly using Gemini live function calling.
+- Leads & Progress: Tracked and stored seamlessly.
+- Transcripts: Formatted, rated, and preserved.
 
 Manual compiled on: ${new Date().toISOString()}
 `;

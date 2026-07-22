@@ -27,7 +27,7 @@ export function useConversationEngine() {
     setIsListenOnly,
     setIsSpanishOnlyMode,
     setIsEnglishOnlyMode
-  } = useConversationModes('BILINGUAL');
+  } = useConversationModes('SPANISH');
 
   // Use the extracted learning/metrics manager
   const {

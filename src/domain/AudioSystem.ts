@@ -137,7 +137,8 @@ export class AudioPlayback {
 
     try {
       const pcmBytes = PCMConverter.base64ToBytes(base64Pcm);
-      const pcmData = new Int16Array(pcmBytes.buffer);
+      const samplesCount = Math.floor(pcmBytes.byteLength / 2);
+      const pcmData = new Int16Array(pcmBytes.buffer, pcmBytes.byteOffset, samplesCount);
       const audioBuffer = PCMConverter.createAudioBuffer(this.audioContext, pcmData, 24000);
 
       const sourceNode = this.audioContext.createBufferSource();

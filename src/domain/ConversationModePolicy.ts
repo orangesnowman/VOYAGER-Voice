@@ -37,15 +37,63 @@ export class ConversationModePolicy {
   static getSystemInstructionsForMode(mode: ConversationMode, options: ModePromptOptions): string {
     const { initialPrompt, selectedLang } = options;
     
-    let baseGreeting = initialPrompt || (
-      selectedLang === 'ES'
-        ? `Por favor, preséntate cálidamente en español como "USA Voyager". Introduce el siguiente mensaje de bienvenida o una variación natural de él: "¡Hola! Soy USA Voyager, tu compañero de conversación en inglés estadounidense. Estoy aquí para ayudarte a practicar de una manera relajada y amigable. Aprenderemos juntos a tu propio ritmo."
-A continuación, pregúntame cariñosamente mi nombre y mi edad, explicando que esto te ayuda a adaptar el estilo y la dificultad de la conversación para que sea perfecta para mí.
-Antes de enseñarme nada o corregirme, hazme una pregunta suave y abierta para iniciar la conversación, como por ejemplo: "¿Me cuentas un poquito sobre ti?". Si notas que me cuesta o dudo al responder, ofréceme sugerencias amables como mis pasatiempos, deportes favoritos, música o videojuegos que me gusten, de manera que la interacción se sienta como una charla natural con un amigo y no como llenar un formulario de oficina.`
-        : `Please introduce yourself warmly in English as "USA Voyager". Use this welcome message or a natural variation of it: "Hi! I'm USA Voyager, your American English conversation partner. I'm here to help you practice in a relaxed, friendly way. We'll learn together at your own pace."
-Next, kindly ask for my name and age, explaining that knowing this helps you tailor the conversation's style and difficulty level to be perfect for me.
-Before teaching anything or correcting me, ask a soft, open-ended question to get us started, such as: "Can you tell me a little about yourself?". If I seem hesitant, offer friendly prompts like hobbies, sports, music, or games, so it feels like a casual chat with a friend rather than filling out a form.`
-    );
+    let baseGreeting = "";
+    
+    if (selectedLang === 'ES') {
+      switch (mode) {
+        case 'BILINGUAL':
+          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Bilingüe para nosotros. Responderé primero en español y luego en inglés para ayudarte. ¿Cómo te llamas y qué edad tienes?"
+Sé breve, haz una sola pregunta y mantén el foco en iniciar la conversación inmediatamente. No expliques ningún otro modo de conversación.`;
+          break;
+        case 'AMERICAN_ENGLISH':
+          baseGreeting = `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. Let's get started! What is your name and how old are you?"
+Be extremely brief, ask only one question, and focus on starting immediately in English. Do not explain other modes.`;
+          break;
+        case 'SPANISH':
+          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿Cómo te llamas y qué edad tienes?"
+Sé breve, haz una sola pregunta y mantén el foco en iniciar la conversación inmediatamente. No expliques ningún otro modo de conversación.`;
+          break;
+        case 'LIVE_TRANSLATOR':
+          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager. He activado el Modo de Traducción Instantánea. Traduciré todo lo que digas de inmediato. ¿Listo para empezar?"
+Mantén el foco en iniciar la traducción inmediatamente. No expliques ningún otro modo de conversación.`;
+          break;
+        case 'LISTEN_ONLY':
+          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager. He activado el Modo Solo Escucha. Te escucharé hablar en inglés y te daré consejos por texto. ¿Cómo te llamas y qué edad tienes?"
+Sé breve, haz una sola pregunta y mantén el foco en iniciar la conversación inmediatamente. No expliques ningún otro modo de conversación.`;
+          break;
+        default:
+          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Pregúntame cómo me llamo y qué edad tengo para comenzar. No expliques los modos de conversación.`;
+      }
+    } else {
+      switch (mode) {
+        case 'BILINGUAL':
+          baseGreeting = `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated Bilingual Mode for us. I will respond in Spanish first, then repeat in English. What is your name and how old are you?"
+Be very brief, ask only one question, and start immediately. Do not explain other modes.`;
+          break;
+        case 'AMERICAN_ENGLISH':
+          baseGreeting = `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. Let's get started! What is your name and how old are you?"
+Be very brief, ask only one question, and start immediately. Do not explain other modes.`;
+          break;
+        case 'SPANISH':
+          baseGreeting = `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Say: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿Cómo te llamas y qué edad tienes?"
+Be very brief, ask only one question, and start immediately. Do not explain other modes.`;
+          break;
+        case 'LIVE_TRANSLATOR':
+          baseGreeting = `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Say: "Hello! I am USA Voyager. I have activated Instant Translation Mode. I will translate everything you say immediately. Ready to start?"
+Focus on starting translation immediately. Do not explain other modes.`;
+          break;
+        case 'LISTEN_ONLY':
+          baseGreeting = `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Say: "Hello! I am USA Voyager. I have activated Listen Only Mode. I will listen to your English and give text-only tips. What is your name and how old are you?"
+Be very brief, ask only one question, and start immediately. Do not explain other modes.`;
+          break;
+        default:
+          baseGreeting = `Please introduce yourself warmly and briefly as "USA Voyager". Ask for my name and age to begin. Do not explain other modes.`;
+      }
+    }
+
+    if (initialPrompt) {
+      baseGreeting = initialPrompt;
+    }
 
     switch (mode) {
       case 'BILINGUAL':

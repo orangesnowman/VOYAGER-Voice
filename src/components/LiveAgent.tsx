@@ -6,9 +6,12 @@ import { getAccessToken } from '../services/firebaseAuth';
 import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 import { ProgressDashboard } from './ProgressDashboard';
+import { RoadmapPanel } from './RoadmapPanel';
+import { TeacherInsightsPanel } from './TeacherInsightsPanel';
+import { SettingsPanel } from './SettingsPanel';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
-import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare } from 'lucide-react';
+import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play } from 'lucide-react';
 
 import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { TRAVEL_PRESETS } from './TravelPresets';
@@ -16,13 +19,151 @@ import { translations, getTranslatedMessageText } from './Translations';
 import { CONVERSATION_MODES, ConversationMode } from './ConversationModes';
 import { useConversationEngine } from './useConversationEngine';
 
+const modeDetails = [
+  {
+    id: 'SPANISH',
+    nameEs: 'Español',
+    nameEn: 'Spanish',
+    descEs: 'Conversación puramente en español.',
+    descEn: 'Conversation purely in Spanish.',
+    icon: 'MessageSquare',
+    tagEs: 'Español',
+    tagEn: 'Spanish',
+    bg: 'hover:bg-black/5'
+  },
+  {
+    id: 'BILINGUAL',
+    nameEs: 'Bilingüe',
+    nameEn: 'Bilingual',
+    descEs: 'Responde primero en español y luego repite en inglés.',
+    descEn: 'Responds first in Spanish, then repeats in English.',
+    icon: 'Sparkles',
+    tagEs: 'Recomendado',
+    tagEn: 'Recommended',
+    bg: 'hover:bg-black/5'
+  },
+  {
+    id: 'AMERICAN_ENGLISH',
+    nameEs: 'Inglés',
+    nameEn: 'English',
+    descEs: 'Responde y conversa estrictamente en inglés.',
+    descEn: 'Responds and converses strictly in English.',
+    icon: 'Compass',
+    tagEs: 'Práctica Avanzada',
+    tagEn: 'Advanced Practice',
+    bg: 'hover:bg-black/5'
+  },
+  {
+    id: 'LIVE_TRANSLATOR',
+    nameEs: 'Traductor',
+    nameEn: 'Translator',
+    descEs: 'Traduce instantáneamente entre inglés y español.',
+    descEn: 'Translates instantly between English and Spanish.',
+    icon: 'Languages',
+    tagEs: 'Traducción en vivo',
+    tagEn: 'Live translation',
+    bg: 'hover:bg-black/5'
+  },
+  {
+    id: 'LISTEN_ONLY',
+    nameEs: 'Escucha',
+    nameEn: 'Listen Only',
+    descEs: 'Escucha y ofrece correcciones por texto sin hablar.',
+    descEn: 'Listens and provides text-only tips without speaking.',
+    icon: 'Headphones',
+    tagEs: 'Solo Escuchar',
+    tagEn: 'Listen & Observe',
+    bg: 'hover:bg-black/5'
+  }
+];
+
+const getModeExplanationText = (mode: ConversationMode, lang: 'EN' | 'ES'): string => {
+  if (lang === 'EN') {
+    switch (mode) {
+      case 'SPANISH':
+        return "Spanish Mode. We will converse strictly in Spanish.";
+      case 'BILINGUAL':
+        return "Bilingual Mode. I will respond to you in Spanish and repeat my answer in English to help you learn.";
+      case 'AMERICAN_ENGLISH':
+        return "English Immersion Mode. We will speak strictly in English. This is perfect for advanced practice!";
+      case 'LIVE_TRANSLATOR':
+        return "Translator Mode. Speak in either English or Spanish, and I will translate it instantly for you.";
+      case 'LISTEN_ONLY':
+        return "Listen Only Mode. I will listen to you and provide helpful tips and corrections in the text chat without speaking.";
+      default:
+        return "";
+    }
+  } else {
+    switch (mode) {
+      case 'SPANISH':
+        return "Modo Español. Conversaremos estrictamente en español.";
+      case 'BILINGUAL':
+        return "Modo Bilingüe. Te responderé primero en español y luego repetiré la respuesta en inglés para ayudarte a aprender.";
+      case 'AMERICAN_ENGLISH':
+        return "Modo de Inmersión en Inglés. Hablaremos strictly en inglés. ¡Es perfecto para una práctica avanzada!";
+      case 'LIVE_TRANSLATOR':
+        return "Modo Traductor. Habla en inglés o español, y yo lo traducirá instantáneamente para ti.";
+      case 'LISTEN_ONLY':
+        return "Modo Escucha. Te escucharé y te daré consejos y correcciones por chat de texto sin interrumpirte hablando.";
+      default:
+        return "";
+    }
+  }
+};
+
+const sphereParticles = [
+  { top: '15%', left: '32%', size: '1.5px', delay: '0s', duration: '1.2s' },
+  { top: '18%', left: '68%', size: '2px', delay: '0.3s', duration: '1.5s' },
+  { top: '28%', left: '22%', size: '1px', delay: '0.7s', duration: '1s' },
+  { top: '22%', left: '48%', size: '2.5px', delay: '0.1s', duration: '1.8s' },
+  { top: '32%', left: '78%', size: '1.5px', delay: '0.5s', duration: '1.3s' },
+  { top: '42%', left: '18%', size: '2px', delay: '0.9s', duration: '1.6s' },
+  { top: '38%', left: '46%', size: '1px', delay: '0.2s', duration: '1.1s' },
+  { top: '48%', left: '62%', size: '2px', delay: '0.4s', duration: '1.4s' },
+  { top: '52%', left: '28%', size: '1.5px', delay: '0.6s', duration: '1.2s' },
+  { top: '58%', left: '82%', size: '1px', delay: '0.8s', duration: '1.7s' },
+  { top: '68%', left: '22%', size: '2.5px', delay: '0.3s', duration: '1.9s' },
+  { top: '62%', left: '52%', size: '1.5px', delay: '0s', duration: '1.3s' },
+  { top: '72%', left: '72%', size: '2px', delay: '0.5s', duration: '1.5s' },
+  { top: '78%', left: '38%', size: '1px', delay: '0.7s', duration: '1s' },
+  { top: '72%', left: '18%', size: '1.5px', delay: '0.2s', duration: '1.2s' },
+  { top: '82%', left: '58%', size: '2px', delay: '0.4s', duration: '1.4s' },
+  
+  // Extra dense particles for connected active state
+  { top: '50%', left: '50%', size: '3px', delay: '0.1s', duration: '0.8s', connectedOnly: true },
+  { top: '46%', left: '36%', size: '2px', delay: '0.5s', duration: '1.1s', connectedOnly: true },
+  { top: '54%', left: '64%', size: '2.5px', delay: '0.2s', duration: '0.9s', connectedOnly: true },
+  { top: '36%', left: '54%', size: '1.5px', delay: '0.7s', duration: '1.2s', connectedOnly: true },
+  { top: '64%', left: '46%', size: '2px', delay: '0.3s', duration: '1s', connectedOnly: true },
+  { top: '30%', left: '42%', size: '1px', delay: '0s', duration: '1.4s', connectedOnly: true },
+  { top: '70%', left: '58%', size: '1.5px', delay: '0.6s', duration: '1.3s', connectedOnly: true },
+  { top: '40%', left: '30%', size: '2px', delay: '0.8s', duration: '1.1s', connectedOnly: true },
+  { top: '60%', left: '70%', size: '2.5px', delay: '0.4s', duration: '0.9s', connectedOnly: true },
+  { top: '24%', left: '34%', size: '1px', delay: '0.5s', duration: '1.6s', connectedOnly: true },
+  { top: '76%', left: '66%', size: '1.5px', delay: '0.1s', duration: '1.2s', connectedOnly: true },
+];
+
+const renderModeIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'Sparkles':
+      return <Sparkles className="w-5 h-5 text-yellow-600" />;
+    case 'Compass':
+      return <Compass className="w-5 h-5 text-blue-600" />;
+    case 'Languages':
+      return <Languages className="w-5 h-5 text-emerald-600" />;
+    case 'Headphones':
+      return <Headphones className="w-5 h-5 text-purple-600" />;
+    default:
+      return <MessageSquare className="w-5 h-5 text-zinc-600" />;
+  }
+};
+
 interface LiveAgentProps {
-  isWidgetMode: boolean;
+  isWidgetMode?: boolean;
   onClose?: () => void;
 }
 
-const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
-  const engine = useConversationEngine();
+const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) => {
   const {
     isConnected,
     statusText,
@@ -31,7 +172,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
     volume,
     error,
     setError,
-
     selectedLang,
     setSelectedLang,
     isListenOnly,
@@ -44,7 +184,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
     setIsSpanishOnlyMode,
     isEnglishOnlyMode,
     setIsEnglishOnlyMode,
-
     scores,
     setScores,
     learnedWords,
@@ -52,815 +191,458 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
     accentPatterns,
     setAccentPatterns,
     pronunciationEvents,
-    setPronunciationEvents,
-
     chatMessages,
     setChatMessages,
-    addSystemMessage,
     addUserMessage,
-    addSplashMessage,
+    connect,
+    disconnect,
+    sendText,
+    pause,
+    resume,
+  } = useConversationEngine();
 
-    wsRef
-  } = engine;
+  const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings'>('home');
+  const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
+  const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
+  const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
+  const [showReviewScreen, setShowReviewScreen] = useState<boolean>(false);
+  const [inputText, setInputText] = useState<string>('');
+  const [isFadingMascot, setIsFadingMascot] = useState<boolean>(false);
+  const [hasInteracted, setHasInteracted] = useState<boolean>(false);
 
-  const session = engine;
-
-  const [rightPanelTab, setRightPanelTab] = useState<'chat' | 'progress' | 'travel'>('chat');
-  const [classroomSubTab, setClassroomSubTab] = useState<'lessons' | 'subway_map'>('lessons');
-
-  // Chat & Leads State
-  const [inputText, setInputText] = useState("");
-  const [serverLeads, setServerLeads] = useState<Lead[]>([]);
-
-  // Inline Lead Form State
-  const [inlineLeadForm, setInlineLeadForm] = useState({
-    name: "",
-    email: "",
-    company: "",
-    phone: "",
-    meetingTime: "",
-    consent: false,
-    notes: ""
-  });
-  const [isSubmittingInlineLead, setIsSubmittingInlineLead] = useState(false);
-  const [inlineLeadSuccess, setInlineLeadSuccess] = useState(false);
-  const [inlineLeadError, setInlineLeadError] = useState<string | null>(null);
+  // Leads inline form states
   const [inlineFormStep, setInlineFormStep] = useState<'details' | 'services'>('details');
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [calendarMonth, setCalendarMonth] = useState(() => new Date());
+  const [inlineLeadForm, setInlineLeadForm] = useState({
+    name: '',
+    email: '',
+    company: '',
+    phone: '',
+    meetingTime: '',
+    consent: false
+  });
+  const [showCalendar, setShowCalendar] = useState<boolean>(false);
+  const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
   const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
-  const [selectedCalendarTime, setSelectedCalendarTime] = useState("09:00");
+  const [selectedCalendarTime, setSelectedCalendarTime] = useState<string>('09:00');
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [isSubmittingInlineLead, setIsSubmittingInlineLead] = useState<boolean>(false);
+  const [inlineLeadError, setInlineLeadError] = useState<string | null>(null);
+  const [inlineLeadSuccess, setInlineLeadSuccess] = useState<boolean>(false);
 
-  // Chat Review State
-  const [showReviewScreen, setShowReviewScreen] = useState(false);
-  const [reviewRating, setReviewRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
-  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const [reviewSubmitted, setReviewSubmitted] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const hasInteracted = isConnected || statusText === "Connecting..." || chatMessages.length > 1;
-
-  // Scroll ref for chat feed
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
-
-  // Auto-scroll chat to bottom
+  // Auto-scroll chat
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [chatMessages]);
 
-  // Input Placeholder typing animation
-  const [placeholderText, setPlaceholderText] = useState("");
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [typingSpeed, setTypingSpeed] = useState(100);
-
-  useEffect(() => {
-    const phrases = [
-      "Empieza aca...",
-      "Pregúntame cómo te puedo ayudar...",
-      "Soy tu agente de voz y chat de IA..."
-    ];
-    let timer: any;
-    const currentPhrase = phrases[placeholderIndex];
+  // Voice TTS Helper
+  const speakText = (text: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'es-ES';
     
-    const handleTyping = () => {
-      if (!isDeleting) {
-        setPlaceholderText(currentPhrase.substring(0, placeholderText.length + 1));
-        if (placeholderText.length + 1 === currentPhrase.length) {
-          timer = setTimeout(() => setIsDeleting(true), 2500);
-          return;
-        }
-        setTypingSpeed(90);
-      } else {
-        setPlaceholderText(currentPhrase.substring(0, placeholderText.length - 1));
-        if (placeholderText.length - 1 === 0) {
-          setIsDeleting(false);
-          setPlaceholderIndex((prev) => (prev + 1) % phrases.length);
-          setTypingSpeed(400);
-          return;
-        }
-        setTypingSpeed(45);
-      }
-    };
-
-    timer = setTimeout(handleTyping, typingSpeed);
-    return () => clearTimeout(timer);
-  }, [placeholderText, isDeleting, placeholderIndex, typingSpeed]);
-
-  // Particle visualizer canvas refs & loop
-  const particleCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const volumeRef = useRef(0);
-  volumeRef.current = volume;
-
-  useEffect(() => {
-    let animationFrameId: number;
-    let time = 0;
-
-    // Initialize 900 ring particles concentrated in a band (yellow cab)
-    const numParticles = 900;
-    const particles: { angle: number; r: number; speed: number; pulsePhase: number; size: number }[] = [];
-
-    for (let i = 0; i < numParticles; i++) {
-      particles.push({
-        angle: Math.random() * 2 * Math.PI,
-        // Bell-curve concentration around radius 56
-        r: 45 + Math.random() * 18 + (Math.random() - 0.5) * 8,
-        speed: (Math.random() * 0.004 + 0.001) * (Math.random() < 0.5 ? 1 : -1),
-        pulsePhase: Math.random() * 2 * Math.PI,
-        size: 0.6 + Math.random() * 1.4
-      });
-    }
-
-    // Initialize orbiting circles (moons) rotating around the oval
-    const numOrbiters = 8;
-    const orbiters: { angle: number; speed: number; rx: number; ry: number; size: number; alpha: number }[] = [];
-    for (let i = 0; i < numOrbiters; i++) {
-      let rxFactor = 1.35 + (i % 3) * 0.12;
-      let ryFactor = 1.0 + (i % 3) * 0.08;
-      orbiters.push({
-        angle: (i * 2 * Math.PI) / numOrbiters + Math.random() * 0.5,
-        speed: (0.007 + (i % 3) * 0.005) * (i % 2 === 0 ? 1 : -1),
-        rx: 55 * rxFactor,
-        ry: 55 * ryFactor,
-        size: 1.8 + (i % 4) * 0.6,
-        alpha: 0.55 + (i % 3) * 0.12
-      });
-    }
-
-    const renderLoop = () => {
-      const canvas = particleCanvasRef.current;
-      if (!canvas) {
-        animationFrameId = requestAnimationFrame(renderLoop);
-        return;
-      }
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      const width = canvas.width;
-      const height = canvas.height;
-      const centerX = width / 2;
-      const centerY = height / 2;
-      const currentVolume = volumeRef.current;
-
-      ctx.clearRect(0, 0, width, height);
-
-      // Draw solid background circle (color: #231d17) in the center of the orb
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 62 + currentVolume * 0.15, 0, 2 * Math.PI);
-      ctx.fillStyle = '#231d17';
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(234, 179, 8, 0.2)';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      // Radial background glow (yellow cab)
-      let grad = ctx.createRadialGradient(centerX, centerY, 10, centerX, centerY, 60 + currentVolume * 0.65);
-      grad.addColorStop(0, 'rgba(234, 179, 8, 0.2)');
-      grad.addColorStop(0.5, 'rgba(234, 179, 8, 0.06)');
-      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 95 + currentVolume * 0.5, 0, 2 * Math.PI);
-      ctx.fill();
-
-      // Outer ring
-      ctx.beginPath();
-      ctx.ellipse(centerX, centerY, 75, 54.6, 0, 0, 2 * Math.PI);
-      ctx.strokeStyle = 'rgba(234, 179, 8, 0.05)';
-      ctx.lineWidth = 4;
-      ctx.stroke();
-
-      // Shimmering dust particles
-      time += 1;
-      for (let i = 0; i < numParticles; i++) {
-        let p = particles[i];
-        let speedMultiplier = 1.0 + (currentVolume * 0.08);
-        p.angle += p.speed * speedMultiplier;
-
-        let radialJitter = Math.sin(p.pulsePhase + time * 0.05) * (1.2 + currentVolume * 0.08);
-        let volumeJitter = (Math.random() - 0.5) * (currentVolume * 0.5);
-        let finalRadius = p.r + radialJitter + volumeJitter;
-
-        p.pulsePhase += 0.02;
-
-        let px = centerX + Math.cos(p.angle) * finalRadius * 1.35;
-        let py = centerY + Math.sin(p.angle) * finalRadius * 1.0;
-        let opacity = 0.35 + Math.sin(p.pulsePhase + i) * 0.25 + (Math.random() * 0.25);
-        
-        ctx.fillStyle = `rgba(234, 179, 8, ${opacity})`;
-        ctx.fillRect(px, py, p.size, p.size);
-      }
-
-      // Orbiting circles
-      for (let i = 0; i < numOrbiters; i++) {
-        let orb = orbiters[i];
-        let speedMultiplier = 1.0 + (currentVolume * 0.08);
-        orb.angle += orb.speed * speedMultiplier;
-
-        let radialJitter = (Math.random() - 0.5) * (currentVolume * 0.35);
-        let finalRx = orb.rx + radialJitter;
-        let finalRy = orb.ry + radialJitter;
-
-        let ox = centerX + Math.cos(orb.angle) * finalRx;
-        let oy = centerY + Math.sin(orb.angle) * finalRy;
-
-        ctx.beginPath();
-        ctx.arc(ox, oy, orb.size, 0, 2 * Math.PI);
-        ctx.fillStyle = `rgba(234, 179, 8, ${orb.alpha})`;
-        ctx.shadowBlur = 6 + (currentVolume / 100) * 8;
-        ctx.shadowColor = '#eab308';
-        ctx.fill();
-      }
-
-      animationFrameId = requestAnimationFrame(renderLoop);
-    };
-
-    renderLoop();
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
-
-  // Fetch leads and set up welcome message
-  useEffect(() => {
-    fetchLeads();
+    // Attempt to find a male Spanish voice in the browser if available
+    const voices = window.speechSynthesis.getVoices();
+    const esVoice = voices.find(v => 
+      v.lang.toLowerCase().startsWith('es') && 
+      (v.name.toLowerCase().includes('jorge') || v.name.toLowerCase().includes('pablo') || v.name.toLowerCase().includes('carlos') || v.name.toLowerCase().includes('diego') || v.name.toLowerCase().includes('miguel') || v.name.toLowerCase().includes('male'))
+    ) || voices.find(v => 
+      v.lang.toLowerCase().startsWith('es') && 
+      (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('premium'))
+    ) || voices.find(v => v.lang.toLowerCase().startsWith('es'));
     
-    setChatMessages([
-      {
-        id: 'welcome_1',
-        sender: 'splash',
-        text: 'Hi! I\'m VOYAGER, your American English tutor and cultural advisor. Click Connect to start a voice-and-text conversation.',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
-      }
-    ]);
-  }, []);
+    if (esVoice) {
+      utterance.voice = esVoice;
+    }
+    
+    window.speechSynthesis.speak(utterance);
+  };
 
-  const fetchLeads = async () => {
-    try {
-      const response = await fetch('/api/leads');
-      if (response.ok) {
-         const data = await response.json();
-         setServerLeads(data.leads || []);
-      }
-    } catch (err) {
-      console.error("Error fetching leads:", err);
+  // Connect Click handler
+  const handleConnectClick = () => {
+    setIsFadingMascot(true);
+    setTimeout(() => {
+      setHasClickedConnect(true);
+      setRightPanelTab('chat');
+      setChosenStartMode(null);
+      setExplanationCountdown(null);
+      setIsFadingMascot(false);
+    }, 400);
+  };
+
+  // Mode click handler
+  const handleModeSelection = (modeId: ConversationMode) => {
+    setChosenStartMode(modeId);
+  };
+
+  // Helper to apply mode to Hook state
+  const applyChosenMode = (mode: ConversationMode) => {
+    switch (mode) {
+      case 'BILINGUAL':
+        setIsBilingualMode(true);
+        break;
+      case 'AMERICAN_ENGLISH':
+        setIsEnglishOnlyMode(true);
+        break;
+      case 'LIVE_TRANSLATOR':
+        setIsTranslateMode(true);
+        break;
+      case 'LISTEN_ONLY':
+        setIsListenOnly(true);
+        break;
+      case 'SPANISH':
+        setIsSpanishOnlyMode(true);
+        break;
     }
   };
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDayIndex = new Date(year, month, 1).getDay();
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    const adjustedStart = (firstDayIndex === 0) ? 6 : firstDayIndex - 1;
-    const days: (number | null)[] = [];
-    for (let i = 0; i < adjustedStart; i++) {
-      days.push(null);
-    }
-    for (let i = 1; i <= lastDay; i++) {
-      days.push(i);
-    }
-    return days;
+  // Continua Click handler
+  const handleContinuaClick = () => {
+    const modeToUse = chosenStartMode || 'SPANISH';
+    window.speechSynthesis.cancel();
+    setRightPanelTab('chat');
+    setHasInteracted(true);
+    applyChosenMode(modeToUse);
+    setExplanationCountdown(null);
+    connect(undefined, true); // Voice Connection
   };
 
-  const handleInlineLeadSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inlineLeadForm.name.trim() || !inlineLeadForm.email.trim() || !inlineLeadForm.phone.trim()) {
-      setInlineLeadError(selectedLang === 'EN' ? "Name, email, and phone number are required." : "Se requiere nombre, correo y número telefónico.");
+  // Start Conversation trigger
+  const handleStartConversation = () => {
+    setExplanationCountdown(null);
+    setHasInteracted(true);
+    window.speechSynthesis.cancel();
+    connect(undefined, true); // Voice Connection
+  };
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (explanationCountdown === null) return;
+    if (explanationCountdown <= 0) {
+      handleStartConversation();
       return;
     }
-    
+    const timer = setTimeout(() => {
+      setExplanationCountdown(prev => (prev !== null ? prev - 1 : null));
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [explanationCountdown]);
+
+  // Disconnect handler
+  const handleDisconnectClick = () => {
+    disconnect();
+    window.speechSynthesis.cancel();
+    setHasClickedConnect(false);
+    setHasInteracted(false);
+    setChosenStartMode(null);
+    setRightPanelTab('home');
+    setExplanationCountdown(null);
+    setShowReviewScreen(false);
+  };
+
+  // End Session handler
+  const handleEndSessionClick = () => {
+    disconnect();
+    window.speechSynthesis.cancel();
+    setHasClickedConnect(false);
+    setHasInteracted(false);
+    setChosenStartMode(null);
+    setRightPanelTab('home');
+    setExplanationCountdown(null);
+    setShowReviewScreen(false);
+  };
+
+  // Text message send
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    addUserMessage(inputText);
+    sendText(inputText);
+    setInputText('');
+  };
+
+  // Suggestion pill click
+  const handleSuggestionClick = (text: string) => {
+    setHasInteracted(true);
+    addUserMessage(text);
+    sendText(text);
+  };
+
+  // Lead submit
+  const handleInlineLeadSubmit = async () => {
     setIsSubmittingInlineLead(true);
     setInlineLeadError(null);
-
     try {
-      let combinedNotes = inlineLeadForm.notes;
-      if (chatMessages.length > 2) {
-        const transcriptText = chatMessages
-          .filter(m => m.id !== 'system_1' && m.id !== 'welcome_1')
-          .map(m => `[${m.timestamp}] ${m.sender.toUpperCase()}: ${getTranslatedMessageText(m, selectedLang)}`)
-          .join('\n');
-        
-        if (transcriptText) {
-          combinedNotes = `${inlineLeadForm.notes}\n\n=== Live Chat Transcript ===\n${transcriptText}`;
-        }
-      }
-
-      const payload = {
-        name: inlineLeadForm.name,
-        email: inlineLeadForm.email,
-        company: inlineLeadForm.company,
-        phone: inlineLeadForm.phone,
-        notes: `Preferred Meeting Time: ${inlineLeadForm.meetingTime || "Not selected"}\nMarketing Consent Given: ${inlineLeadForm.consent ? "Yes" : "No"}\nServices of Interest: ${selectedServices.length > 0 ? selectedServices.join(", ") : "None selected"}\n\n${combinedNotes}`,
-        chatTranscript: chatMessages
-          .filter(m => m.id !== 'system_1' && m.id !== 'welcome_1')
-          .map(m => ({
-            sender: m.sender,
-            text: getTranslatedMessageText(m, selectedLang),
-            timestamp: m.timestamp
-          }))
-      };
-
-      const response = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setInlineLeadSuccess(true);
-        fetchLeads();
-        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-          console.log("Form saved. Relaying lead details to Gemini Live to book meeting...");
-          const triggerMsg = `[SYSTEM MESSAGE: The user has filled out the contact form. Name: ${inlineLeadForm.name}, Email: ${inlineLeadForm.email}, Phone: ${inlineLeadForm.phone || "Not provided"}, Selected Preferred Meeting Time: ${inlineLeadForm.meetingTime || "Not provided"}, Services of Interest: ${selectedServices.length > 0 ? selectedServices.join(", ") : "None selected"}. Please proceed to book the meeting using the calendar_book_meeting tool for this exact selected date/time now.]`;
-          wsRef.current.send(JSON.stringify({ text: triggerMsg }));
-        }
-      } else {
-        setInlineLeadError(data.error || "Failed to submit lead.");
-      }
-    } catch (err) {
-      console.error("Error submitting inline lead:", err);
-      setInlineLeadError("An error occurred while saving your lead.");
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setInlineLeadSuccess(true);
+    } catch (err: any) {
+      setInlineLeadError(err.message || "Error saving practice log.");
     } finally {
       setIsSubmittingInlineLead(false);
     }
   };
 
-  const handleEndConversation = () => {
-    disconnect();
-    setShowReviewScreen(false);
-    setChatMessages([
-      {
-        id: 'welcome_1',
-        sender: 'splash',
-        text: translations[selectedLang].welcomeMsg,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
-      }
-    ]);
+  // Connect to Gemini proxy
+  const connectToGemini = (prompt?: string, isVoice: boolean = false) => {
+    connect(prompt, isVoice);
   };
 
-  const handleReviewSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (reviewRating === 0) return;
+  // Days in month helper for calendar
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
     
-    setIsSubmittingReview(true);
-    try {
-      const payload = {
-        rating: reviewRating,
-        comment: reviewText,
-        chatTranscript: chatMessages
-          .filter(m => m.id !== 'system_1' && m.id !== 'welcome_1')
-          .map(m => ({
-            sender: m.sender,
-            text: getTranslatedMessageText(m, selectedLang),
-            timestamp: m.timestamp
-          }))
-      };
-
-      const response = await fetch('/api/reviews', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (response.ok) {
-        setReviewSubmitted(true);
-      }
-    } catch (err) {
-      console.error("Error submitting review:", err);
-    } finally {
-      setIsSubmittingReview(false);
+    const days: (number | null)[] = [];
+    for (let i = 0; i < adjustedFirstDay; i++) {
+      days.push(null);
     }
-  };
-
-  const pauseSession = () => {
-    session.pause();
-    addSystemMessage(
-      selectedLang === 'EN'
-        ? 'ℹ️ Session paused. Type a message below to resume.'
-        : 'ℹ️ Sesión en pausa. Escribe un mensaje en el campo de texto de abajo para reanudar la sesión.',
-      `msg_sys_pause_${Date.now()}`
-    );
-  };
-
-  const resumeSession = () => {
-    session.resume();
-    addSystemMessage(
-      selectedLang === 'EN'
-        ? 'ℹ️ Session resumed.'
-        : 'ℹ️ Sesión reanudada.',
-      `msg_sys_resume_${Date.now()}`
-    );
-  };
-
-  const connectToGemini = async (initialPrompt?: string, isVoiceConnection: boolean = false, langOverride?: 'EN' | 'ES') => {
-    setShowReviewScreen(false);
-    setRightPanelTab('chat');
-    setScores({ grammar: 0, pronunciation: 0, confidence: 0, naturalness: 0 });
-    setLearnedWords([]);
-    setAccentPatterns([]);
-    
-    if (initialPrompt && !isVoiceConnection) {
-      setChatMessages([
-        {
-          id: `msg_${Date.now()}`,
-          sender: 'user',
-          text: initialPrompt,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          timeMs: Date.now()
-        }
-      ]);
-    } else {
-      setChatMessages([
-        {
-          id: `msg_sys_${Date.now()}`,
-          sender: 'system',
-          text: (langOverride || selectedLang) === 'EN' ? '🎙️ Connecting to Voyager... Please speak clearly.' : '🎙️ Conectando con Voyager... Por favor habla claro.',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          timeMs: Date.now()
-        }
-      ]);
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(i);
     }
-
-    session.connect(initialPrompt, isVoiceConnection, langOverride);
+    return days;
   };
 
-  const disconnect = () => {
-    session.disconnect();
-  };
+  const placeholderText = selectedLang === 'EN' 
+    ? 'Type your message or scenario...' 
+    : 'Escribe tu mensaje o escenario...';
 
-  useEffect(() => {
-    if (showReviewScreen) {
-      disconnect();
-    }
-  }, [showReviewScreen]);
+  return (
+    <div 
+      className="relative min-h-screen md:h-screen w-full bg-[#000000] flex items-center justify-center p-2 sm:p-3 md:p-4 overflow-y-auto md:overflow-hidden select-none"
+      style={{
+        backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 0)',
+        backgroundSize: '24px 24px'
+      }}
+    >
+      {/* Layout Grid with 125% Passport, Adjusted Cover and Perfect Tight Gutter */}
+      <div className="grid grid-cols-1 md:grid-cols-[1.25fr_1.66fr] gap-2.5 md:gap-3 w-full max-w-7xl max-h-full items-stretch justify-center md:aspect-[1.5]">
+        
+        {/* Left Side (Column 1): The Passport (Deep Navy Voyager Blue Console) */}
+        {/* It remains CONSTANT throughout the entire session */}
+        <div className="md:col-span-1 bg-gradient-to-b from-[#153166] to-[#0a1833] border border-[#2563eb]/20 rounded-[20px] sm:rounded-[24px] md:rounded-[32px] p-4 sm:p-6 md:p-10 flex flex-col justify-between items-center text-center shadow-[0_20px_50px_rgba(0,0,0,0.65)] relative overflow-hidden w-full h-full min-h-[380px] sm:min-h-[420px] md:min-h-0">
+          {/* Ambient Background Glow */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-amber-500/5 rounded-full blur-[100px] pointer-events-none" />
+          
+          {/* Header Text */}
+          <div className="space-y-2 pt-6">
+            <span style={{ letterSpacing: '0.45em' }} className="text-xs font-bold text-slate-400 uppercase tracking-widest block font-sans">
+              {selectedLang === 'EN' ? 'I AM' : 'YO SOY'}
+            </span>
+            <h1 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, Georgia, serif !important', textShadow: '0 4px 15px rgba(0,0,0,0.8)' }} className="text-4xl md:text-5xl font-black text-white tracking-[0.1em] uppercase block leading-none">
+              VOYAGER
+            </h1>
+            <h1 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, Georgia, serif !important', textShadow: '0 4px 15px rgba(0,0,0,0.8)' }} className="text-4xl md:text-5xl font-black text-white tracking-[0.1em] uppercase block leading-none mt-2">
+              USA
+            </h1>
+            <span style={{ letterSpacing: '0.15em' }} className="text-[10px] md:text-xs font-mono font-bold text-gray-400 tracking-wider uppercase block mt-4">
+              {selectedLang === 'EN' ? 'YOUR PASSPORT TO AMERICAN ENGLISH' : 'TU PASAPORTE AL INGLES AMERICANO'}
+            </span>
+          </div>
 
-  const handleLanguageChange = (lang: 'EN' | 'ES') => {
-    if (selectedLang === lang) return;
-    
-    setSelectedLang(lang);
-    
-    if (isConnected || statusText === "Connecting...") {
-      disconnect();
-      const isEn = lang === 'EN';
-      const prompt = isEn 
-        ? "Hello! Let's talk in English now. Please introduce yourself in English in one short sentence, and ask how you can help."
-        : "¡Hola! Hablemos en español ahora. Por favor, preséntate en español en una frase corta y pregúntame cómo puedes ayudar.";
-      
-      setTimeout(() => {
-        connectToGemini(prompt, true, lang);
-      }, 150);
-    }
-  };
-  
-  const handleSuggestionClick = (text: string) => {
-      setChatMessages(prev => {
-        if (prev.some(m => m.text === text && m.sender === 'user')) return prev;
-        return [
-          ...prev,
-          {
-            id: `msg_suggest_${Date.now()}`,
-            sender: 'user',
-            text,
-            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            timeMs: Date.now()
-          }
-        ];
-      });
-
-      // Automatically transition tab on subway map keywords
-      // if (/(subway\s*map|metro\s*map|network\s*grid|subway\s*grid|subway\s*system|mapa\s*de\s*metro|mapa\s*del\s*metro|red\s*de\s*metro|transit\s*map|mapa\s*de\s*tr[aá]nsito)/i.test(text)) {
-      //   setRightPanelTab('lessons');
-      //   setClassroomSubTab('subway_map');
-      // }
-
-      if (!isConnected) {
-          connectToGemini(text);
-      } else {
-          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-             wsRef.current.send(JSON.stringify({ text }));
-          }
-      }
-  };
-
-  const handleSendMessage = (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!inputText.trim()) return;
-
-    session.recordInteraction();
-    if (session.isPaused) {
-      resumeSession();
-    }
-
-    const textToSend = inputText.trim();
-    setInputText("");
-
-    addUserMessage(textToSend);
-
-    // Automatically transition subtab on subway map keywords
-    if (/(subway\s*map|metro\s*map|network\s*grid|subway\s*grid|subway\s*system|mapa\s*de\s*metro|mapa\s*del\s*metro|red\s*de\s*metro|transit\s*map|mapa\s*de\s*tr[aá]nsito)/i.test(textToSend)) {
-      setClassroomSubTab('subway_map');
-    }
-
-    if (isConnected) {
-       session.sendText(textToSend);
-    } else {
-       connectToGemini(textToSend, false);
-    }
-  };
-
-     return (
-       <div className={`
-           relative flex flex-col items-center justify-center overflow-y-auto md:overflow-hidden p-4 md:p-8
-           ${isWidgetMode ? 'w-full h-full bg-black' : 'w-full min-h-screen bg-black'}
-           text-zinc-900 font-sans transition-all duration-300
-       `}>
-        <style dangerouslySetInnerHTML={{__html: `
-            @import url('https://fonts.googleapis.com/css2?family=Allerta&display=swap');
-            @keyframes blackNeonPulse {
-                0% {
-                    text-shadow:
-                        0 0 4px #000000,
-                        0 0 8px #000000,
-                        0 0 15px rgba(0, 0, 0, 0.9),
-                        0 0 30px rgba(0, 0, 0, 0.7);
-                }
-                50% {
-                    text-shadow:
-                        0 0 6px #000000,
-                        0 0 12px #000000,
-                        0 0 25px rgba(0, 0, 0, 0.95),
-                        0 0 50px rgba(0, 0, 0, 0.95),
-                        0 0 80px rgba(0, 0, 0, 0.75);
-                }
-                100% {
-                    text-shadow:
-                        0 0 4px #000000,
-                        0 0 8px #000000,
-                        0 0 15px rgba(0, 0, 0, 0.9),
-                        0 0 30px rgba(0, 0, 0, 0.7);
-                }
-            }
-            .animate-black-neon-glow {
-                animation: blackNeonPulse 2.5s ease-in-out infinite;
-            }
-            @keyframes subMenuFlicker {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.55; transform: scale(0.9); }
-            }
-            .animate-submenu-flicker {
-                animation: subMenuFlicker 1.4s infinite ease-in-out;
-            }
-            .theme-light {
-                background-color: #f5efe6 !important;
-            }
-            .theme-light .bg-black\\/45 {
-                background-color: transparent !important;
-                color: #18181b !important;
-            }
-            .theme-light .border-white\\/10 {
-                border: none !important;
-            }
-            .theme-light .text-white {
-                color: #18181b !important;
-            }
-            .theme-light .text-neutral-100 {
-                color: #18181b !important;
-            }
-            .theme-light .text-neutral-200 {
-                color: #27272a !important;
-            }
-            .theme-light .text-neutral-300 {
-                color: #3f3f46 !important;
-            }
-            .theme-light .text-neutral-400 {
-                color: #71717a !important;
-            }
-            .theme-light .bg-zinc-100 {
-                background-color: #faf9f6 !important;
-            }
-            .theme-light .bg-white\\/5 {
-                background-color: #faf9f6 !important;
-                border: none !important;
-            }
-            .theme-light .bg-\\[\\#1f1f23\\]\\/60 {
-                background-color: #faf9f6 !important;
-                border: none !important;
-            }
-            .theme-light .border-white\\/5 {
-                border: none !important;
-            }
-            .theme-light .text-yellow-400 {
-                color: #ca8a04 !important;
-            }
-            .theme-light .bg-yellow-500\\/10 {
-                background-color: rgba(202, 138, 4, 0.1) !important;
-            }
-            .theme-light .border-yellow-500\\/30 {
-                border: none !important;
-            }
-            .theme-light .text-emerald-400 {
-                color: #059669 !important;
-            }
-            .theme-light .bg-white {
-                background-color: #18181b !important;
-                color: #ffffff !important;
-            }
-            .theme-light .text-neutral-500 {
-                color: #71717a !important;
-            }
-            .theme-light button.bg-\\[\\#1e3a8a\\] {
-                color: #ffffff !important;
-            }
-            .theme-light [class*="border"] {
-                border: none !important;
-            }
-            .tab-content-area .text-xs,
-            .tab-content-area .text-\\[12px\\],
-            .tab-content-area .text-sm,
-            .tab-content-area .text-\\[14px\\] {
-                font-size: 18.5px !important;
-                line-height: 1.6 !important;
-            }
-            .tab-content-area .text-\\[10px\\],
-            .tab-content-area .text-\\[9px\\],
-            .tab-content-area .text-neutral-400 {
-                font-size: 14.5px !important;
-            }
-            .tab-content-area .text-lg,
-            .tab-content-area .text-xl,
-            .tab-content-area h3 {
-                font-size: 22px !important;
-            }
-            .tab-content-area p {
-                font-size: 18.5px !important;
-                line-height: 1.6 !important;
-            }
-            .tab-content-area .chat-message-text {
-                font-family: "American Typewriter", "Courier New", Courier, Georgia, serif !important;
-                font-size: 12pt !important;
-            }
-            .tab-content-area .chat-message-english {
-                font-size: 11pt !important;
-                line-height: 1.25 !important;
-                font-weight: normal !important;
-                letter-spacing: -0.15px !important;
-            }
-            .tab-content-area input.chat-input-text {
-                font-family: "American Typewriter", "Courier New", Courier, Georgia, serif !important;
-                font-size: 12pt !important;
-                font-weight: 600 !important;
-                letter-spacing: 0.05em !important;
-            }
-            .tab-content-area input,
-            .tab-content-area textarea,
-            .tab-content-area select,
-            .tab-content-area button {
-                font-size: 14.5px !important;
-            }
-            .tab-content-area label {
-                font-size: 14px !important;
-            }
-        `}} />
-        {/* Background Image & Overlay */}
-        {!isWidgetMode && (
-             <div className="absolute inset-0 z-0 pointer-events-none bg-black">
-                 <div className="absolute inset-0 bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:16px_16px] opacity-50"></div>
-             </div>
-        )}
-
-        {/* Outer Grid Layout */}
-        <div className={`relative z-10 flex flex-col md:flex-row items-stretch justify-center w-full ${isWidgetMode ? 'max-w-full h-full space-y-4 md:space-y-0 md:space-x-4' : 'max-w-6xl space-y-8 md:space-y-0 md:space-x-8 animate-fade-in'}`}>
+          {/* Glowing Golden Energy Sphere */}
+          <div className="relative flex items-center justify-center my-auto py-8">
+            {/* Ambient gold glow under the sphere */}
+            <div className={`absolute w-36 h-36 rounded-full bg-amber-500/10 blur-xl transition-all duration-1000 ${hasClickedConnect ? 'scale-125 bg-amber-500/20' : 'animate-pulse'}`} />
             
-            {/* Left Column */}
-            <div className="w-full md:w-5/12 max-w-md mx-auto md:mx-0 flex flex-col items-center justify-between space-y-6 bg-[#0a192f] backdrop-blur-2xl rounded-3xl p-6 shadow-2xl relative border border-blue-900/60">
-                
-                {isWidgetMode && onClose && (
-                    <button onClick={onClose} className="absolute top-2 right-2 text-white/50 hover:text-white cursor-pointer">
-                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                )}
+            {/* The gold dust ring/sphere */}
+            <div 
+              className={`w-[180px] h-[180px] rounded-full transition-all duration-1000 relative flex items-center justify-center overflow-hidden ${
+                hasClickedConnect 
+                  ? 'bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.25)_0%,rgba(245,158,11,0.5)_50%,rgba(251,191,36,0.85)_80%,rgba(0,0,0,0)_100%)] shadow-[0_0_50px_rgba(245,158,11,0.4),_inset_0_0_30px_rgba(251,191,36,0.6)]'
+                  : 'bg-[radial-gradient(circle_at_center,rgba(11,21,38,0.95)_35%,rgba(245,158,11,0.5)_65%,rgba(251,191,36,0.9)_85%,rgba(0,0,0,0)_100%)] shadow-[0_0_35px_rgba(245,158,11,0.3),_inset_0_0_20px_rgba(245,158,11,0.5)] animate-pulse'
+              }`}
+            >
+              {/* Rotating particle overlays */}
+              <div className={`absolute inset-0 rounded-full border border-dashed border-amber-500/25 ${hasClickedConnect ? 'animate-[spin_15s_linear_infinite]' : 'animate-[spin_30s_linear_infinite]'}`} />
+              <div className={`absolute inset-2 rounded-full border border-dotted border-yellow-500/30 ${hasClickedConnect ? 'animate-[spin_8s_linear_infinite_reverse]' : 'animate-[spin_15s_linear_infinite_reverse]'}`} />
+              <div className="absolute inset-4 rounded-full border border-dashed border-amber-400/10 animate-[spin_45s_linear_infinite]" />
 
-                <div className="text-center mt-4 flex flex-col items-center w-full">
-                    <h2 style={{ letterSpacing: '0.25em' }} className="font-tech uppercase text-xl md:text-2xl font-bold text-white tracking-widest">
-                        YO SOY
-                    </h2>
-                    <h1 style={{ letterSpacing: '0.12em' }} className="font-tech uppercase text-5xl md:text-6xl font-black text-white mt-1.5 animate-black-neon-glow">
-                        VOYAGER
-                    </h1>
-                    <p style={{ letterSpacing: '0.22em' }} className="text-[10px] md:text-xs text-yellow-400 font-mono font-bold uppercase mt-2">
-                        TUTOR DE INGLÉS AMERICANO
-                    </p>
-                </div>
-
-                <div className="w-full flex-1 flex flex-col items-center justify-center space-y-6 py-4 animate-fade-in">
-                    <style dangerouslySetInnerHTML={{__html: `
-                        @keyframes orbFluid {
-                            0%, 100% { border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%; }
-                            33% { border-radius: 70% 30% 52% 48% / 60% 40% 60% 40%; }
-                            66% { border-radius: 50% 50% 30% 70% / 40% 60% 30% 70%; }
-                        }
-                        .animate-orb-fluid {
-                            animation: orbFluid 10s ease-in-out infinite;
-                        }
-                        @keyframes zeroGFloat {
-                            0% { transform: translateY(0px) rotate(0deg) scale(1); }
-                            25% { transform: translateY(-6px) rotate(0.8deg) scale(1.008); }
-                            50% { transform: translateY(-12px) rotate(-0.5deg) scale(1.015); }
-                            75% { transform: translateY(-6px) rotate(-1deg) scale(1.008); }
-                            100% { transform: translateY(0px) rotate(0deg) scale(1); }
-                        }
-                        @keyframes yellowGlowPulse {
-                            0%, 100% { box-shadow: 0 0 10px rgba(234, 179, 8, 0.4), 0 0 5px rgba(234, 179, 8, 0.2); }
-                            50% { box-shadow: 0 0 24px rgba(234, 179, 8, 0.85), 0 0 12px rgba(234, 179, 8, 0.5); }
-                        }
-                        .animate-yellow-glow-pulse {
-                            animation: yellowGlowPulse 2.5s ease-in-out infinite;
-                        }
-                    `}} />
-
-                    <div className="relative flex items-center justify-center w-64 h-[380px]">
-                        <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-tr from-yellow-500/10 via-amber-500/15 to-orange-500/10 blur-3xl animate-pulse duration-[3000ms]"></div>
-                        
-                        <div className="relative w-full h-full flex flex-col items-center justify-center -translate-y-[70px]">
-                            <canvas 
-                                ref={particleCanvasRef} 
-                                width={360} 
-                                height={360} 
-                                className="z-20 transition-transform duration-75 animate-float-zero-g"
-                            />
-                        </div>
-
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-20">
-                            {isConnected ? (
-                                <button
-                                    onClick={handleEndConversation}
-                                    className="px-7 py-2.5 text-[12.5px] font-mono font-bold tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer whitespace-nowrap bg-white text-black hover:bg-zinc-100 hover:scale-[1.02] active:scale-95 shadow-md"
-                                >
-                                    {translations[selectedLang].disconnectBtn}
-                                </button>
-                            ) : (
-                                <button
-                                    onClick={() => {
-                                        if (statusText === "Connecting...") return;
-                                        connectToGemini(undefined, true);
-                                    }}
-                                    disabled={statusText === "Connecting..."}
-                                    className={`px-7 py-2.5 text-[12.5px] font-mono font-bold tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer whitespace-nowrap ${
-                                        statusText === "Connecting..."
-                                        ? 'bg-emerald-600 text-white animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.6)]'
-                                        : 'bg-white text-black animate-yellow-glow-pulse hover:bg-zinc-100 hover:scale-[1.02] active:scale-95'
-                                    }`}
-                                >
-                                    {statusText === "Connecting..." ? translations[selectedLang].connecting : translations[selectedLang].connect}
-                                </button>
-                            )}
-
-                            {/* Session Status Display */}
-                            {isConnected && (
-                                <div className="flex items-center gap-1.5 mt-0.5 animate-fade-in">
-                                    <div className="w-1.5 h-1.5 rounded-full animate-pulse bg-emerald-500" />
-                                    <span className="text-[10px] font-sans font-bold text-neutral-300 uppercase tracking-widest">
-                                        {`Sesión (${Math.floor(secondsElapsed / 60)}:${(secondsElapsed % 60).toString().padStart(2, '0')})`}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
- 
-                {error && (
-                    <div className="w-full bg-red-950/45 border border-red-500/35 rounded-xl p-3 text-center space-y-2 animate-fade-in max-w-sm shadow-lg backdrop-blur-md mb-2">
-                        <div className="flex items-center justify-center space-x-2 text-red-400 font-semibold text-xs">
-                            <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <span>{translations[selectedLang].connectionError}</span>
-                        </div>
-                        <p className="text-[10px] text-neutral-200 leading-relaxed font-mono bg-black/30 p-2 rounded border border-white/5">{error}</p>
-                        {(error.toLowerCase().includes('api') || error.toLowerCase().includes('key') || error.toLowerCase().includes('expired') || error.toLowerCase().includes('clave') || error.toLowerCase().includes('caducada')) && (
-                            <div className="text-[10px] text-neutral-300 bg-black/55 p-2 rounded-lg text-left space-y-1 border border-white/5">
-                                <p className="font-semibold text-yellow-500/90">{translations[selectedLang].howToFix}</p>
-                                <ol className="list-decimal pl-4 space-y-0.5 text-neutral-400">
-                                    <li>{translations[selectedLang].step1}</li>
-                                    <li>{translations[selectedLang].step2}</li>
-                                    <li>{translations[selectedLang].step3}</li>
-                                </ol>
-                            </div>
-                        )}
-                    </div>
-                )}
+              {/* Glowing Particle Sparks precisely placed like gold dust */}
+              {sphereParticles.map((p, idx) => {
+                if (p.connectedOnly && !hasClickedConnect) return null;
+                return (
+                  <span
+                    key={idx}
+                    style={{
+                      top: p.top,
+                      left: p.left,
+                      width: p.size,
+                      height: p.size,
+                      animationDelay: p.delay,
+                      animationDuration: p.duration,
+                    }}
+                    className="absolute rounded-full bg-yellow-300 animate-pulse shadow-[0_0_4px_rgba(251,191,36,0.8)] opacity-90"
+                  />
+                );
+              })}
             </div>
+          </div>
 
-            <div className={`w-full md:w-7/12 mx-auto md:mx-0 flex-1 flex flex-col justify-start backdrop-blur-xl rounded-3xl overflow-hidden shadow-2xl min-h-[480px] md:min-h-[580px] font-tech relative transition-all duration-500 ${showReviewScreen ? 'bg-zinc-950 text-white shadow-[0_10px_35px_rgba(0,0,0,0.3)]' : 'bg-white text-zinc-900 shadow-[0_10px_35px_rgba(0,0,0,0.08)] theme-light border-[6px] border-[#0a192f]'}`}>
-                
+          {/* Bottom Button Panel */}
+          <div className="pb-8 w-full z-10 flex flex-col items-center">
+              {!hasClickedConnect ? (
+                  <button
+                      onClick={handleConnectClick}
+                      className="px-7 py-3 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(245,158,11,0.45)] hover:shadow-[0_0_35px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-95 text-xs md:text-sm min-w-[150px]"
+                  >
+                      {selectedLang === 'EN' ? 'ENTER' : 'ENTRADA'}
+                  </button>
+              ) : isConnected ? (
+                  <div className="flex flex-col items-center w-full">
+                      <button
+                          onClick={handleEndSessionClick}
+                          className="px-7 py-3 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(255,255,255,0.15)] hover:shadow-[0_0_35px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-95 text-xs md:text-sm min-w-[150px]"
+                      >
+                          {selectedLang === 'EN' ? 'FINISH' : 'FINALIZAR'}
+                      </button>
+                      
+                      {/* Session duration indicator */}
+                      <div className="flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-widest uppercase text-[#10b981] mt-4">
+                          <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
+                          <span className="text-slate-300">
+                              {selectedLang === 'EN' 
+                                  ? `SESSION (${Math.floor(secondsElapsed / 60)}:${(secondsElapsed % 60).toString().padStart(2, '0')})` 
+                                  : `SESIÓN (${Math.floor(secondsElapsed / 60)}:${(secondsElapsed % 60).toString().padStart(2, '0')})`}
+                          </span>
+                      </div>
+                  </div>
+              ) : (
+                  <button
+                      onClick={() => {
+                          if (chosenStartMode) {
+                              handleContinuaClick();
+                          } else {
+                              setRightPanelTab('home');
+                          }
+                      }}
+                      className="px-7 py-3 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(245,158,11,0.45)] hover:shadow-[0_0_35px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-95 text-xs md:text-sm min-w-[150px]"
+                  >
+                      {selectedLang === 'EN' ? 'SELECT' : 'SELECCIONA'}
+                  </button>
+              )}
+          </div>
+        </div>
+
+        {/* Column 2 (Right Panel): The Cover Page (Cream layout) */}
+        <div className="md:col-span-1 bg-[#f5efe6] border border-[#dfc389]/10 rounded-[20px] sm:rounded-[24px] md:rounded-[32px] flex flex-col justify-between items-center text-center shadow-[0_15px_35px_rgba(0,0,0,0.15)] relative overflow-hidden w-full h-full min-h-[420px] sm:min-h-[480px] md:min-h-0">
+          {!hasClickedConnect ? (
+            /* Disconnected Landing Screen inside the Cover */
+            <>
+              {/* Mascot in Center */}
+              <div className="flex-1 flex items-center justify-center py-6 w-full relative z-10">
+                <img 
+                  src="https://cdn.gamma.app/e61o72b77sp71e0/edited-images/xOsepr1r0_Xzzbxf.png" 
+                  alt="Voyager USA Mascot" 
+                  referrerPolicy="no-referrer"
+                  className="w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] md:w-[350px] md:h-[350px] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)]" 
+                />
+              </div>
+
+              {/* Footer Text */}
+              <div className="pb-8 z-10 px-4">
+                <p style={{ fontFamily: '"Lato", sans-serif' }} className="text-xs md:text-sm font-medium text-black">
+                  © 2026 Yo Soy Voger USA. All rights reserved. Derechos reservados
+                </p>
+              </div>
+            </>
+          ) : (
+            /* Connected Workspace Area inside the Cover */
+            <div className="w-full h-full flex flex-col overflow-hidden">
+            {/* Header / Tabs */}
+            <div className="w-full bg-[#ebd5a3] py-2 sm:py-3.5 px-3 sm:px-6 flex items-center justify-center relative flex-shrink-0">
+                <div className="grid grid-cols-4 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-xs sm:max-w-md">
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
+                        <button 
+                            title={selectedLang === 'EN' ? 'Home' : 'Inicio'}
+                            aria-label={selectedLang === 'EN' ? 'Home' : 'Inicio'}
+                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
+                                rightPanelTab === 'home' 
+                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
+                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
+                            }`}
+                        >
+                            <Home className="w-4.5 h-4.5 text-white" />
+                        </button>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'home' ? 'font-extrabold' : 'font-bold'}`}>
+                            {selectedLang === 'EN' ? 'HOME' : 'INICIO'}
+                        </span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('chat')}>
+                        <button 
+                            title={selectedLang === 'EN' ? 'Chat' : 'Chat'}
+                            aria-label={selectedLang === 'EN' ? 'Chat' : 'Chat'}
+                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
+                                rightPanelTab === 'chat' 
+                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
+                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
+                            }`}
+                        >
+                            <MessageSquare className="w-4.5 h-4.5 text-white" />
+                        </button>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'chat' ? 'font-extrabold' : 'font-bold'}`}>
+                            CHAT
+                        </span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('teachers')}>
+                        <button 
+                            title={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
+                            aria-label={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
+                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
+                                rightPanelTab === 'teachers' 
+                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
+                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
+                            }`}
+                        >
+                            <Apple className="w-4.5 h-4.5 text-white" />
+                        </button>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'teachers' ? 'font-extrabold' : 'font-bold'}`}>
+                            {selectedLang === 'EN' ? 'TEACHER' : 'LA PROFE'}
+                        </span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('roadmap')}>
+                        <button 
+                            title={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
+                            aria-label={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
+                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
+                                rightPanelTab === 'roadmap' 
+                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
+                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
+                            }`}
+                        >
+                            <User className="w-4.5 h-4.5 text-white" />
+                        </button>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'roadmap' ? 'font-extrabold' : 'font-bold'}`}>
+                            {selectedLang === 'EN' ? 'PROFILE' : 'PERFIL'}
+                        </span>
+                    </div>
+                </div>
+
+                {/* Fixed Settings Gear on far right */}
+                <div className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 flex items-center">
+                    <button 
+                        onClick={() => setRightPanelTab('settings')}
+                        title={selectedLang === 'EN' ? 'Settings' : 'Configura'}
+                        aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
+                        className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group"
+                    >
+                        <Settings className={`w-9 h-9 transition-all duration-300 ${
+                            rightPanelTab === 'settings' 
+                                ? 'text-red-600 rotate-90 scale-110' 
+                                : 'text-[#9c6b21] hover:text-red-600 group-hover:text-red-600'
+                        }`} />
+                    </button>
+                </div>
+            </div>
 
 
                 {showReviewScreen ? (
@@ -883,7 +665,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
                                           {
                                             id: 'welcome_1',
                                             sender: 'splash',
-                                            text: 'Hi! I\'m VOYAGER, your American English tutor and cultural advisor. Click Connect to start a voice-and-text conversation.',
+                                            text: translations[selectedLang].welcomeMsg,
                                             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                             timeMs: Date.now()
                                           }
@@ -897,105 +679,248 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
                     </div>
                 ) : (
                     <>
-                        {hasInteracted && (
-                            <div className="w-full bg-[#ebd5a3] border-b border-[#dfc389] py-4 px-4 flex items-center justify-center flex-shrink-0 z-10">
+                        {(hasInteracted || rightPanelTab === 'chat') && (
+                            <div className="w-full bg-transparent py-3 sm:py-4 px-2 sm:px-6 flex items-center justify-center flex-shrink-0 z-10">
                                 {rightPanelTab === 'chat' && (
-                                    <div className="flex items-center justify-center gap-2 flex-wrap max-w-full">
-                                        {/* Bilingual Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsBilingualMode(!isBilingualMode)}
-                                            style={{ fontFamily: "'Allerta', sans-serif", color: isBilingualMode ? '#ffffff' : '#231d17' }}
-                                            className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
-                                                isBilingualMode 
-                                                ? 'bg-[#9c6b21] shadow-sm' 
-                                                : 'bg-transparent'
-                                            }`}
-                                        >
-                                            BILINGÜE
-                                        </button>
+                                    <div className="flex items-center justify-between sm:justify-evenly w-full max-w-5xl gap-2 sm:gap-4 flex-wrap sm:flex-nowrap px-1 sm:px-2">
+                                        {/* 1. Pause / Resume Button */}
+                                        <div className="relative group/tooltip flex items-center justify-center">
+                                            <button 
+                                                onClick={() => {
+                                                    if (isPaused) {
+                                                        resume();
+                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                            window.speechSynthesis.resume();
+                                                        }
+                                                    } else {
+                                                        pause();
+                                                        if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                                                            window.speechSynthesis.pause();
+                                                        }
+                                                    }
+                                                }}
+                                                title={isPaused ? (selectedLang === 'EN' ? 'Resume chat' : 'Reanuda el chat') : (selectedLang === 'EN' ? 'Pause chat' : 'Pausa el chat')}
+                                                aria-label={isPaused ? (selectedLang === 'EN' ? 'Resume chat' : 'Reanuda el chat') : (selectedLang === 'EN' ? 'Pause chat' : 'Pausa el chat')}
+                                                className="flex items-center justify-center cursor-pointer p-1 select-none transition-colors duration-200"
+                                            >
+                                                {isPaused ? (
+                                                    <Play className="w-5 h-5 fill-current text-red-600 hover:text-red-700 transition-colors" />
+                                                ) : (
+                                                    <Pause className="w-5 h-5 fill-current text-[#9c6b21] hover:text-red-600 transition-colors" />
+                                                )}
+                                            </button>
 
-                                        {/* Translate Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsTranslateMode(!isTranslateMode)}
-                                            style={{ fontFamily: "'Allerta', sans-serif", color: isTranslateMode ? '#ffffff' : '#231d17' }}
-                                            className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
-                                                isTranslateMode 
-                                                ? 'bg-[#9c6b21] shadow-sm' 
-                                                : 'bg-transparent'
-                                            }`}
-                                        >
-                                            TRADUCE
-                                        </button>
+                                            {/* Hover Info Pop-up */}
+                                            <div className="absolute bottom-full mb-2 hidden group-hover/tooltip:flex flex-col items-center pointer-events-none z-50 transition-opacity duration-200 whitespace-nowrap">
+                                                <div className="bg-[#1b4079] text-white text-[11pt] font-sans px-3 py-1.5 rounded-lg shadow-xl border border-yellow-500/40 text-center leading-tight">
+                                                    {isPaused 
+                                                        ? (selectedLang === 'EN' ? 'Resume chat' : 'Reanuda el chat')
+                                                        : (selectedLang === 'EN' ? 'Pause chat' : 'Pausa el chat')
+                                                    }
+                                                </div>
+                                                <div className="w-2 h-2 -mt-1 bg-[#1b4079] rotate-45 border-r border-b border-yellow-500/40"></div>
+                                            </div>
+                                        </div>
 
-                                        {/* Listen Only Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsListenOnly(!isListenOnly)}
-                                            style={{ fontFamily: "'Allerta', sans-serif", color: isListenOnly ? '#ffffff' : '#231d17' }}
-                                            className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
-                                                isListenOnly 
-                                                ? 'bg-[#9c6b21] shadow-sm' 
-                                                : 'bg-transparent'
-                                            }`}
-                                        >
-                                            ESCUCHA
-                                        </button>
-
-                                        {/* Spanish Option Toggle */}
+                                        {/* 2. Spanish Option Toggle */}
                                         <button 
                                             onClick={() => setIsSpanishOnlyMode(!isSpanishOnlyMode)}
-                                            style={{ fontFamily: "'Allerta', sans-serif", color: isSpanishOnlyMode ? '#ffffff' : '#231d17' }}
-                                            className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
-                                                isSpanishOnlyMode 
-                                                ? 'bg-[#9c6b21] shadow-sm' 
-                                                : 'bg-transparent'
-                                            }`}
+                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
                                         >
-                                            ESPAÑOL
+                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
+                                                isSpanishOnlyMode 
+                                                ? 'bg-red-600' 
+                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
+                                            }`} />
+                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                isSpanishOnlyMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
+                                            }`}>
+                                                {selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL'}
+                                            </span>
                                         </button>
 
-                                        {/* English Option Toggle */}
+                                        {/* 3. Bilingual Option Toggle */}
+                                        <button 
+                                            onClick={() => setIsBilingualMode(!isBilingualMode)}
+                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                                        >
+                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
+                                                isBilingualMode 
+                                                ? 'bg-red-600' 
+                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
+                                            }`} />
+                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                isBilingualMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
+                                            }`}>
+                                                BILINGÜE
+                                            </span>
+                                        </button>
+
+                                        {/* 4. English Option Toggle */}
                                         <button 
                                             onClick={() => setIsEnglishOnlyMode(!isEnglishOnlyMode)}
-                                            style={{ fontFamily: "'Allerta', sans-serif", color: isEnglishOnlyMode ? '#ffffff' : '#231d17' }}
-                                            className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wider transition-all duration-200 flex-shrink-0 ${
-                                                isEnglishOnlyMode 
-                                                ? 'bg-[#9c6b21] shadow-sm' 
-                                                : 'bg-transparent'
-                                            }`}
+                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
                                         >
-                                            ENGLISH
+                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
+                                                isEnglishOnlyMode 
+                                                ? 'bg-red-600' 
+                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
+                                            }`} />
+                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                isEnglishOnlyMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
+                                            }`}>
+                                                {selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS'}
+                                            </span>
+                                        </button>
+
+                                        {/* 5. Translate / Translator Option Toggle */}
+                                        <button 
+                                            onClick={() => setIsTranslateMode(!isTranslateMode)}
+                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                                        >
+                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
+                                                isTranslateMode 
+                                                ? 'bg-red-600' 
+                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
+                                            }`} />
+                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                isTranslateMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
+                                            }`}>
+                                                {selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR'}
+                                            </span>
+                                        </button>
+
+                                        {/* 6. Listen Only Option Toggle */}
+                                        <button 
+                                            onClick={() => setIsListenOnly(!isListenOnly)}
+                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                                        >
+                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
+                                                isListenOnly 
+                                                ? 'bg-red-600' 
+                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
+                                            }`} />
+                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                isListenOnly ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
+                                            }`}>
+                                                {selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA'}
+                                            </span>
                                         </button>
                                     </div>
                                 )}
                             </div>
                         )}
-                        {rightPanelTab === 'chat' ? (
-                            <div className="flex-grow flex flex-col overflow-hidden h-full">
-
-                                <div className={`flex-1 p-4 pt-2 tab-content-area overflow-y-auto ${
-                                    hasInteracted
-                                    ? 'max-h-[310px] md:max-h-[390px]' 
-                                    : 'h-full flex flex-col items-center justify-center'
-                                }`}>
-                            {!hasInteracted ? (
-                                <div className="w-full max-w-xl mx-auto flex flex-col items-center justify-center p-4 animate-fade-in">
-                                    <div className="w-full flex items-center justify-center mb-6 relative">
-                                        <img 
-                                            src="https://cdn.gamma.app/e61o72b77sp71e0/edited-images/xOsepr1r0_Xzzbxf.png" 
-                                            alt="Voyager USA Mascot" 
-                                            referrerPolicy="no-referrer"
-                                            className="w-[432px] h-[432px] md:w-[480px] md:h-[480px] object-contain animate-float-zero-g drop-shadow-[0_15px_15px_rgba(0,0,0,0.15)]" 
-                                        />
-                                    </div>
-                                    <div style={{ letterSpacing: '0.12em', color: '#52525b' }} className="text-[11px] md:text-[12px] font-mono font-bold uppercase text-center max-w-[90%] leading-relaxed">
-                                        {selectedLang === 'EN' 
-                                            ? '✦ PRESS "CONNECT" ON THE LEFT CONSOLE TO START ✦' 
-                                            : '✦ PRESIONA "CONECTAR" EN LA CONSOLA IZQUIERDA PARA INICIAR ✦'}
-                                    </div>
+                        {rightPanelTab === 'home' ? (
+                            <div className="flex-grow flex flex-col justify-between items-center text-center p-6 h-full animate-fade-in tab-content-area">
+                                <div className="flex-1 flex items-center justify-center py-6 w-full relative z-10">
+                                    <img 
+                                      src="https://cdn.gamma.app/e61o72b77sp71e0/edited-images/xOsepr1r0_Xzzbxf.png" 
+                                      alt="Voyager USA Mascot" 
+                                      referrerPolicy="no-referrer"
+                                      className="w-[280px] h-[280px] md:w-[350px] md:h-[350px] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)]" 
+                                    />
                                 </div>
-                            ) : (
-                                <div className="min-h-full flex flex-col justify-end space-y-4">
-                                {chatMessages.map((msg, index) => {
+                                <div className="pb-8 z-10 px-4">
+                                    <p style={{ fontFamily: '"Lato", sans-serif' }} className="text-xs md:text-sm font-medium text-black">
+                                      © 2026 Yo Soy Voger USA. All rights reserved. Derechos reservados
+                                    </p>
+                                </div>
+                            </div>
+                        ) : rightPanelTab === 'chat' ? (
+                            <div className="flex-grow flex flex-col overflow-hidden h-full">
+                                {!hasInteracted ? (
+                                    <div className="flex-grow flex flex-col justify-center items-center overflow-y-auto p-4 md:p-6 tab-content-area h-full">
+                                        <div className="w-full max-w-2xl mx-auto flex flex-col justify-start p-2 sm:p-4 animate-fade-in">
+                                            {/* Header */}
+                                            <div className="text-center mb-5 md:mb-6 flex flex-col items-center">
+                                                <h2 className="text-2xl md:text-3xl font-bold text-black leading-tight">
+                                                    {selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!'}
+                                                </h2>
+                                                <p className="text-[10pt] text-black font-serif mt-1.5 max-w-lg mx-auto" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
+                                                    {selectedLang === 'EN' 
+                                                        ? 'Choose your preferred conversation mode below to start practicing.' 
+                                                        : 'Selecciona el modo de conversación que prefieras para comenzar tu práctica.'}
+                                                </p>
+                                            </div>
+
+                                            {/* Main grid: Mascot on Left, Modes on Right */}
+                                            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] md:grid-cols-[210px_1fr] gap-4 md:gap-6 items-center w-full">
+                                                {/* Left: Mascot */}
+                                                <div className="flex items-center justify-center">
+                                                    <img 
+                                                        src="https://cdn.gamma.app/e61o72b77sp71e0/edited-images/xOsepr1r0_Xzzbxf.png" 
+                                                        alt="Voyager USA Mascot" 
+                                                        referrerPolicy="no-referrer"
+                                                        className="w-[160px] sm:w-[180px] md:w-[210px] object-contain drop-shadow-md" 
+                                                    />
+                                                </div>
+
+                                                {/* Right: Modes list & CONECTA button */}
+                                                <div className="flex flex-col items-center sm:items-start w-full">
+                                                    <div className="w-full">
+                                                        {modeDetails.map((mode) => {
+                                                            const name = selectedLang === 'EN' ? mode.nameEn : mode.nameEs;
+                                                            const desc = selectedLang === 'EN' ? mode.descEn : mode.descEs;
+                                                            const effectiveMode = chosenStartMode || 'SPANISH';
+                                                            const isSelected = effectiveMode === mode.id;
+
+                                                            return (
+                                                                <button
+                                                                    key={mode.id}
+                                                                    onClick={() => handleModeSelection(mode.id as ConversationMode)}
+                                                                    className="w-full text-left py-2.5 px-1.5 flex items-start gap-3 transition-colors cursor-pointer rounded-lg group"
+                                                                >
+                                                                    <div className="mt-1.5 flex-shrink-0">
+                                                                        <span className={`w-3.5 h-3.5 rounded-full flex-shrink-0 transition-all duration-200 block ${
+                                                                            isSelected 
+                                                                            ? 'bg-red-600' 
+                                                                            : 'bg-[#9c6b21] group-hover:bg-red-600'
+                                                                        }`} />
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <span className={`font-sans font-bold text-lg md:text-[1.18rem] block leading-tight transition-colors ${
+                                                                            isSelected 
+                                                                            ? 'text-red-600' 
+                                                                            : 'text-[#9c6b21] group-hover:text-red-600'
+                                                                        }`}>
+                                                                            {name}
+                                                                        </span>
+                                                                        <p className="text-[10pt] text-black font-serif mt-0.5 leading-snug" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
+                                                                            {desc}
+                                                                        </p>
+                                                                    </div>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+
+                                                    {/* CONECTA Button styled as a pill button */}
+                                                    <div className="mt-5 w-full flex justify-center sm:justify-start sm:pl-4">
+                                                        <button 
+                                                            id="home-mode-continua-btn"
+                                                            onClick={handleContinuaClick}
+                                                            className="group py-2.5 px-8 bg-[#9c6b21] hover:bg-red-600 text-white font-bold text-xs md:text-sm tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center gap-2 min-w-[150px]"
+                                                        >
+                                                            <Sparkles className="w-4 h-4 text-white animate-pulse" />
+                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-white">
+                                                                {selectedLang === 'EN' ? 'CONNECT' : 'CONECTA'}
+                                                            </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+
+                                <div className="flex-1 p-4 pt-2 tab-content-area overflow-y-auto max-h-[310px] md:max-h-[390px]">
+                                    <div className="min-h-full flex flex-col justify-end space-y-4">
+                                        {chatMessages.map((msg, index) => {
                             if (msg.sender === 'system') {
                                 return null;
                             }
@@ -1055,15 +980,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
                                                         if (parts.length >= 2) {
                                                             return (
                                                                 <>
-                                                                    <div className="font-serif text-zinc-900 leading-snug">{parseAndRenderEmojis(parts[0])}</div>
-                                                                    <div className="chat-message-english text-blue-900 font-serif leading-snug mt-2">
+                                                                    <div className="font-sans text-black leading-snug">{parseAndRenderEmojis(parts[0])}</div>
+                                                                    <div className="chat-message-english text-blue-900 font-sans leading-snug mt-2">
                                                                         {parseAndRenderEmojis(parts.slice(1).join(" / "))}
                                                                     </div>
                                                                 </>
                                                             );
                                                         }
                                                     }
-                                                    return <div className="font-serif leading-snug">{parseAndRenderEmojis(rawText)}</div>;
+                                                    return <div className="font-sans text-black leading-snug">{parseAndRenderEmojis(rawText)}</div>;
                                                 })()}
                                             </div>
                                             
@@ -1379,9 +1304,61 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
                         })}
                                 <div ref={chatEndRef} />
                             </div>
-                        )}
                             </div>
+                            )}
                             </div>
+                        ) : rightPanelTab === 'roadmap' ? (
+                            <RoadmapPanel
+                                selectedLang={selectedLang}
+                                learnedWordsCount={learnedWords.length}
+                                grammarScore={scores.grammar}
+                                pronunciationScore={scores.pronunciation}
+                                scores={scores}
+                                learnedWords={learnedWords}
+                                accentPatterns={accentPatterns}
+                                onAskVoyager={(text) => {
+                                    setRightPanelTab('chat');
+                                    handleSuggestionClick(text);
+                                }}
+                                onNavigateTab={(tab) => setRightPanelTab(tab)}
+                            />
+                        ) : rightPanelTab === 'teachers' ? (
+                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-[#FAF7F2]">
+                                <TeacherInsightsPanel
+                                    selectedLang={selectedLang}
+                                    scores={scores}
+                                    learnedWords={learnedWords}
+                                    accentPatterns={accentPatterns}
+                                />
+                            </div>
+                        ) : rightPanelTab === 'progress' ? (
+                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-[#f5efe6]">
+                                <ProgressDashboard 
+                                    selectedLang={selectedLang}
+                                    scores={scores}
+                                    learnedWords={learnedWords}
+                                    accentPatterns={accentPatterns}
+                                    onAskVoyager={(text) => {
+                                        setRightPanelTab('chat');
+                                        handleSuggestionClick(text);
+                                    }}
+                                />
+                            </div>
+                        ) : rightPanelTab === 'settings' ? (
+                            <SettingsPanel
+                                selectedLang={selectedLang}
+                                setSelectedLang={setSelectedLang}
+                                isListenOnly={isListenOnly}
+                                setIsListenOnly={setIsListenOnly}
+                                isTranslateMode={isTranslateMode}
+                                setIsTranslateMode={setIsTranslateMode}
+                                isBilingualMode={isBilingualMode}
+                                setIsBilingualMode={setIsBilingualMode}
+                                isSpanishOnlyMode={isSpanishOnlyMode}
+                                setIsSpanishOnlyMode={setIsSpanishOnlyMode}
+                                isEnglishOnlyMode={isEnglishOnlyMode}
+                                setIsEnglishOnlyMode={setIsEnglishOnlyMode}
+                            />
                         ) : null}
 
                     {!showReviewScreen && rightPanelTab === 'chat' && hasInteracted && (
@@ -1409,10 +1386,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode, onClose }) => {
                     )}
                 </>
             )}
+            </div>
+          )}
         </div>
-        </div>
-
-
+      </div>
     </div>
   );
 };
