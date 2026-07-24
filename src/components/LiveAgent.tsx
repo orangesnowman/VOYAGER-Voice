@@ -205,6 +205,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   } = useConversationEngine();
 
   const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings'>('home');
+  const [isAppleHovered, setIsAppleHovered] = useState<boolean>(false);
   const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
   const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
@@ -956,17 +957,53 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                         </span>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('teachers')}>
+                    <div 
+                        onMouseEnter={() => setIsAppleHovered(true)}
+                        onMouseLeave={() => setIsAppleHovered(false)}
+                        className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" 
+                        onClick={() => setRightPanelTab('teachers')}
+                    >
                         <button 
                             title={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
                             aria-label={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <Apple className={`w-6 h-6 transition-all duration-300 ${
-                                rightPanelTab === 'teachers' 
-                                    ? 'text-red-600 scale-110' 
-                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
-                            }`} />
+                            {(() => {
+                                const hasBite = isAppleHovered || (rightPanelTab === 'teachers');
+                                return (
+                                    <svg 
+                                        xmlns="http://www.w3.org/2000/svg" 
+                                        width="24" 
+                                        height="24" 
+                                        viewBox="0 0 24 24" 
+                                        stroke="currentColor" 
+                                        strokeWidth="2" 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round"
+                                        className={`w-6 h-6 transition-all duration-300 ${
+                                            rightPanelTab === 'teachers' 
+                                                ? 'text-red-600 scale-110' 
+                                                : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
+                                        }`}
+                                    >
+                                        <defs>
+                                            <mask id="apple-bite">
+                                                <rect x="0" y="0" width="24" height="24" fill="white" />
+                                                <circle cx="17.5" cy="13" r="3.2" fill="black" />
+                                            </mask>
+                                        </defs>
+                                        {/* Apple Body */}
+                                        <path 
+                                            d="M12 22c-5.078 0-6-3.27-6-9a6 6 0 1 1 12 0c0 5.73-.922 9-6 9z" 
+                                            fill={rightPanelTab === 'teachers' ? 'currentColor' : 'none'}
+                                            mask={hasBite ? "url(#apple-bite)" : undefined}
+                                            className="transition-all duration-300"
+                                        />
+                                        {/* Apple Stem */}
+                                        <path d="M12 6c0-2 1.5-3 3-3" fill="none" />
+                                    </svg>
+                                );
+                            })()}
                         </button>
                         <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
                             rightPanelTab === 'teachers' 
