@@ -1103,7 +1103,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     <div className="flex-1 min-w-0">
                                                                         <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-normal text-lg md:text-[1.18rem] block leading-tight transition-colors ${
                                                                             isSelected 
-                                                                            ? 'text-black' 
+                                                                            ? 'text-red-600' 
                                                                             : 'text-black/80 group-hover:text-black'
                                                                         }`}>
                                                                             {name}
