@@ -1208,160 +1208,106 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                     {/* Embedded Mode Selectors */}
                                                     <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
-                                                        {/* 1. Spanish Mode */}
-                                                        <button 
-                                                            onClick={() => {
-                                                                if (!isSpanishOnlyMode) {
-                                                                    setIsSpanishOnlyMode(true);
-                                                                    if (isPaused) {
-                                                                        resume();
-                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                                                            window.speechSynthesis.resume();
+                                                        {(() => {
+                                                            const modes = [
+                                                                {
+                                                                    id: 'spanish',
+                                                                    label: selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL',
+                                                                    active: isSpanishOnlyMode,
+                                                                    activate: () => {
+                                                                        setIsSpanishOnlyMode(true);
+                                                                        if (isPaused) {
+                                                                            resume();
+                                                                            if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                                window.speechSynthesis.resume();
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    id: 'bilingual',
+                                                                    label: 'BILINGÜE',
+                                                                    active: isBilingualMode,
+                                                                    activate: () => {
+                                                                        setIsBilingualMode(true);
+                                                                        if (isPaused) {
+                                                                            resume();
+                                                                            if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                                window.speechSynthesis.resume();
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    id: 'english',
+                                                                    label: selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS',
+                                                                    active: isEnglishOnlyMode,
+                                                                    activate: () => {
+                                                                        setIsEnglishOnlyMode(true);
+                                                                        if (isPaused) {
+                                                                            resume();
+                                                                            if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                                window.speechSynthesis.resume();
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    id: 'translate',
+                                                                    label: selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR',
+                                                                    active: isTranslateMode,
+                                                                    activate: () => {
+                                                                        setIsTranslateMode(true);
+                                                                        if (isPaused) {
+                                                                            resume();
+                                                                            if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                                window.speechSynthesis.resume();
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                {
+                                                                    id: 'listen',
+                                                                    label: selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA',
+                                                                    active: isListenOnly,
+                                                                    activate: () => {
+                                                                        setIsListenOnly(true);
+                                                                        if (isPaused) {
+                                                                            resume();
+                                                                            if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                                window.speechSynthesis.resume();
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
-                                                            }}
-                                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                                            className="flex items-center gap-1 cursor-pointer group select-none"
-                                                        >
-                                                            <MessageSquare 
-                                                                strokeWidth={isSpanishOnlyMode ? 3 : 2}
-                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                                                    isSpanishOnlyMode 
-                                                                        ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
-                                                                }`} 
-                                                            />
-                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isSpanishOnlyMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
-                                                            }`}>
-                                                                {selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL'}
-                                                            </span>
-                                                        </button>
+                                                            ];
 
-                                                        {/* 2. Bilingual Mode */}
-                                                        <button 
-                                                            onClick={() => {
-                                                                if (!isBilingualMode) {
-                                                                    setIsBilingualMode(true);
-                                                                    if (isPaused) {
-                                                                        resume();
-                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                                                            window.speechSynthesis.resume();
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }}
-                                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                                            className="flex items-center gap-1 cursor-pointer group select-none"
-                                                        >
-                                                            <MessageSquare 
-                                                                strokeWidth={isBilingualMode ? 3 : 2}
-                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                                                    isBilingualMode 
-                                                                        ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
-                                                                }`} 
-                                                            />
-                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isBilingualMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
-                                                            }`}>
-                                                                BILINGÜE
-                                                            </span>
-                                                        </button>
+                                                            // Sort so active mode is first
+                                                            const sortedModes = [...modes].sort((a, b) => (a.active ? -1 : b.active ? 1 : 0));
 
-                                                        {/* 3. English Mode */}
-                                                        <button 
-                                                            onClick={() => {
-                                                                if (!isEnglishOnlyMode) {
-                                                                    setIsEnglishOnlyMode(true);
-                                                                    if (isPaused) {
-                                                                        resume();
-                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                                                            window.speechSynthesis.resume();
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }}
-                                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                                            className="flex items-center gap-1 cursor-pointer group select-none"
-                                                        >
-                                                            <MessageSquare 
-                                                                strokeWidth={isEnglishOnlyMode ? 3 : 2}
-                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                                                    isEnglishOnlyMode 
-                                                                        ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
-                                                                }`} 
-                                                            />
-                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isEnglishOnlyMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
-                                                            }`}>
-                                                                {selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS'}
-                                                            </span>
-                                                        </button>
-
-                                                        {/* 4. Translator Mode */}
-                                                        <button 
-                                                            onClick={() => {
-                                                                if (!isTranslateMode) {
-                                                                    setIsTranslateMode(true);
-                                                                    if (isPaused) {
-                                                                        resume();
-                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                                                            window.speechSynthesis.resume();
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }}
-                                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                                            className="flex items-center gap-1 cursor-pointer group select-none"
-                                                        >
-                                                            <MessageSquare 
-                                                                strokeWidth={isTranslateMode ? 3 : 2}
-                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                                                    isTranslateMode 
-                                                                        ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
-                                                                }`} 
-                                                            />
-                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isTranslateMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
-                                                            }`}>
-                                                                {selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR'}
-                                                            </span>
-                                                        </button>
-
-                                                        {/* 5. Listen Mode */}
-                                                        <button 
-                                                            onClick={() => {
-                                                                if (!isListenOnly) {
-                                                                    setIsListenOnly(true);
-                                                                    if (isPaused) {
-                                                                        resume();
-                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                                                            window.speechSynthesis.resume();
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }}
-                                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                                            className="flex items-center gap-1 cursor-pointer group select-none"
-                                                        >
-                                                            <MessageSquare 
-                                                                strokeWidth={isListenOnly ? 3 : 2}
-                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                                                    isListenOnly 
-                                                                        ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
-                                                                }`} 
-                                                            />
-                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isListenOnly ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
-                                                            }`}>
-                                                                {selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA'}
-                                                            </span>
-                                                        </button>
+                                                            return sortedModes.map((m) => (
+                                                                <button 
+                                                                    key={m.id}
+                                                                    onClick={m.activate}
+                                                                    style={{ fontFamily: "'Lato', sans-serif" }}
+                                                                    className="flex items-center gap-1 cursor-pointer group select-none"
+                                                                >
+                                                                    <MessageSquare 
+                                                                        strokeWidth={m.active ? 3 : 2}
+                                                                        className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                                                            m.active 
+                                                                                ? 'text-red-600 scale-110' 
+                                                                                : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
+                                                                        }`} 
+                                                                    />
+                                                                    <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                                        m.active ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
+                                                                    }`}>
+                                                                        {m.label}
+                                                                    </span>
+                                                                </button>
+                                                            ));
+                                                        })()}
                                                     </div>
                                                 </div>
                                             )}
