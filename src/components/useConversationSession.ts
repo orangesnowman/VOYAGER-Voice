@@ -238,7 +238,7 @@ export function useConversationSession(config: UseConversationSessionConfig) {
               
               const lobbyReminderInstruction = `[SYSTEM INSTRUCTION: The user has NOT clicked the 'CONECTA' button on the screen yet to enter the active chat. You are allowed to chat, answer questions, and converse with them if they speak to you, but:
 1. Do NOT ask for the user's name or age yet. You must wait to ask for their name and age until they click CONECTA and enter the active chat section.
-2. In each response, you MUST softly and friendly remind them that they need to click the 'CONECTA' button on the right side of the screen to start the active chat and get the most out of USA VOYAGER (including written transcripts, interactive maps, scores, and personal recommendations).]`;
+2. In each response, you MUST softly and friendly remind them that they need to click the 'CONECTA' button at the bottom of the page to start the active chat and get the most out of USA VOYAGER (including written transcripts, interactive maps, scores, and personal recommendations).]`;
 
               if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
                 wsRef.current.send(JSON.stringify({ text: welcomeIntroPrompt }));
