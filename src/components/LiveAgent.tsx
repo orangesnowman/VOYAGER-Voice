@@ -206,7 +206,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
   const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings'>('home');
   const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
-  const [showBubbles, setShowBubbles] = useState<boolean>(false);
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
   const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
   const [showReviewScreen, setShowReviewScreen] = useState<boolean>(false);
@@ -1170,7 +1169,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                 <div className="flex-1 px-3 pt-2 pb-4 tab-content-area overflow-y-auto min-h-0">
                                     <div className="min-h-full flex flex-col justify-start space-y-4">
-                                        {showBubbles && chatMessages.map((msg, index) => {
+                                        {chatMessages.map((msg, index) => {
                             if (msg.sender === 'system') {
                                 return null;
                             }
@@ -1294,14 +1293,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     style={{ fontFamily: "'Lato', sans-serif" }}
                                                                     className="flex items-center gap-1 cursor-pointer group select-none"
                                                                 >
-                                                                    <MessageSquare 
-                                                                        strokeWidth={m.active ? 3 : 2}
-                                                                        className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                                                            m.active 
-                                                                                ? 'text-red-600 scale-110' 
-                                                                                : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
-                                                                        }`} 
-                                                                    />
+                                                                    {m.active && (
+                                                                        <MessageSquare 
+                                                                            strokeWidth={3}
+                                                                            className="w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 text-red-600 scale-110" 
+                                                                        />
+                                                                    )}
                                                                     <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
                                                                         m.active ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
                                                                     }`}>
@@ -1702,8 +1699,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 setIsSpanishOnlyMode={setIsSpanishOnlyMode}
                                 isEnglishOnlyMode={isEnglishOnlyMode}
                                 setIsEnglishOnlyMode={setIsEnglishOnlyMode}
-                                showBubbles={showBubbles}
-                                setShowBubbles={setShowBubbles}
                             />
                         ) : null}
 
