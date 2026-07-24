@@ -1194,8 +1194,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                         `}>
                                             {isUser ? (
                                                 <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
-                                                    <div className="flex items-center gap-1">
-                                                        <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] font-black tracking-wider text-black/50">
+                                                    <div className="flex items-center gap-1 group">
+                                                        <span 
+                                                            style={{ fontFamily: "'Lato', sans-serif" }} 
+                                                            className={`text-[9px] font-black tracking-wider transition-all duration-300 ${
+                                                                isPaused 
+                                                                    ? 'text-red-600 font-extrabold' 
+                                                                    : 'text-black/50 group-hover:text-red-600'
+                                                            }`}
+                                                        >
                                                             PAUSA
                                                         </span>
                                                         <button
@@ -1220,9 +1227,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             }`}
                                                         >
                                                             {isPaused ? (
-                                                                <Play strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-black/50 hover:text-red-600 transition-all animate-pulse" />
+                                                                <Play strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
                                                             ) : (
-                                                                <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-black/50 hover:text-red-600 transition-all" />
+                                                                <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-black/50 group-hover:text-red-600 transition-all duration-300" />
                                                             )}
                                                         </button>
                                                     </div>
