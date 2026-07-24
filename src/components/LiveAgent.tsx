@@ -823,8 +823,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                   </button>
               )}
 
-              {/* Utility Buttons: Pause & Settings Gear */}
-              <div className="flex items-center justify-center gap-6 mt-4">
+              {/* Utility Buttons: Pause */}
+              <div className="flex items-center justify-center mt-4">
                   {/* Pause Button */}
                   <button
                       onClick={() => {
@@ -857,20 +857,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                       ) : (
                           <Pause strokeWidth={2.5} className="w-6 h-6 text-white hover:text-red-600 transition-all" />
                       )}
-                  </button>
-
-                  {/* Settings Button */}
-                  <button 
-                      onClick={() => setRightPanelTab('settings')}
-                      title={selectedLang === 'EN' ? 'Settings' : 'Configura'}
-                      aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
-                      className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group hover:scale-110 active:scale-95"
-                  >
-                      <Settings strokeWidth={2.5} className={`w-6 h-6 transition-all duration-300 ${
-                          rightPanelTab === 'settings' 
-                              ? 'text-red-600 rotate-90' 
-                              : 'text-black/50 hover:text-red-600'
-                      }`} />
                   </button>
               </div>
           </div>
@@ -933,6 +919,21 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
               <div className="w-full bg-transparent py-2 sm:py-2.5 px-3 sm:px-6 flex flex-col items-center justify-center gap-1.5 relative flex-shrink-0 border-none">
                 {/* Row 1: Main Menu & Controls */}
                 <div className="w-full flex items-center justify-center relative">
+                    {/* Settings Button */}
+                    <div className="absolute right-3 sm:right-6 top-1">
+                        <button 
+                            onClick={() => setRightPanelTab('settings')}
+                            title={selectedLang === 'EN' ? 'Settings' : 'Configura'}
+                            aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group hover:scale-110 active:scale-95"
+                        >
+                            <Settings className={`w-6 h-6 transition-all duration-300 ${
+                                rightPanelTab === 'settings' 
+                                    ? 'text-red-600 rotate-90 scale-110' 
+                                    : 'text-black/65 hover:text-red-600 group-hover:text-red-600'
+                            }`} />
+                        </button>
+                    </div>
                     <div className="grid grid-cols-3 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-xs sm:max-w-md">
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
                         <button 
