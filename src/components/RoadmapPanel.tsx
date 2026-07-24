@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, LogOut, Compass, Calendar, Award, CheckCircle2, Circle, Target, ChevronRight, Mail, Key, Users, Sparkles, Activity, BookOpen, Volume2, Apple } from 'lucide-react';
 import { googleSignIn, logout, auth } from '../services/firebaseAuth';
+import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import { IMMERSION_CURRICULUM } from '../constants';
 import { TeacherInsightsPanel } from './TeacherInsightsPanel';
 
@@ -133,24 +134,73 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
   return (
     <div className="flex-1 flex flex-col p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
       
-      {/* PROFILE SECTION EXPLANATION BANNER */}
-      <div className="bg-gradient-to-r from-red-600 via-red-700 to-[#231d17] rounded-2xl p-5 md:p-6 text-white text-left shadow-lg space-y-3 relative overflow-hidden border border-red-500/20 mb-4 flex-shrink-0">
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-8 translate-x-8">
-          <User className="w-48 h-48 text-white" />
+      {/* VOYAGER CHAT BUBBLE INTRODUCING THE PROFILE SECTION */}
+      <div className="flex items-start gap-3 mb-4 flex-shrink-0 animate-fade-in text-left">
+        {/* Avatar image container */}
+        <div className="w-[50px] h-[50px] rounded-full bg-slate-900 border-2 border-red-600/30 flex-shrink-0 overflow-hidden flex items-center justify-center shadow-md">
+          <img 
+            src={voyagerRobot} 
+            alt="Voyager Mascot" 
+            className="w-full h-full object-contain" 
+          />
         </div>
-        <div className="relative z-10 flex flex-col justify-between gap-3">
-          <div className="space-y-1.5">
-            <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full border border-white/10 inline-block">
-              {selectedLang === 'EN' ? 'YOUR PROFILE & PROGRESS' : 'TU PERFIL Y PROGRESO'}
+        
+        {/* Chat bubble body */}
+        <div className="flex-grow flex flex-col space-y-1.5 max-w-[calc(100%-62px)]">
+          <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm relative text-black">
+            <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] font-black uppercase tracking-widest text-red-600/70 block mb-1">
+              VOYAGER
             </span>
-            <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-black tracking-tight uppercase">
-              {selectedLang === 'EN' ? 'Your Learning Dashboard' : 'Tu Panel de Aprendizaje'}
-            </h2>
-            <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] text-white/90 leading-relaxed font-serif">
+            <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed">
               {selectedLang === 'EN' 
-                ? 'Welcome to your Profile space. Here you can edit your fluency goals, view your Google account authentication details, monitor your grammar and pronunciation scores, track your daily learning curriculum roadmap, and check your master instructor session logs.'
-                : 'Bienvenido a tu espacio de Perfil. Aquí puedes editar tus metas de fluidez, ver los detalles de tu cuenta de Google, monitorear tus puntajes de gramática y pronunciación, seguir tu mapa de ruta de aprendizaje diario y revisar tus registros de clases con instructores.'}
+                ? 'Welcome to your Profile! Here you can check your English learning progress, view your Google account auth details, set your fluency goals, track your daily roadmap, and inspect class logs. If you have any questions, type them below and I will answer!'
+                : '¡Bienvenido a tu Perfil! Aquí puedes ver tu progreso de inglés, verificar tu cuenta de Google, configurar tus metas de fluidez, seguir tu mapa diario e inspeccionar tus clases. Si tienes dudas, ¡escríbeme aquí abajo y te responderé!'}
             </p>
+
+            {/* Input field inside the bubble to ask questions about the Profile page content */}
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                const inputEl = e.currentTarget.elements.namedItem('profileQuestion') as HTMLInputElement;
+                if (inputEl && inputEl.value.trim()) {
+                  onAskVoyager(inputEl.value.trim());
+                  inputEl.value = '';
+                }
+              }}
+              className="mt-3.5 flex items-center gap-2 bg-neutral-100 border border-black/10 rounded-xl p-1 focus-within:border-red-600/50 transition-all"
+            >
+              <input
+                type="text"
+                name="profileQuestion"
+                required
+                placeholder={selectedLang === 'EN' ? "Ask Voyager about your profile..." : "Pregúntale a Voyager sobre tu perfil..."}
+                style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}
+                className="flex-1 bg-transparent border-none text-xs text-black placeholder-neutral-500 focus:outline-none px-2 py-1.5"
+              />
+              <button
+                type="submit"
+                className="bg-red-600 hover:bg-red-700 text-white rounded-lg p-1.5 border-none cursor-pointer flex items-center justify-center transition-colors"
+                title={selectedLang === 'EN' ? "Ask Voyager" : "Preguntar a Voyager"}
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </form>
+          </div>
+
+          {/* Quick suggestions row below the bubble */}
+          <div className="flex flex-wrap gap-1.5 pl-1">
+            <button
+              onClick={() => onAskVoyager(selectedLang === 'EN' ? "How do I improve my pronunciation score?" : "¿Cómo mejoro mi puntaje de pronunciación?")}
+              className="text-[9px] font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-2.5 py-1 cursor-pointer transition-colors"
+            >
+              {selectedLang === 'EN' ? "How do I improve my pronunciation?" : "¿Cómo mejoro mi pronunciación?"}
+            </button>
+            <button
+              onClick={() => onAskVoyager(selectedLang === 'EN' ? "What is the daily learning curriculum roadmap?" : "¿Qué es la ruta de aprendizaje diario?")}
+              className="text-[9px] font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-2.5 py-1 cursor-pointer transition-colors"
+            >
+              {selectedLang === 'EN' ? "What is the roadmap?" : "¿Qué es la ruta?"}
+            </button>
           </div>
         </div>
       </div>
