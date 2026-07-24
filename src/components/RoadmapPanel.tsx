@@ -135,73 +135,74 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
     <div className="flex-1 flex flex-col p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
       
       {/* VOYAGER CHAT BUBBLE INTRODUCING THE PROFILE SECTION */}
-      <div className="flex items-start gap-3 mb-4 flex-shrink-0 animate-fade-in text-left">
-        {/* Avatar image container */}
-        <div className="w-[50px] h-[50px] rounded-full bg-slate-900 border-2 border-red-600/30 flex-shrink-0 overflow-hidden flex items-center justify-center shadow-md">
-          <img 
-            src={voyagerRobot} 
-            alt="Voyager Mascot" 
-            className="w-full h-full object-contain" 
-          />
-        </div>
-        
-        {/* Chat bubble body */}
-        <div className="flex-grow flex flex-col space-y-1.5 max-w-[calc(100%-62px)]">
-          <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm relative text-black">
+      <div className="flex flex-col space-y-3 mb-4 flex-shrink-0 animate-fade-in text-left">
+        {/* Row 1: Voyager's Speech Bubble */}
+        <div className="flex items-start gap-3">
+          {/* Avatar image container */}
+          <div className="w-[50px] h-[50px] rounded-full bg-slate-900 border-2 border-red-600/30 flex-shrink-0 overflow-hidden flex items-center justify-center shadow-md">
+            <img 
+              src={voyagerRobot} 
+              alt="Voyager Mascot" 
+              className="w-full h-full object-contain" 
+            />
+          </div>
+          
+          {/* Voyager's chat bubble */}
+          <div className="flex-grow max-w-[calc(100%-62px)] bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm relative text-black">
             <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] font-black uppercase tracking-widest text-red-600/70 block mb-1">
               VOYAGER
             </span>
             <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed">
               {selectedLang === 'EN' 
-                ? 'Welcome to your Profile! Here you can check your English learning progress, view your Google account auth details, set your fluency goals, track your daily roadmap, and inspect class logs. If you have any questions, type them below and I will answer!'
-                : '¡Bienvenido a tu Perfil! Aquí puedes ver tu progreso de inglés, verificar tu cuenta de Google, configurar tus metas de fluidez, seguir tu mapa diario e inspeccionar tus clases. Si tienes dudas, ¡escríbeme aquí abajo y te responderé!'}
+                ? 'Welcome to your Profile! Here you can check your English learning progress, view your Google account auth details, set your fluency goals, track your daily roadmap, and inspect class logs. If you have any questions, use the chat box below to ask me!'
+                : '¡Bienvenido a tu Perfil! Aquí puedes ver tu progreso de inglés, verificar tu cuenta de Google, configurar tus metas de fluidez, seguir tu mapa diario e inspeccionar tus clases. Si tienes dudas, ¡usa la caja de chat de abajo para preguntarme!'}
             </p>
-
-            {/* Input field inside the bubble to ask questions about the Profile page content */}
-            <form 
-              onSubmit={(e) => {
-                e.preventDefault();
-                const inputEl = e.currentTarget.elements.namedItem('profileQuestion') as HTMLInputElement;
-                if (inputEl && inputEl.value.trim()) {
-                  onAskVoyager(inputEl.value.trim());
-                  inputEl.value = '';
-                }
-              }}
-              className="mt-3.5 flex items-center gap-2 bg-neutral-100 border border-black/10 rounded-xl p-1 focus-within:border-red-600/50 transition-all"
-            >
-              <input
-                type="text"
-                name="profileQuestion"
-                required
-                placeholder={selectedLang === 'EN' ? "Ask Voyager about your profile..." : "Pregúntale a Voyager sobre tu perfil..."}
-                style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}
-                className="flex-1 bg-transparent border-none text-xs text-black placeholder-neutral-500 focus:outline-none px-2 py-1.5"
-              />
-              <button
-                type="submit"
-                className="bg-red-600 hover:bg-red-700 text-white rounded-lg p-1.5 border-none cursor-pointer flex items-center justify-center transition-colors"
-                title={selectedLang === 'EN' ? "Ask Voyager" : "Preguntar a Voyager"}
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </form>
           </div>
+        </div>
 
-          {/* Quick suggestions row below the bubble */}
-          <div className="flex flex-wrap gap-1.5 pl-1">
-            <button
-              onClick={() => onAskVoyager(selectedLang === 'EN' ? "How do I improve my pronunciation score?" : "¿Cómo mejoro mi puntaje de pronunciación?")}
-              className="text-[9px] font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-2.5 py-1 cursor-pointer transition-colors"
-            >
-              {selectedLang === 'EN' ? "How do I improve my pronunciation?" : "¿Cómo mejoro mi pronunciación?"}
-            </button>
-            <button
-              onClick={() => onAskVoyager(selectedLang === 'EN' ? "What is the daily learning curriculum roadmap?" : "¿Qué es la ruta de aprendizaje diario?")}
-              className="text-[9px] font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-2.5 py-1 cursor-pointer transition-colors"
-            >
-              {selectedLang === 'EN' ? "What is the roadmap?" : "¿Qué es la ruta?"}
-            </button>
-          </div>
+        {/* Row 2: User's Input Box (Styled exactly like the Chat section input box) */}
+        <div className="flex justify-end w-full pl-[62px]">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const inputEl = e.currentTarget.elements.namedItem('profileQuestion') as HTMLInputElement;
+              if (inputEl && inputEl.value.trim()) {
+                onAskVoyager(inputEl.value.trim());
+                inputEl.value = '';
+              }
+            }}
+            className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
+          >
+            <div className="flex justify-end mb-1 select-none">
+              <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+            </div>
+            <input
+              type="text"
+              name="profileQuestion"
+              required
+              placeholder={selectedLang === 'EN' ? "Ask Voyager about your profile..." : "Pregúntale a Voyager sobre tu perfil..."}
+              style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}
+              className="w-full focus:outline-none transition-all border-none bg-transparent text-black text-right placeholder:text-right placeholder:text-black/45 font-serif text-[13px] p-0"
+            />
+          </form>
+        </div>
+
+        {/* Row 3: Suggestion Options (PRONUNCIACION and RUTA) */}
+        <div className="flex justify-end gap-1.5 w-full pl-[62px]">
+          <button
+            onClick={() => onAskVoyager(selectedLang === 'EN' ? "How do I improve my pronunciation score?" : "¿Cómo mejoro mi puntuación de pronunciación?")}
+            style={{ fontFamily: "'Lato', sans-serif" }}
+            className="text-[9px] font-black tracking-wider uppercase text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-3 py-1 cursor-pointer transition-colors shadow-xs"
+          >
+            {selectedLang === 'EN' ? "PRONUNCIATION" : "PRONUNCIACIÓN"}
+          </button>
+          <button
+            onClick={() => onAskVoyager(selectedLang === 'EN' ? "What is the daily learning curriculum roadmap?" : "¿Qué es la ruta de aprendizaje diario?")}
+            style={{ fontFamily: "'Lato', sans-serif" }}
+            className="text-[9px] font-black tracking-wider uppercase text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-3 py-1 cursor-pointer transition-colors shadow-xs"
+          >
+            {selectedLang === 'EN' ? "ROADMAP" : "RUTA"}
+          </button>
         </div>
       </div>
 
