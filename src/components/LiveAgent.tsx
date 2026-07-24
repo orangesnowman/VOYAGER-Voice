@@ -899,7 +899,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                             }`} />
                         </button>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-xs sm:max-w-md">
+                    <div className="grid grid-cols-4 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-sm sm:max-w-lg">
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Home' : 'Inicio'}
@@ -918,6 +918,27 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
                         }`}>
                             {selectedLang === 'EN' ? 'HOME' : 'INICIO'}
+                        </span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('chat')}>
+                        <button 
+                            title={selectedLang === 'EN' ? 'Chat' : 'Chat'}
+                            aria-label={selectedLang === 'EN' ? 'Chat' : 'Chat'}
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
+                        >
+                            <MessageSquare className={`w-6 h-6 transition-all duration-300 ${
+                                rightPanelTab === 'chat' 
+                                    ? 'text-red-600 scale-110' 
+                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
+                            }`} />
+                        </button>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                            rightPanelTab === 'chat' 
+                                ? 'text-red-600 font-extrabold' 
+                                : 'text-black/65 group-hover:text-red-600 font-bold'
+                        }`}>
+                            {selectedLang === 'EN' ? 'CHAT' : 'CHAT'}
                         </span>
                     </div>
 
