@@ -452,17 +452,17 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     window.speechSynthesis.speak(utterance);
   };
 
-  // Reminder timer to nudge the user after 15 seconds on welcome screen without clicking CONECTA
+  // Reminder timer to nudge the user after 4 seconds on welcome screen without clicking CONECTA
   const resetReminderTimer = () => {
     if (reminderTimerRef.current) {
       clearTimeout(reminderTimerRef.current);
     }
     
     reminderTimerRef.current = setTimeout(() => {
-      if (hasClickedConnect && !hasInteracted) {
+      if (!hasClickedConnect) {
         const reminderText = selectedLang === 'EN'
-          ? "Remember to click the Connect button to start chatting."
-          : "Recuerda hacer clic en el botón Conecta para comenzar a chatear.";
+          ? "Remember to click the CONNECT button to start."
+          : "Recuerda hacer clic en el botón CONECTA para comenzar.";
         
         if (isConnected) {
           sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following reminder message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${reminderText}"]`);
@@ -470,11 +470,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           speakText(reminderText);
         }
       }
-    }, 15000);
+    }, 4000);
   };
 
   useEffect(() => {
-    if (hasClickedConnect && !hasInteracted) {
+    if (!hasClickedConnect) {
       resetReminderTimer();
     } else {
       if (reminderTimerRef.current) {
@@ -487,7 +487,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         clearTimeout(reminderTimerRef.current);
       }
     };
-  }, [hasClickedConnect, hasInteracted, isConnected]);
+  }, [hasClickedConnect, isConnected, selectedLang]);
 
   // Speak explanation when arriving at the Teacher, Profile, or Settings section
   useEffect(() => {
