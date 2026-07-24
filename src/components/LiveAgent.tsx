@@ -1220,9 +1220,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             }`}
                                                         >
                                                             {isPaused ? (
-                                                                <Play strokeWidth={2.5} className="w-3.5 h-3.5 text-red-600 animate-pulse" />
+                                                                <Play strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-red-600 animate-pulse" />
                                                             ) : (
-                                                                <Pause strokeWidth={2.5} className="w-3.5 h-3.5 text-black/50 hover:text-red-600 transition-all" />
+                                                                <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-black/50 hover:text-red-600 transition-all" />
                                                             )}
                                                         </button>
                                                     </div>
