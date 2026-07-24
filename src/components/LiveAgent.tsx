@@ -823,42 +823,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                   </button>
               )}
 
-              {/* Utility Buttons: Pause */}
-              <div className="flex items-center justify-center mt-4">
-                  {/* Pause Button */}
-                  <button
-                      onClick={() => {
-                          if (!isConnected) return;
-                          if (isPaused) {
-                              resume();
-                              if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                  window.speechSynthesis.resume();
-                              }
-                          } else {
-                              pause();
-                              if (window.speechSynthesis && window.speechSynthesis.speaking) {
-                                  window.speechSynthesis.pause();
-                              }
-                          }
-                      }}
-                      disabled={!isConnected}
-                      title={!isConnected 
-                          ? undefined
-                          : (isPaused 
-                            ? (selectedLang === 'EN' ? 'Resume session' : 'Reanudar sesión') 
-                            : (selectedLang === 'EN' ? 'Pause session' : 'Pausar sesión'))
-                      }
-                      className={`p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group ${
-                          !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-95'
-                      }`}
-                  >
-                      {isPaused ? (
-                          <Play strokeWidth={2.5} fill="currentColor" className="w-6 h-6 text-red-600 animate-pulse" />
-                      ) : (
-                          <Pause strokeWidth={2.5} fill="currentColor" className="w-6 h-6 text-white hover:text-red-600 transition-all" />
-                      )}
-                  </button>
-              </div>
+
           </div>
         </div>
 
