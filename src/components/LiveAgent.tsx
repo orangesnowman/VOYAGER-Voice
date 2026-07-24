@@ -1195,16 +1195,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                             {isUser ? (
                                                 <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
                                                     <div className="flex items-center gap-1 group">
-                                                        <span 
-                                                            style={{ fontFamily: "'Lato', sans-serif" }} 
-                                                            className={`text-[9px] font-black tracking-wider transition-all duration-300 ${
-                                                                isPaused 
-                                                                    ? 'text-red-600 font-extrabold' 
-                                                                    : 'text-blue-600/70 group-hover:text-red-600'
-                                                            }`}
-                                                        >
-                                                            PAUSA
-                                                        </span>
+                                                        {!isPaused && (
+                                                            <span 
+                                                                style={{ fontFamily: "'Lato', sans-serif" }} 
+                                                                className="text-[9px] font-black tracking-wider transition-all duration-300 text-blue-600/70 group-hover:text-red-600"
+                                                            >
+                                                                PAUSA
+                                                            </span>
+                                                        )}
                                                         <button
                                                             type="button"
                                                             onClick={() => {
