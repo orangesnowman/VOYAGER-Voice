@@ -231,8 +231,8 @@ export function useConversationSession(config: UseConversationSessionConfig) {
             } else {
               // Speak welcome intro message on landing on Welcome page, without asking for name/age yet
               const welcomeSpeech = selectedLang === 'EN'
-                ? "Hello! Welcome to USA Voyager. I have set the default mode to Spanish. You can click on the other modes to hear Voyager explain what each one does before starting your practice."
-                : "¡Hola! Bienvenido a USA Voyager. He configurado el modo Español como predeterminado. Puedes hacer clic en los otros modos para que Voyager te explique de qué trata cada uno antes de comenzar tu práctica.";
+                ? "Welcome to USA Voyager! I have set the default mode to Spanish. You can click on the other modes to hear Voyager explain what each one does before starting your practice."
+                : "¡Bienvenido a USA Voyager! He configurado el modo Español como predeterminado. Puedes hacer clic en los otros modos para que Voyager te explique de qué trata cada uno antes de comenzar tu práctica.";
               
               const welcomeIntroPrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
               
