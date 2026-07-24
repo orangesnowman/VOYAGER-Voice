@@ -927,10 +927,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                             aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group hover:scale-110 active:scale-95"
                         >
-                            <Settings className={`w-[27px] h-[27px] transition-all duration-300 ${
+                            <Settings className={`w-[27px] h-[27px] transition-all duration-500 ease-in-out ${
                                 rightPanelTab === 'settings' 
-                                    ? 'text-red-600 rotate-90 scale-110' 
-                                    : 'text-black/65 hover:text-red-600 group-hover:text-red-600'
+                                    ? 'text-red-600 rotate-90 scale-110 hover:rotate-[270deg]' 
+                                    : 'text-black/65 hover:text-red-600 group-hover:text-red-600 hover:rotate-180'
                             }`} />
                         </button>
                     </div>
