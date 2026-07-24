@@ -933,7 +933,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
               <div className="w-full bg-transparent py-2 sm:py-2.5 px-3 sm:px-6 flex flex-col items-center justify-center gap-1.5 relative flex-shrink-0 border-none">
                 {/* Row 1: Main Menu & Controls */}
                 <div className="w-full flex items-center justify-center relative">
-                    <div className="grid grid-cols-4 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-xs sm:max-w-md">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-xs sm:max-w-md">
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Home' : 'Inicio'}
@@ -952,27 +952,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
                         }`}>
                             {selectedLang === 'EN' ? 'HOME' : 'INICIO'}
-                        </span>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('chat')}>
-                        <button 
-                            title={selectedLang === 'EN' ? 'Chat' : 'Chat'}
-                            aria-label={selectedLang === 'EN' ? 'Chat' : 'Chat'}
-                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
-                        >
-                            <MessageSquare className={`w-6 h-6 transition-all duration-300 ${
-                                rightPanelTab === 'chat' 
-                                    ? 'text-red-600 scale-110' 
-                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
-                            }`} />
-                        </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
-                            rightPanelTab === 'chat' 
-                                ? 'text-red-600 font-extrabold' 
-                                : 'text-black/65 group-hover:text-red-600 font-bold'
-                        }`}>
-                            CHAT
                         </span>
                     </div>
 
@@ -1020,170 +999,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                 </div>
                 </div>
 
-                {/* Row 2: Mode Selector Toggles */}
-                {rightPanelTab === 'chat' && (
-                    <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap w-full pt-1.5 pb-0.5">
-                        {/* 2. Spanish Option Toggle */}
-                        <button 
-                            onClick={() => {
-                                if (!isSpanishOnlyMode) {
-                                    setIsSpanishOnlyMode(true);
-                                    if (isPaused) {
-                                        resume();
-                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                            window.speechSynthesis.resume();
-                                        }
-                                    }
-                                }
-                            }}
-                            title={selectedLang === 'EN' ? 'Spanish Mode' : 'Modo Español'}
-                            style={{ fontFamily: "'Lato', sans-serif" }}
-                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                        >
-                            <MessageSquare 
-                                strokeWidth={isSpanishOnlyMode ? 3 : 2}
-                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                    isSpanishOnlyMode 
-                                        ? 'text-red-600 scale-110' 
-                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
-                                }`} 
-                            />
-                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                isSpanishOnlyMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
-                            }`}>
-                                {selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL'}
-                            </span>
-                        </button>
-
-                        {/* 3. Bilingual Option Toggle */}
-                        <button 
-                            onClick={() => {
-                                if (!isBilingualMode) {
-                                    setIsBilingualMode(true);
-                                    if (isPaused) {
-                                        resume();
-                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                            window.speechSynthesis.resume();
-                                        }
-                                    }
-                                }
-                            }}
-                            title={selectedLang === 'EN' ? 'Bilingual Mode' : 'Modo Bilingüe'}
-                            style={{ fontFamily: "'Lato', sans-serif" }}
-                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                        >
-                            <MessageSquare 
-                                strokeWidth={isBilingualMode ? 3 : 2}
-                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                    isBilingualMode 
-                                        ? 'text-red-600 scale-110' 
-                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
-                                }`} 
-                            />
-                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                isBilingualMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
-                            }`}>
-                                BILINGÜE
-                            </span>
-                        </button>
-
-                        {/* 4. English Option Toggle */}
-                        <button 
-                            onClick={() => {
-                                if (!isEnglishOnlyMode) {
-                                    setIsEnglishOnlyMode(true);
-                                    if (isPaused) {
-                                        resume();
-                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                            window.speechSynthesis.resume();
-                                        }
-                                    }
-                                }
-                            }}
-                            title={selectedLang === 'EN' ? 'English Mode' : 'Modo Inglés'}
-                            style={{ fontFamily: "'Lato', sans-serif" }}
-                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                        >
-                            <MessageSquare 
-                                strokeWidth={isEnglishOnlyMode ? 3 : 2}
-                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                    isEnglishOnlyMode 
-                                        ? 'text-red-600 scale-110' 
-                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
-                                }`} 
-                            />
-                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                isEnglishOnlyMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
-                            }`}>
-                                {selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS'}
-                            </span>
-                        </button>
-
-                        {/* 5. Translate / Translator Option Toggle */}
-                        <button 
-                            onClick={() => {
-                                if (!isTranslateMode) {
-                                    setIsTranslateMode(true);
-                                    if (isPaused) {
-                                        resume();
-                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                            window.speechSynthesis.resume();
-                                        }
-                                    }
-                                }
-                            }}
-                            title={selectedLang === 'EN' ? 'Translator Mode' : 'Modo Traductor'}
-                            style={{ fontFamily: "'Lato', sans-serif" }}
-                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                        >
-                            <MessageSquare 
-                                strokeWidth={isTranslateMode ? 3 : 2}
-                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                    isTranslateMode 
-                                        ? 'text-red-600 scale-110' 
-                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
-                                }`} 
-                            />
-                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                isTranslateMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
-                            }`}>
-                                {selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR'}
-                            </span>
-                        </button>
-
-                        {/* 6. Listen Only Option Toggle */}
-                        <button 
-                            onClick={() => {
-                                if (!isListenOnly) {
-                                    setIsListenOnly(true);
-                                    if (isPaused) {
-                                        resume();
-                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                            window.speechSynthesis.resume();
-                                        }
-                                    }
-                                }
-                            }}
-                            title={selectedLang === 'EN' ? 'Listening Mode' : 'Modo de Escucha'}
-                            style={{ fontFamily: "'Lato', sans-serif" }}
-                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                        >
-                            <MessageSquare 
-                                strokeWidth={isListenOnly ? 3 : 2}
-                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
-                                    isListenOnly 
-                                        ? 'text-red-600 scale-110' 
-                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
-                                }`} 
-                            />
-                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                isListenOnly ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
-                            }`}>
-                                {selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA'}
-                            </span>
-                        </button>
-                    </div>
-                )}
               </div>
             )}
 
@@ -1381,12 +1196,173 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
                                                 </div>
                                             ) : (
-                                                <div 
-                                                    onClick={() => setHasInteracted(false)} 
-                                                    title={selectedLang === 'EN' ? 'Go to Welcome Page' : 'Ir a la página de bienvenida'} 
-                                                    className="flex justify-start mb-1 select-none cursor-pointer"
-                                                >
-                                                    <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600/70 hover:scale-110 active:scale-95 transition-all" />
+                                                <div className="flex items-center gap-3 sm:gap-4 flex-wrap mb-2.5 select-none">
+                                                    {/* Mascot Bot Icon */}
+                                                    <div 
+                                                        onClick={() => setHasInteracted(false)} 
+                                                        title={selectedLang === 'EN' ? 'Go to Welcome Page' : 'Ir a la página de bienvenida'} 
+                                                        className="cursor-pointer hover:scale-110 active:scale-95 transition-all flex-shrink-0"
+                                                    >
+                                                        <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
+                                                    </div>
+
+                                                    {/* Embedded Mode Selectors */}
+                                                    <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+                                                        {/* 1. Spanish Mode */}
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (!isSpanishOnlyMode) {
+                                                                    setIsSpanishOnlyMode(true);
+                                                                    if (isPaused) {
+                                                                        resume();
+                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                            window.speechSynthesis.resume();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }}
+                                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                                            className="flex items-center gap-1 cursor-pointer group select-none"
+                                                        >
+                                                            <MessageSquare 
+                                                                strokeWidth={isSpanishOnlyMode ? 3 : 2}
+                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                                                    isSpanishOnlyMode 
+                                                                        ? 'text-red-600 scale-110' 
+                                                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                                                }`} 
+                                                            />
+                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                                isSpanishOnlyMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                                                            }`}>
+                                                                {selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL'}
+                                                            </span>
+                                                        </button>
+
+                                                        {/* 2. Bilingual Mode */}
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (!isBilingualMode) {
+                                                                    setIsBilingualMode(true);
+                                                                    if (isPaused) {
+                                                                        resume();
+                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                            window.speechSynthesis.resume();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }}
+                                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                                            className="flex items-center gap-1 cursor-pointer group select-none"
+                                                        >
+                                                            <MessageSquare 
+                                                                strokeWidth={isBilingualMode ? 3 : 2}
+                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                                                    isBilingualMode 
+                                                                        ? 'text-red-600 scale-110' 
+                                                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                                                }`} 
+                                                            />
+                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                                isBilingualMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                                                            }`}>
+                                                                BILINGÜE
+                                                            </span>
+                                                        </button>
+
+                                                        {/* 3. English Mode */}
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (!isEnglishOnlyMode) {
+                                                                    setIsEnglishOnlyMode(true);
+                                                                    if (isPaused) {
+                                                                        resume();
+                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                            window.speechSynthesis.resume();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }}
+                                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                                            className="flex items-center gap-1 cursor-pointer group select-none"
+                                                        >
+                                                            <MessageSquare 
+                                                                strokeWidth={isEnglishOnlyMode ? 3 : 2}
+                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                                                    isEnglishOnlyMode 
+                                                                        ? 'text-red-600 scale-110' 
+                                                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                                                }`} 
+                                                            />
+                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                                isEnglishOnlyMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                                                            }`}>
+                                                                {selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS'}
+                                                            </span>
+                                                        </button>
+
+                                                        {/* 4. Translator Mode */}
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (!isTranslateMode) {
+                                                                    setIsTranslateMode(true);
+                                                                    if (isPaused) {
+                                                                        resume();
+                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                            window.speechSynthesis.resume();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }}
+                                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                                            className="flex items-center gap-1 cursor-pointer group select-none"
+                                                        >
+                                                            <MessageSquare 
+                                                                strokeWidth={isTranslateMode ? 3 : 2}
+                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                                                    isTranslateMode 
+                                                                        ? 'text-red-600 scale-110' 
+                                                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                                                }`} 
+                                                            />
+                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                                isTranslateMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                                                            }`}>
+                                                                {selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR'}
+                                                            </span>
+                                                        </button>
+
+                                                        {/* 5. Listen Mode */}
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (!isListenOnly) {
+                                                                    setIsListenOnly(true);
+                                                                    if (isPaused) {
+                                                                        resume();
+                                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                            window.speechSynthesis.resume();
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }}
+                                                            style={{ fontFamily: "'Lato', sans-serif" }}
+                                                            className="flex items-center gap-1 cursor-pointer group select-none"
+                                                        >
+                                                            <MessageSquare 
+                                                                strokeWidth={isListenOnly ? 3 : 2}
+                                                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                                                    isListenOnly 
+                                                                        ? 'text-red-600 scale-110' 
+                                                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                                                }`} 
+                                                            />
+                                                            <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                                                isListenOnly ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                                                            }`}>
+                                                                {selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA'}
+                                                            </span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             )}
                                             <div className={`chat-message-text whitespace-pre-line tracking-wider leading-snug ${isUser ? 'text-right' : 'text-left'}`}>
