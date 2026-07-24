@@ -236,9 +236,7 @@ export function useConversationSession(config: UseConversationSessionConfig) {
               
               const welcomeIntroPrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
               
-              const lobbyReminderInstruction = `[SYSTEM INSTRUCTION: The user has NOT clicked the 'CONECTA' button on the screen yet to enter the active chat. You are allowed to chat, answer questions, and converse with them if they speak to you, but:
-1. Do NOT ask for the user's name or age yet. You must wait to ask for their name and age until they click CONECTA and enter the active chat section.
-2. In each response, you MUST softly and friendly remind them that they need to click the 'CONECTA' button at the bottom of the page to start the active chat and get the most out of USA VOYAGER (including written transcripts, interactive maps, scores, and personal recommendations).]`;
+              const lobbyReminderInstruction = `[SYSTEM INSTRUCTION: The user is on the welcome lobby and has NOT clicked the 'CONECTA' button yet. Limit yourself strictly to the information written on the page (the welcome message, the name of the modes, or the mode explanations). Do NOT make small talk, do NOT ask for their name or age, and do NOT talk about other features (like transcripts, maps, or scores). If they speak to you, simply tell them to click the 'CONECTA' button at the bottom of the page to start the conversation.]`;
 
               if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
                 wsRef.current.send(JSON.stringify({ text: welcomeIntroPrompt }));
