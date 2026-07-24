@@ -131,13 +131,36 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
 
   // Logged-in screen (Profile Dashboard + Learning Roadmap + Live Lessons)
   return (
-    <div className="flex-1 flex flex-col p-4 bg-[#f5efe6] overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
+    <div className="flex-1 flex flex-col p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
+      
+      {/* PROFILE SECTION EXPLANATION BANNER */}
+      <div className="bg-gradient-to-r from-red-600 via-red-700 to-[#231d17] rounded-2xl p-5 md:p-6 text-white text-left shadow-lg space-y-3 relative overflow-hidden border border-red-500/20 mb-4 flex-shrink-0">
+        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-8 translate-x-8">
+          <User className="w-48 h-48 text-white" />
+        </div>
+        <div className="relative z-10 flex flex-col justify-between gap-3">
+          <div className="space-y-1.5">
+            <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full border border-white/10 inline-block">
+              {selectedLang === 'EN' ? 'YOUR PROFILE & PROGRESS' : 'TU PERFIL Y PROGRESO'}
+            </span>
+            <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-black tracking-tight uppercase">
+              {selectedLang === 'EN' ? 'Your Learning Dashboard' : 'Tu Panel de Aprendizaje'}
+            </h2>
+            <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] text-white/90 leading-relaxed font-serif">
+              {selectedLang === 'EN' 
+                ? 'Welcome to your Profile space. Here you can edit your fluency goals, view your Google account authentication details, monitor your grammar and pronunciation scores, track your daily learning curriculum roadmap, and check your master instructor session logs.'
+                : 'Bienvenido a tu espacio de Perfil. Aquí puedes editar tus metas de fluidez, ver los detalles de tu cuenta de Google, monitorear tus puntajes de gramática y pronunciación, seguir tu mapa de ruta de aprendizaje diario y revisar tus registros de clases con instructores.'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Profile Header Block */}
-      <div className="bg-white rounded-2xl p-4 border border-[#dfc389]/60 shadow-sm mb-4">
+      <div className="bg-white rounded-2xl p-4 border border-black/10 shadow-sm mb-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#ebd5a3] flex items-center justify-center border border-[#dfc389]">
-              <User className="w-5 h-5 text-[#9c6b21]" />
+            <div className="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center border border-black/10">
+              <User className="w-5 h-5 text-neutral-600" />
             </div>
             <div>
               <h4 className="text-sm font-bold text-neutral-900 font-serif leading-tight">{user.name}</h4>
@@ -206,13 +229,13 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
           <div className="mt-3.5 pt-3 border-t border-neutral-100 space-y-3 text-left">
             <div className="flex flex-wrap gap-x-4 gap-y-2">
               <div className="flex items-center gap-1.5">
-                <Target className="w-3.5 h-3.5 text-[#9c6b21] flex-shrink-0" />
+                <Target className="w-3.5 h-3.5 text-neutral-600 flex-shrink-0" />
                 <span className="text-xs text-neutral-600 font-medium">
                   <strong>{selectedLang === 'EN' ? 'Goal:' : 'Meta:'}</strong> {user.goal || selectedGoal}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-[#ca8a04] flex-shrink-0" />
+                <Award className="w-3.5 h-3.5 text-neutral-600 flex-shrink-0" />
                 <span className="text-xs text-neutral-600 font-medium">
                   <strong>{selectedLang === 'EN' ? 'Level:' : 'Nivel:'}</strong> {user.levelEstimate || selectedLevel}
                 </span>
@@ -221,47 +244,47 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
 
             {/* Score competency cards including Fluidez */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
-              <div className="bg-[#FAF7F2] p-2 rounded-xl border border-[#dfc389]/40 flex flex-col justify-between">
-                <div className="flex items-center gap-1 text-[#865918]">
-                  <Sparkles className="w-3 h-3 text-amber-600" />
+              <div className="bg-neutral-50 p-2 rounded-xl border border-black/10 flex flex-col justify-between">
+                <div className="flex items-center gap-1 text-neutral-700">
+                  <Sparkles className="w-3 h-3 text-neutral-500" />
                   <span className="text-[10px] font-bold uppercase tracking-wider">{selectedLang === 'EN' ? 'Fluency' : 'Fluidez'}</span>
                 </div>
-                <div className="text-base font-extrabold text-[#231d17] my-0.5">{scores?.naturalness || 75}%</div>
-                <div className="w-full bg-amber-200/50 h-1 rounded-full overflow-hidden">
-                  <div className="bg-[#865918] h-full rounded-full" style={{ width: `${scores?.naturalness || 75}%` }}></div>
+                <div className="text-base font-extrabold text-black my-0.5">{scores?.naturalness || 75}%</div>
+                <div className="w-full bg-neutral-200 h-1 rounded-full overflow-hidden">
+                  <div className="bg-neutral-600 h-full rounded-full" style={{ width: `${scores?.naturalness || 75}%` }}></div>
                 </div>
               </div>
 
-              <div className="bg-[#FAF7F2] p-2 rounded-xl border border-[#dfc389]/40 flex flex-col justify-between">
-                <div className="flex items-center gap-1 text-[#865918]">
-                  <BookOpen className="w-3 h-3 text-amber-600" />
+              <div className="bg-neutral-50 p-2 rounded-xl border border-black/10 flex flex-col justify-between">
+                <div className="flex items-center gap-1 text-neutral-700">
+                  <BookOpen className="w-3 h-3 text-neutral-500" />
                   <span className="text-[10px] font-bold uppercase tracking-wider">{selectedLang === 'EN' ? 'Grammar' : 'Gramática'}</span>
                 </div>
-                <div className="text-base font-extrabold text-[#231d17] my-0.5">{scores?.grammar || grammarScore || 70}%</div>
-                <div className="w-full bg-amber-200/50 h-1 rounded-full overflow-hidden">
-                  <div className="bg-[#865918] h-full rounded-full" style={{ width: `${scores?.grammar || grammarScore || 70}%` }}></div>
+                <div className="text-base font-extrabold text-black my-0.5">{scores?.grammar || grammarScore || 70}%</div>
+                <div className="w-full bg-neutral-200 h-1 rounded-full overflow-hidden">
+                  <div className="bg-neutral-600 h-full rounded-full" style={{ width: `${scores?.grammar || grammarScore || 70}%` }}></div>
                 </div>
               </div>
 
-              <div className="bg-[#FAF7F2] p-2 rounded-xl border border-[#dfc389]/40 flex flex-col justify-between">
-                <div className="flex items-center gap-1 text-[#865918]">
-                  <Volume2 className="w-3 h-3 text-amber-600" />
+              <div className="bg-neutral-50 p-2 rounded-xl border border-black/10 flex flex-col justify-between">
+                <div className="flex items-center gap-1 text-neutral-700">
+                  <Volume2 className="w-3 h-3 text-neutral-500" />
                   <span className="text-[10px] font-bold uppercase tracking-wider">{selectedLang === 'EN' ? 'Phonetics' : 'Fonética'}</span>
                 </div>
-                <div className="text-base font-extrabold text-[#231d17] my-0.5">{scores?.pronunciation || pronunciationScore || 75}%</div>
-                <div className="w-full bg-amber-200/50 h-1 rounded-full overflow-hidden">
-                  <div className="bg-[#865918] h-full rounded-full" style={{ width: `${scores?.pronunciation || pronunciationScore || 75}%` }}></div>
+                <div className="text-base font-extrabold text-black my-0.5">{scores?.pronunciation || pronunciationScore || 75}%</div>
+                <div className="w-full bg-neutral-200 h-1 rounded-full overflow-hidden">
+                  <div className="bg-neutral-600 h-full rounded-full" style={{ width: `${scores?.pronunciation || pronunciationScore || 75}%` }}></div>
                 </div>
               </div>
 
-              <div className="bg-[#FAF7F2] p-2 rounded-xl border border-[#dfc389]/40 flex flex-col justify-between">
-                <div className="flex items-center gap-1 text-[#865918]">
-                  <Activity className="w-3 h-3 text-amber-600" />
+              <div className="bg-neutral-50 p-2 rounded-xl border border-black/10 flex flex-col justify-between">
+                <div className="flex items-center gap-1 text-neutral-700">
+                  <Activity className="w-3 h-3 text-neutral-500" />
                   <span className="text-[10px] font-bold uppercase tracking-wider">{selectedLang === 'EN' ? 'Confidence' : 'Confianza'}</span>
                 </div>
-                <div className="text-base font-extrabold text-[#231d17] my-0.5">{scores?.confidence || 80}%</div>
-                <div className="w-full bg-amber-200/50 h-1 rounded-full overflow-hidden">
-                  <div className="bg-[#865918] h-full rounded-full" style={{ width: `${scores?.confidence || 80}%` }}></div>
+                <div className="text-base font-extrabold text-black my-0.5">{scores?.confidence || 80}%</div>
+                <div className="w-full bg-neutral-200 h-1 rounded-full overflow-hidden">
+                  <div className="bg-neutral-600 h-full rounded-full" style={{ width: `${scores?.confidence || 80}%` }}></div>
                 </div>
               </div>
             </div>
@@ -273,16 +296,16 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
         {/* ROADMAP SECTION */}
         <div className="space-y-3 text-left">
           <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-[#9c6b21] flex items-center gap-1.5 font-serif">
-              <Compass className="w-4 h-4 text-[#9c6b21]" />
+            <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
+              <Compass className="w-4 h-4 text-neutral-700" />
               {selectedLang === 'EN' ? 'Your Living Roadmap' : 'Tu Mapa de Ruta Activo'}
             </h4>
-            <span className="text-[10px] font-mono font-bold bg-[#ebd5a3] text-[#9c6b21] px-2 py-0.5 rounded-full uppercase">
+            <span className="text-[10px] font-mono font-bold bg-neutral-200 text-neutral-700 px-2 py-0.5 rounded-full uppercase">
               {user.completedDays.length} / {IMMERSION_CURRICULUM.length} {selectedLang === 'EN' ? 'Completed' : 'Completados'}
             </span>
           </div>
 
-          <div className="bg-white rounded-2xl p-3 border border-[#dfc389]/60 shadow-sm max-h-[290px] overflow-y-auto space-y-2.5">
+          <div className="bg-white rounded-2xl p-3 border border-black/10 shadow-sm max-h-[290px] overflow-y-auto space-y-2.5">
             {IMMERSION_CURRICULUM.map((day) => {
               const isCompleted = user.completedDays.includes(day.dayNum);
               return (
@@ -298,7 +321,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                     <div className="flex items-start gap-2">
                       <button
                         onClick={() => toggleDayCompleted(day.dayNum)}
-                        className="mt-0.5 bg-transparent border-none p-0 cursor-pointer text-neutral-400 hover:text-[#9c6b21]"
+                        className="mt-0.5 bg-transparent border-none p-0 cursor-pointer text-neutral-400 hover:text-neutral-600"
                       >
                         {isCompleted ? (
                           <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 fill-emerald-100" />
@@ -343,14 +366,14 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
             {/* Link to FLUIDEZ */}
             <div 
               onClick={() => onNavigateTab?.('progress')}
-              className="bg-white hover:bg-amber-50/50 p-3.5 rounded-2xl border border-[#dfc389]/60 shadow-sm transition-all cursor-pointer group flex items-center justify-between"
+              className="bg-white hover:bg-neutral-100/50 p-3.5 rounded-2xl border border-black/10 shadow-sm transition-all cursor-pointer group flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-[#865918] group-hover:scale-105 transition-transform">
+                <div className="w-9 h-9 rounded-xl bg-neutral-100 border border-black/10 flex items-center justify-center text-neutral-600 group-hover:scale-105 transition-transform">
                   <Activity className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <h5 className="text-xs font-bold text-[#231d17] group-hover:text-[#865918] transition-colors">
+                  <h5 className="text-xs font-bold text-[#231d17] group-hover:text-neutral-700 transition-colors">
                     {selectedLang === 'EN' ? 'Recent Lesson Summary & Fluency' : 'Resumen de Sesión Reciente y Fluidez'}
                   </h5>
                   <p className="text-[10px] text-neutral-500 mt-0.5">
@@ -360,7 +383,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-xs font-bold text-[#865918] group-hover:translate-x-1 transition-transform">
+              <div className="flex items-center gap-1 text-xs font-bold text-neutral-700 group-hover:translate-x-1 transition-transform">
                 <span>{scores?.naturalness || 75}%</span>
                 <ChevronRight className="w-4 h-4" />
               </div>
@@ -372,14 +395,14 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                 ? 'Let us do a practice session focusing on ordering food and daily conversation in English.' 
                 : 'Hagamos una sesión de práctica enfocada en pedir comida y conversación cotidiana en inglés.'
               )}
-              className="bg-white hover:bg-amber-50/50 p-3.5 rounded-2xl border border-[#dfc389]/60 shadow-sm transition-all cursor-pointer group flex items-center justify-between"
+              className="bg-white hover:bg-neutral-100/50 p-3.5 rounded-2xl border border-black/10 shadow-sm transition-all cursor-pointer group flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-700 group-hover:scale-105 transition-transform">
+                <div className="w-9 h-9 rounded-xl bg-neutral-100 border border-black/10 flex items-center justify-center text-neutral-600 group-hover:scale-105 transition-transform">
                   <Target className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <h5 className="text-xs font-bold text-[#231d17] group-hover:text-[#865918] transition-colors">
+                  <h5 className="text-xs font-bold text-[#231d17] group-hover:text-neutral-700 transition-colors">
                     {selectedLang === 'EN' ? 'Recommended Practice Lesson' : 'Lección de Práctica Recomendada'}
                   </h5>
                   <p className="text-[10px] text-neutral-500 mt-0.5">
@@ -387,7 +410,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-xs font-bold text-[#865918] group-hover:translate-x-1 transition-transform">
+              <div className="flex items-center gap-1 text-xs font-bold text-neutral-700 group-hover:translate-x-1 transition-transform">
                 <ChevronRight className="w-4 h-4" />
               </div>
             </div>
@@ -395,14 +418,14 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
             {/* Link to PROFESORES evaluation */}
             <div 
               onClick={() => onNavigateTab?.('teachers')}
-              className="bg-white hover:bg-amber-50/50 p-3.5 rounded-2xl border border-[#dfc389]/60 shadow-sm transition-all cursor-pointer group flex items-center justify-between"
+              className="bg-white hover:bg-neutral-100/50 p-3.5 rounded-2xl border border-black/10 shadow-sm transition-all cursor-pointer group flex items-center justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-800 group-hover:scale-105 transition-transform">
+                <div className="w-9 h-9 rounded-xl bg-neutral-100 border border-black/10 flex items-center justify-center text-neutral-600 group-hover:scale-105 transition-transform">
                   <Apple className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <h5 className="text-xs font-bold text-[#231d17] group-hover:text-[#865918] transition-colors">
+                  <h5 className="text-xs font-bold text-[#231d17] group-hover:text-neutral-700 transition-colors">
                     {selectedLang === 'EN' ? 'Teacher Notes & Pedagogical Insights' : 'Notas y Evaluación del Profesor'}
                   </h5>
                   <p className="text-[10px] text-neutral-500 mt-0.5">
@@ -412,7 +435,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-1 text-xs font-bold text-[#865918] group-hover:translate-x-1 transition-transform">
+              <div className="flex items-center gap-1 text-xs font-bold text-neutral-700 group-hover:translate-x-1 transition-transform">
                 <ChevronRight className="w-4 h-4" />
               </div>
             </div>
@@ -421,13 +444,13 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
       </div>
 
       {/* TEACHER INSIGHTS & PEDAGOGICAL FEEDBACK SECTION */}
-      <div id="teacher-insights" className="mt-6 pt-5 border-t border-[#dfc389]/60 space-y-3 text-left">
+      <div id="teacher-insights" className="mt-6 pt-5 border-t border-black/10 space-y-3 text-left">
         <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-bold uppercase tracking-widest text-[#9c6b21] flex items-center gap-1.5 font-serif">
-            <Users className="w-4 h-4 text-[#9c6b21]" />
+          <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
+            <Users className="w-4 h-4 text-neutral-700" />
             {selectedLang === 'EN' ? 'Teacher Insights & Notes' : 'Notas y Feedback del Profesor'}
           </h4>
-          <span className="text-[10px] font-mono text-[#865918] font-semibold bg-amber-100/70 px-2.5 py-0.5 rounded-full border border-amber-300/60">
+          <span className="text-[10px] font-mono text-neutral-700 font-semibold bg-neutral-200 px-2.5 py-0.5 rounded-full border border-black/10">
             {selectedLang === 'EN' ? 'Pedagogical Evaluation' : 'Evaluación Pedagógica'}
           </span>
         </div>

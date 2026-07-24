@@ -46,6 +46,7 @@ export function useConversationEngine() {
   } = useConversationLearning();
 
   const [error, setError] = useState<string | null>(null);
+  const [hasInteracted, setHasInteracted] = useState<boolean>(false);
 
   // Use the transcript manager
   const {
@@ -68,6 +69,7 @@ export function useConversationEngine() {
     isSpanishOnlyMode,
     isEnglishOnlyMode,
     memory,
+    hasInteracted,
     onUserTranscription: (text) => {
       updateUserVoiceTranscription(text);
       memory.extractLearnerContext(text);
@@ -288,6 +290,10 @@ export function useConversationEngine() {
     addSplashMessage,
     updateUserVoiceTranscription,
     updateAssistantResponse,
+
+    // Interaction states
+    hasInteracted,
+    setHasInteracted,
 
     // Proxy actions
     connect: connectToGemini,

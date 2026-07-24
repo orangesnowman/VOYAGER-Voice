@@ -11,13 +11,14 @@ import { TeacherInsightsPanel } from './TeacherInsightsPanel';
 import { SettingsPanel } from './SettingsPanel';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
-import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play } from 'lucide-react';
+import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot } from 'lucide-react';
 
 import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { TRAVEL_PRESETS } from './TravelPresets';
 import { translations, getTranslatedMessageText } from './Translations';
 import { CONVERSATION_MODES, ConversationMode } from './ConversationModes';
 import { useConversationEngine } from './useConversationEngine';
+import { ConversationModePolicy } from '../domain/ConversationModePolicy';
 
 const modeDetails = [
   {
@@ -199,6 +200,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     sendText,
     pause,
     resume,
+    hasInteracted,
+    setHasInteracted,
   } = useConversationEngine();
 
   const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings'>('home');
@@ -208,7 +211,22 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [showReviewScreen, setShowReviewScreen] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
   const [isFadingMascot, setIsFadingMascot] = useState<boolean>(false);
-  const [hasInteracted, setHasInteracted] = useState<boolean>(false);
+  const [activePolicyModal, setActivePolicyModal] = useState<'privacy' | 'terms' | 'copyright' | null>(null);
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) return;
+    const updateVoices = () => {
+      setVoices(window.speechSynthesis.getVoices());
+    };
+    updateVoices();
+    window.speechSynthesis.onvoiceschanged = updateVoices;
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = null;
+      }
+    };
+  }, []);
 
   // Leads inline form states
   const [inlineFormStep, setInlineFormStep] = useState<'details' | 'services'>('details');
@@ -231,6 +249,146 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
+  // Particle visualizer canvas refs & loop
+  const particleCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const volumeRef = useRef(0);
+  volumeRef.current = volume;
+  const reminderTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const lastVisitedTabRef = useRef<string>('');
+
+  useEffect(() => {
+    let animationFrameId: number;
+    let time = 0;
+
+    // Initialize 1400 ring particles concentrated in a band (yellow cab)
+    const numParticles = 1400;
+    const particles: { angle: number; r: number; speed: number; pulsePhase: number; size: number }[] = [];
+
+    for (let i = 0; i < numParticles; i++) {
+      particles.push({
+        angle: Math.random() * 2 * Math.PI,
+        // Bell-curve concentration around radius 64 (56 * 1.15)
+        r: 52 + Math.random() * 21 + (Math.random() - 0.5) * 9,
+        speed: (Math.random() * 0.004 + 0.001) * (Math.random() < 0.5 ? 1 : -1),
+        pulsePhase: Math.random() * 2 * Math.PI,
+        size: (0.6 + Math.random() * 1.4) * 1.25
+      });
+    }
+
+    // Initialize orbiting circles (moons) rotating around the oval
+    const numOrbiters = 8;
+    const orbiters: { angle: number; speed: number; rx: number; ry: number; size: number; alpha: number }[] = [];
+    for (let i = 0; i < numOrbiters; i++) {
+      let rxFactor = 1.35 + (i % 3) * 0.12;
+      let ryFactor = 1.0 + (i % 3) * 0.08;
+      orbiters.push({
+        angle: (i * 2 * Math.PI) / numOrbiters + Math.random() * 0.5,
+        speed: (0.007 + (i % 3) * 0.005) * (i % 2 === 0 ? 1 : -1),
+        rx: 63 * rxFactor,
+        ry: 63 * ryFactor,
+        size: (1.8 + (i % 4) * 0.6) * 1.25,
+        alpha: 0.55 + (i % 3) * 0.12
+      });
+    }
+
+    const renderLoop = () => {
+      const canvas = particleCanvasRef.current;
+      if (!canvas) {
+        animationFrameId = requestAnimationFrame(renderLoop);
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      const scale = width / 360;
+      const currentVolume = volumeRef.current;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Reset shadow blur to avoid applying it to background elements
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = 'transparent';
+
+      // Draw solid background circle (color: #50411a) in the center of the orb
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, (71 + currentVolume * 0.15) * scale, 0, 2 * Math.PI);
+      ctx.fillStyle = '#50411a';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.25)';
+      ctx.lineWidth = 1.5 * scale;
+      ctx.stroke();
+
+      // Radial background glow (gold)
+      let grad = ctx.createRadialGradient(centerX, centerY, 11.5 * scale, centerX, centerY, (69 + currentVolume * 0.65) * scale);
+      grad.addColorStop(0, 'rgba(255, 223, 0, 0.45)');
+      grad.addColorStop(0.5, 'rgba(255, 215, 0, 0.18)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, (109 + currentVolume * 0.5) * scale, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Outer ring
+      ctx.beginPath();
+      ctx.ellipse(centerX, centerY, 86 * scale, 63 * scale, 0, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(255, 215, 0, 0.15)';
+      ctx.lineWidth = 4 * scale;
+      ctx.stroke();
+
+      // Shimmering dust particles
+      time += 1;
+      for (let i = 0; i < numParticles; i++) {
+        let p = particles[i];
+        let speedMultiplier = 1.0 + (currentVolume * 0.08);
+        p.angle += p.speed * speedMultiplier;
+
+        let radialJitter = Math.sin(p.pulsePhase + time * 0.05) * (1.2 + currentVolume * 0.08);
+        let volumeJitter = (Math.random() - 0.5) * (currentVolume * 0.5);
+        let finalRadius = (p.r + radialJitter + volumeJitter) * scale;
+
+        p.pulsePhase += 0.02;
+
+        let px = centerX + Math.cos(p.angle) * finalRadius * 1.35;
+        let py = centerY + Math.sin(p.angle) * finalRadius * 1.0;
+        let opacity = 0.35 + Math.sin(p.pulsePhase + i) * 0.25 + (Math.random() * 0.25);
+        
+        ctx.fillStyle = `rgba(255, 215, 0, ${opacity})`;
+        ctx.fillRect(px, py, p.size * scale, p.size * scale);
+      }
+
+      // Orbiting circles
+      for (let i = 0; i < numOrbiters; i++) {
+        let orb = orbiters[i];
+        let speedMultiplier = 1.0 + (currentVolume * 0.08);
+        orb.angle += orb.speed * speedMultiplier;
+
+        let radialJitter = (Math.random() - 0.5) * (currentVolume * 0.35);
+        let finalRx = (orb.rx + radialJitter) * scale;
+        let finalRy = (orb.ry + radialJitter) * scale;
+
+        let ox = centerX + Math.cos(orb.angle) * finalRx;
+        let oy = centerY + Math.sin(orb.angle) * finalRy;
+
+        ctx.beginPath();
+        ctx.arc(ox, oy, orb.size * scale, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(255, 215, 0, ${orb.alpha})`;
+        ctx.shadowBlur = (6 + (currentVolume / 100) * 8) * scale;
+        ctx.shadowColor = '#ffd700';
+        ctx.fill();
+      }
+
+      animationFrameId = requestAnimationFrame(renderLoop);
+    };
+
+    renderLoop();
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
   // Auto-scroll chat
   useEffect(() => {
     if (chatEndRef.current) {
@@ -243,24 +401,129 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'es-ES';
     
-    // Attempt to find a male Spanish voice in the browser if available
-    const voices = window.speechSynthesis.getVoices();
-    const esVoice = voices.find(v => 
-      v.lang.toLowerCase().startsWith('es') && 
-      (v.name.toLowerCase().includes('jorge') || v.name.toLowerCase().includes('pablo') || v.name.toLowerCase().includes('carlos') || v.name.toLowerCase().includes('diego') || v.name.toLowerCase().includes('miguel') || v.name.toLowerCase().includes('male'))
-    ) || voices.find(v => 
-      v.lang.toLowerCase().startsWith('es') && 
-      (v.name.toLowerCase().includes('google') || v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('premium'))
-    ) || voices.find(v => v.lang.toLowerCase().startsWith('es'));
+    // Explicitly filter out any female voices to keep Voyager male
+    const isFemaleVoice = (name: string) => {
+      const lower = name.toLowerCase();
+      return lower.includes('female') || 
+             lower.includes('samantha') || 
+             lower.includes('victoria') || 
+             lower.includes('karen') || 
+             lower.includes('tessa') || 
+             lower.includes('veena') || 
+             lower.includes('moira') || 
+             lower.includes('fiona') || 
+             lower.includes('susan') || 
+             lower.includes('serena') || 
+             lower.includes('hazel') || 
+             lower.includes('zira') ||
+             lower.includes('siri') ||
+             lower.includes('kyoko');
+    };
+
+    // Attempt to find a male English/US voice for VOYAGER's American-accented Spanish
+    const voicesList = voices.length > 0 ? voices : (window.speechSynthesis ? window.speechSynthesis.getVoices() : []);
+    const voyagerVoice = voicesList.find(v => 
+      v.name.toLowerCase() === 'alex' && !isFemaleVoice(v.name)
+    ) || voicesList.find(v => 
+      v.lang.toLowerCase().startsWith('en') && 
+      !isFemaleVoice(v.name) &&
+      (v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('google us english') || v.name.toLowerCase().includes('natural') || v.name.toLowerCase().includes('premium'))
+    ) || voicesList.find(v => 
+      v.lang.toLowerCase().startsWith('en') && 
+      !isFemaleVoice(v.name) &&
+      (v.name.toLowerCase().includes('daniel') || v.name.toLowerCase().includes('fred') || v.name.toLowerCase().includes('rishi') || v.name.toLowerCase().includes('google'))
+    ) || voicesList.find(v => 
+      v.lang.toLowerCase().startsWith('en-us') && !isFemaleVoice(v.name)
+    ) || voicesList.find(v => 
+      v.lang.toLowerCase().startsWith('en') && !isFemaleVoice(v.name)
+    );
     
-    if (esVoice) {
-      utterance.voice = esVoice;
+    if (voyagerVoice) {
+      utterance.voice = voyagerVoice;
+      utterance.lang = voyagerVoice.lang;
+    } else {
+      utterance.lang = 'es-ES';
     }
+    
+    utterance.rate = 1.05;
+    utterance.pitch = 1.05;
     
     window.speechSynthesis.speak(utterance);
   };
+
+  // Reminder timer to nudge the user after 15 seconds on welcome screen without clicking CONECTA
+  const resetReminderTimer = () => {
+    if (reminderTimerRef.current) {
+      clearTimeout(reminderTimerRef.current);
+    }
+    
+    reminderTimerRef.current = setTimeout(() => {
+      if (hasClickedConnect && !hasInteracted) {
+        const reminderText = selectedLang === 'EN'
+          ? "Remember to click the Connect button to start chatting."
+          : "Recuerda hacer clic en el botón Conecta para comenzar a chatear.";
+        
+        if (isConnected) {
+          sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following reminder message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${reminderText}"]`);
+        } else {
+          speakText(reminderText);
+        }
+      }
+    }, 15000);
+  };
+
+  useEffect(() => {
+    if (hasClickedConnect && !hasInteracted) {
+      resetReminderTimer();
+    } else {
+      if (reminderTimerRef.current) {
+        clearTimeout(reminderTimerRef.current);
+        reminderTimerRef.current = null;
+      }
+    }
+    return () => {
+      if (reminderTimerRef.current) {
+        clearTimeout(reminderTimerRef.current);
+      }
+    };
+  }, [hasClickedConnect, hasInteracted, isConnected]);
+
+  // Speak explanation when arriving at the Teacher, Profile, or Settings section
+  useEffect(() => {
+    if (rightPanelTab === 'teachers' && lastVisitedTabRef.current !== 'teachers') {
+      const speech = selectedLang === 'EN'
+        ? "Welcome to the Teacher section! You have the option to hire Alejandra Francois, La Profe. She is our native bilingual Master English Immersion Coach and NYC Accent Specialist who can help you learn Spanish and English through personalized live 1-on-1 private lessons, accent correction, and direct chat support."
+        : "¡Bienvenido a la sección de La Profe! Tienes la opción de contratar a Alejandra Francois, La Profe. Ella es nuestra Coach Maestra de Inmersión y Especialista en Acento de Nueva York, bilingüe nativa. Te ayudará a aprender español e inglés a través de clases particulares en vivo 1-a-1, corrección de pronunciación y soporte por chat.";
+
+      if (isConnected && !isPaused) {
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
+      } else {
+        speakText(speech);
+      }
+    } else if (rightPanelTab === 'roadmap' && lastVisitedTabRef.current !== 'roadmap') {
+      const speech = selectedLang === 'EN'
+        ? "Welcome to your Profile space! Here you can edit your fluency goals, view your Google account authentication details, monitor your grammar and pronunciation scores, track your daily learning curriculum roadmap, and check your master instructor session logs."
+        : "¡Bienvenido a tu sección de Perfil! Aquí puedes configurar tus metas de fluidez, revisar tu cuenta de Google, monitorear tus puntajes de gramática y pronunciación, seguir tu currículo diario de aprendizaje y ver el registro de tus clases particulares.";
+
+      if (isConnected && !isPaused) {
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
+      } else {
+        speakText(speech);
+      }
+    } else if (rightPanelTab === 'settings' && lastVisitedTabRef.current !== 'settings') {
+      const speech = selectedLang === 'EN'
+        ? "Welcome to the Settings panel! Here you can configure the interface language, select translation and subtitle modes, toggle text-only listen-only mode, adjust voice speech rates, set your daily practice goals, and customize pedagogical feedback levels."
+        : "¡Bienvenido al panel de Configuración! Aquí puedes configurar el idioma de la interfaz, elegir los modos de traducción y subtítulos, activar el modo de solo escucha sin audio, ajustar la velocidad de reproducción de voz de Voyager, establecer tus metas de práctica diarias y personalizar el nivel de feedback pedagógico.";
+
+      if (isConnected && !isPaused) {
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
+      } else {
+        speakText(speech);
+      }
+    }
+    lastVisitedTabRef.current = rightPanelTab;
+  }, [rightPanelTab, selectedLang, isConnected, isPaused]);
 
   // Connect Click handler
   const handleConnectClick = () => {
@@ -271,12 +534,63 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       setChosenStartMode(null);
       setExplanationCountdown(null);
       setIsFadingMascot(false);
+      connect(undefined, true); // Voice Connection started immediately to speak mode explanations
+      resetReminderTimer();
     }, 400);
   };
 
   // Mode click handler
   const handleModeSelection = (modeId: ConversationMode) => {
     setChosenStartMode(modeId);
+    resetReminderTimer(); // Reset reminder timer so they get a fresh 15 seconds after selecting a mode
+    
+    // Speak explanation of the selected mode
+    let explanation = '';
+    if (selectedLang === 'EN') {
+      switch (modeId) {
+        case 'SPANISH':
+          explanation = "In Spanish mode, we will chat mostly in Spanish to answer your questions and explain idioms.";
+          break;
+        case 'BILINGUAL':
+          explanation = "In Bilingual mode, I will respond first in Spanish and then repeat in English to help you build connections.";
+          break;
+        case 'AMERICAN_ENGLISH':
+          explanation = "In English mode, we will converse and practice strictly and only in American English.";
+          break;
+        case 'LIVE_TRANSLATOR':
+          explanation = "In Translator mode, I will instantly translate whatever you say between English and Spanish.";
+          break;
+        case 'LISTEN_ONLY':
+          explanation = "In Listen mode, I will listen to your pronunciation and provide silent text corrections without speaking.";
+          break;
+      }
+    } else {
+      switch (modeId) {
+        case 'SPANISH':
+          explanation = "En el modo español, conversaremos principalmente en español para responder tus preguntas y explicarte modismos.";
+          break;
+        case 'BILINGUAL':
+          explanation = "En el modo bilingüe, te responderé primero en español y luego repetiré la idea en inglés para ayudarte a asociar ambos idiomas.";
+          break;
+        case 'AMERICAN_ENGLISH':
+          explanation = "En el modo de inglés, conversaremos y practicaremos de forma estricta y únicamente en inglés americano.";
+          break;
+        case 'LIVE_TRANSLATOR':
+          explanation = "En el modo traductor, traduciré de forma instantánea todo lo que digas entre inglés y español.";
+          break;
+        case 'LISTEN_ONLY':
+          explanation = "En el modo de escucha, escucharé tu pronunciación y te ofreceré correcciones por texto de manera silenciosa.";
+          break;
+      }
+    }
+    
+    if (explanation) {
+      if (isConnected) {
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following text in your natural voice. Do not write any scores, tags, or explanations, just say this phrase clearly: "${explanation}"]`);
+      } else {
+        speakText(explanation);
+      }
+    }
   };
 
   // Helper to apply mode to Hook state
@@ -308,15 +622,37 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     setHasInteracted(true);
     applyChosenMode(modeToUse);
     setExplanationCountdown(null);
-    connect(undefined, true); // Voice Connection
+    setChatMessages([]); // Clear system option explanations from chat history
+    
+    if (isConnected) {
+      // Trigger greeting prompt now that we have entered the chat section
+      const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
+        selectedLang
+      });
+      sendText(greetingPrompt);
+    } else {
+      connect(undefined, true);
+    }
   };
 
   // Start Conversation trigger
   const handleStartConversation = () => {
+    const modeToUse = chosenStartMode || 'SPANISH';
     setExplanationCountdown(null);
     setHasInteracted(true);
     window.speechSynthesis.cancel();
-    connect(undefined, true); // Voice Connection
+    setChatMessages([]); // Clear system option explanations from chat history
+    
+    if (isConnected) {
+      applyChosenMode(modeToUse);
+      // Trigger greeting prompt now that we have entered the chat section
+      const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
+        selectedLang
+      });
+      sendText(greetingPrompt);
+    } else {
+      connect(undefined, true);
+    }
   };
 
   // Countdown timer effect
@@ -422,7 +758,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       }}
     >
       {/* Layout Grid with 125% Passport, Adjusted Cover and Perfect Tight Gutter */}
-      <div className="grid grid-cols-1 md:grid-cols-[1.25fr_1.66fr] gap-2.5 md:gap-3 w-full max-w-7xl max-h-full items-stretch justify-center md:aspect-[1.5]">
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-2.5 md:gap-3 w-full max-w-7xl max-h-full items-stretch justify-center md:aspect-[1.7]">
         
         {/* Left Side (Column 1): The Passport (Deep Navy Voyager Blue Console) */}
         {/* It remains CONSTANT throughout the entire session */}
@@ -432,145 +768,189 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           
           {/* Header Text */}
           <div className="space-y-2 pt-6">
-            <span style={{ letterSpacing: '0.45em' }} className="text-xs font-bold text-slate-400 uppercase tracking-widest block font-sans">
-              {selectedLang === 'EN' ? 'I AM' : 'YO SOY'}
+            <span style={{ fontFamily: '"Allerta Stencil", sans-serif', letterSpacing: '0.25em' }} className="text-xl md:text-2xl font-bold text-white uppercase tracking-widest block">
+              {selectedLang === 'EN' ? 'I AM USA' : 'YO SOY USA'}
             </span>
-            <h1 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, Georgia, serif !important', textShadow: '0 4px 15px rgba(0,0,0,0.8)' }} className="text-4xl md:text-5xl font-black text-white tracking-[0.1em] uppercase block leading-none">
+            <h1 style={{ fontFamily: '"Allerta Stencil", sans-serif', textShadow: '0 4px 15px rgba(0,0,0,0.8)', letterSpacing: '0.12em' }} className="text-5xl md:text-6xl font-black text-white mt-1.5 uppercase block leading-none">
               VOYAGER
             </h1>
-            <h1 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, Georgia, serif !important', textShadow: '0 4px 15px rgba(0,0,0,0.8)' }} className="text-4xl md:text-5xl font-black text-white tracking-[0.1em] uppercase block leading-none mt-2">
-              USA
-            </h1>
-            <span style={{ letterSpacing: '0.15em' }} className="text-[10px] md:text-xs font-mono font-bold text-gray-400 tracking-wider uppercase block mt-4">
-              {selectedLang === 'EN' ? 'YOUR PASSPORT TO AMERICAN ENGLISH' : 'TU PASAPORTE AL INGLES AMERICANO'}
+            <span style={{ letterSpacing: '0.22em' }} className="text-[10px] md:text-xs text-yellow-400 font-mono uppercase block mt-2">
+              {selectedLang === 'EN' ? 'AMERICAN ENGLISH TUTOR' : 'TUTOR DE INGLÉS AMERICANO'}
             </span>
           </div>
 
           {/* Glowing Golden Energy Sphere */}
-          <div className="relative flex items-center justify-center my-auto py-8">
-            {/* Ambient gold glow under the sphere */}
-            <div className={`absolute w-36 h-36 rounded-full bg-amber-500/10 blur-xl transition-all duration-1000 ${hasClickedConnect ? 'scale-125 bg-amber-500/20' : 'animate-pulse'}`} />
+          <div className="relative flex-grow flex-shrink min-h-0 w-full flex items-center justify-center pt-2 pb-8 md:pt-4 md:pb-12">
+            <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-tr from-yellow-500/10 via-amber-500/15 to-orange-500/10 blur-3xl animate-pulse duration-[3000ms] pointer-events-none" />
             
-            {/* The gold dust ring/sphere */}
-            <div 
-              className={`w-[180px] h-[180px] rounded-full transition-all duration-1000 relative flex items-center justify-center overflow-hidden ${
-                hasClickedConnect 
-                  ? 'bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.25)_0%,rgba(245,158,11,0.5)_50%,rgba(251,191,36,0.85)_80%,rgba(0,0,0,0)_100%)] shadow-[0_0_50px_rgba(245,158,11,0.4),_inset_0_0_30px_rgba(251,191,36,0.6)]'
-                  : 'bg-[radial-gradient(circle_at_center,rgba(11,21,38,0.95)_35%,rgba(245,158,11,0.5)_65%,rgba(251,191,36,0.9)_85%,rgba(0,0,0,0)_100%)] shadow-[0_0_35px_rgba(245,158,11,0.3),_inset_0_0_20px_rgba(245,158,11,0.5)] animate-pulse'
-              }`}
-            >
-              {/* Rotating particle overlays */}
-              <div className={`absolute inset-0 rounded-full border border-dashed border-amber-500/25 ${hasClickedConnect ? 'animate-[spin_15s_linear_infinite]' : 'animate-[spin_30s_linear_infinite]'}`} />
-              <div className={`absolute inset-2 rounded-full border border-dotted border-yellow-500/30 ${hasClickedConnect ? 'animate-[spin_8s_linear_infinite_reverse]' : 'animate-[spin_15s_linear_infinite_reverse]'}`} />
-              <div className="absolute inset-4 rounded-full border border-dashed border-amber-400/10 animate-[spin_45s_linear_infinite]" />
-
-              {/* Glowing Particle Sparks precisely placed like gold dust */}
-              {sphereParticles.map((p, idx) => {
-                if (p.connectedOnly && !hasClickedConnect) return null;
-                return (
-                  <span
-                    key={idx}
-                    style={{
-                      top: p.top,
-                      left: p.left,
-                      width: p.size,
-                      height: p.size,
-                      animationDelay: p.delay,
-                      animationDuration: p.duration,
-                    }}
-                    className="absolute rounded-full bg-yellow-300 animate-pulse shadow-[0_0_4px_rgba(251,191,36,0.8)] opacity-90"
-                  />
-                );
-              })}
+            <div className="relative aspect-square max-h-full max-w-full flex items-center justify-center">
+                <canvas 
+                    ref={particleCanvasRef} 
+                    width={720} 
+                    height={720} 
+                    className="z-20 transition-transform duration-75 animate-float-zero-g max-h-full max-w-full object-contain"
+                    style={{ width: '100%', height: '100%' }}
+                />
             </div>
           </div>
 
           {/* Bottom Button Panel */}
-          <div className="pb-8 w-full z-10 flex flex-col items-center">
+          <div className="pb-8 md:pb-14 w-full z-10 flex flex-col items-center justify-center">
+              {/* Main Action Button */}
               {!hasClickedConnect ? (
                   <button
                       onClick={handleConnectClick}
-                      className="px-7 py-3 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(245,158,11,0.45)] hover:shadow-[0_0_35px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-95 text-xs md:text-sm min-w-[150px]"
+                      className="px-6 py-2.5 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(245,158,11,0.45)] hover:shadow-[0_0_35px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-95 text-[10px] md:text-xs min-w-[128px]"
                   >
-                      {selectedLang === 'EN' ? 'ENTER' : 'ENTRADA'}
+                      {translations[selectedLang].connect}
                   </button>
               ) : isConnected ? (
-                  <div className="flex flex-col items-center w-full">
-                      <button
-                          onClick={handleEndSessionClick}
-                          className="px-7 py-3 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(255,255,255,0.15)] hover:shadow-[0_0_35px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-95 text-xs md:text-sm min-w-[150px]"
-                      >
-                          {selectedLang === 'EN' ? 'FINISH' : 'FINALIZAR'}
-                      </button>
-                      
-                      {/* Session duration indicator */}
-                      <div className="flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-widest uppercase text-[#10b981] mt-4">
-                          <span className="w-2 h-2 rounded-full bg-[#10b981] animate-pulse" />
-                          <span className="text-slate-300">
-                              {selectedLang === 'EN' 
-                                  ? `SESSION (${Math.floor(secondsElapsed / 60)}:${(secondsElapsed % 60).toString().padStart(2, '0')})` 
-                                  : `SESIÓN (${Math.floor(secondsElapsed / 60)}:${(secondsElapsed % 60).toString().padStart(2, '0')})`}
-                          </span>
-                      </div>
-                  </div>
+                  <button
+                      onClick={handleEndSessionClick}
+                      className="px-6 py-2.5 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(255,255,255,0.15)] hover:shadow-[0_0_35px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-95 text-[10px] md:text-xs min-w-[155px] flex items-center justify-center gap-1.5"
+                  >
+                      <span>{selectedLang === 'EN' ? 'FINISH' : 'FINALIZAR'}</span>
+                      <span className="opacity-75 font-sans font-normal text-[9px] md:text-[10px]">
+                          ({Math.floor(secondsElapsed / 60)}:{(secondsElapsed % 60).toString().padStart(2, '0')})
+                      </span>
+                  </button>
               ) : (
                   <button
-                      onClick={() => {
-                          if (chosenStartMode) {
-                              handleContinuaClick();
-                          } else {
-                              setRightPanelTab('home');
-                          }
-                      }}
-                      className="px-7 py-3 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(245,158,11,0.45)] hover:shadow-[0_0_35px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-95 text-xs md:text-sm min-w-[150px]"
+                      onClick={handleContinuaClick}
+                      className="px-6 py-2.5 bg-white hover:bg-slate-50 text-black font-extrabold font-mono tracking-[0.15em] uppercase rounded-full transition-all duration-300 cursor-pointer shadow-[0_0_25px_rgba(245,158,11,0.45)] hover:shadow-[0_0_35px_rgba(245,158,11,0.6)] hover:scale-[1.02] active:scale-95 text-[10px] md:text-xs min-w-[128px]"
                   >
                       {selectedLang === 'EN' ? 'SELECT' : 'SELECCIONA'}
                   </button>
               )}
+
+              {/* Utility Buttons: Pause & Settings Gear */}
+              <div className="flex items-center justify-center gap-6 mt-4">
+                  {/* Pause Button */}
+                  <button
+                      onClick={() => {
+                          if (!isConnected) return;
+                          if (isPaused) {
+                              resume();
+                              if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                  window.speechSynthesis.resume();
+                              }
+                          } else {
+                              pause();
+                              if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                                  window.speechSynthesis.pause();
+                              }
+                          }
+                      }}
+                      disabled={!isConnected}
+                      title={!isConnected 
+                          ? undefined
+                          : (isPaused 
+                            ? (selectedLang === 'EN' ? 'Resume session' : 'Reanudar sesión') 
+                            : (selectedLang === 'EN' ? 'Pause session' : 'Pausar sesión'))
+                      }
+                      className={`p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group ${
+                          !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-95'
+                      }`}
+                  >
+                      {isPaused ? (
+                          <Play strokeWidth={2.5} className="w-6 h-6 text-red-600 animate-pulse" />
+                      ) : (
+                          <Pause strokeWidth={2.5} className="w-6 h-6 text-white hover:text-red-600 transition-all" />
+                      )}
+                  </button>
+
+                  {/* Settings Button */}
+                  <button 
+                      onClick={() => setRightPanelTab('settings')}
+                      title={selectedLang === 'EN' ? 'Settings' : 'Configura'}
+                      aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
+                      className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group hover:scale-110 active:scale-95"
+                  >
+                      <Settings strokeWidth={2.5} className={`w-6 h-6 transition-all duration-300 ${
+                          rightPanelTab === 'settings' 
+                              ? 'text-red-600 rotate-90' 
+                              : 'text-black/50 hover:text-red-600'
+                      }`} />
+                  </button>
+              </div>
           </div>
         </div>
 
         {/* Column 2 (Right Panel): The Cover Page (Cream layout) */}
-        <div className="md:col-span-1 bg-[#f5efe6] border border-[#dfc389]/10 rounded-[20px] sm:rounded-[24px] md:rounded-[32px] flex flex-col justify-between items-center text-center shadow-[0_15px_35px_rgba(0,0,0,0.15)] relative overflow-hidden w-full h-full min-h-[420px] sm:min-h-[480px] md:min-h-0">
+        <div className="md:col-span-1 bg-neutral-300 border border-black/10 rounded-[20px] sm:rounded-[24px] md:rounded-[32px] flex flex-col justify-between items-center text-center shadow-[0_15px_35px_rgba(0,0,0,0.15)] relative overflow-hidden w-full h-full min-h-[420px] sm:min-h-[480px] md:min-h-0">
           {!hasClickedConnect ? (
             /* Disconnected Landing Screen inside the Cover */
             <>
-              {/* Mascot in Center */}
               <div className="flex-1 flex items-center justify-center py-6 w-full relative z-10">
                 <img 
-                  src="https://cdn.gamma.app/e61o72b77sp71e0/edited-images/xOsepr1r0_Xzzbxf.png" 
+                  src={voyagerRobot} 
                   alt="Voyager USA Mascot" 
                   referrerPolicy="no-referrer"
-                  className="w-[220px] h-[220px] sm:w-[280px] sm:h-[280px] md:w-[350px] md:h-[350px] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)]" 
+                  onClick={handleConnectClick}
+                  title={selectedLang === 'EN' ? 'Click to Connect' : 'Haz clic para conectar'}
+                  className="w-[306px] h-[306px] sm:w-[382px] sm:h-[382px] md:w-[484px] md:h-[484px] max-w-[95%] max-h-[60vh] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)] cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300" 
                 />
               </div>
 
               {/* Footer Text */}
-              <div className="pb-8 z-10 px-4">
-                <p style={{ fontFamily: '"Lato", sans-serif' }} className="text-xs md:text-sm font-medium text-black">
-                  © 2026 Yo Soy Voger USA. All rights reserved. Derechos reservados
-                </p>
+              <div className="pb-8 z-10 px-4 flex flex-col items-center flex-shrink-0 w-full">
+                {/* Footer Buttons Row */}
+                <div className="flex items-center justify-center gap-4 text-xs font-mono select-none">
+                  {/* Copyright Button */}
+                  <button 
+                    onClick={() => setActivePolicyModal('copyright')}
+                    className="flex items-center gap-1.5 text-neutral-600 hover:text-black transition-colors duration-300 tracking-wider cursor-pointer"
+                  >
+                    <span style={{ fontSize: '1.65em', lineHeight: '1' }} className="font-normal">©</span>
+                    <span>Copyright</span>
+                  </button>
+
+                  {/* Privacy Button */}
+                  <button 
+                    onClick={() => setActivePolicyModal('privacy')}
+                    className="flex items-center gap-1.5 text-neutral-600 hover:text-black transition-colors duration-300 tracking-wider cursor-pointer"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>Privacy</span>
+                  </button>
+
+                  {/* Terms Button */}
+                  <button 
+                    onClick={() => setActivePolicyModal('terms')}
+                    className="flex items-center gap-1.5 text-neutral-600 hover:text-black transition-colors duration-300 tracking-wider cursor-pointer"
+                  >
+                    <FileText className="w-4 h-4" />
+                    <span>Terms</span>
+                  </button>
+                </div>
               </div>
             </>
           ) : (
             /* Connected Workspace Area inside the Cover */
             <div className="w-full h-full flex flex-col overflow-hidden">
             {/* Header / Tabs */}
-            <div className="w-full bg-[#ebd5a3] py-2 sm:py-3.5 px-3 sm:px-6 flex items-center justify-center relative flex-shrink-0">
-                <div className="grid grid-cols-4 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-xs sm:max-w-md">
+            {hasInteracted && (
+              <div className="w-full bg-transparent py-2 sm:py-2.5 px-3 sm:px-6 flex flex-col items-center justify-center gap-1.5 relative flex-shrink-0 border-none">
+                {/* Row 1: Main Menu & Controls */}
+                <div className="w-full flex items-center justify-center relative">
+                    <div className="grid grid-cols-4 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-xs sm:max-w-md">
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Home' : 'Inicio'}
                             aria-label={selectedLang === 'EN' ? 'Home' : 'Inicio'}
-                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
-                                rightPanelTab === 'home' 
-                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
-                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
-                            }`}
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <Home className="w-4.5 h-4.5 text-white" />
+                            <Home className={`w-6 h-6 transition-all duration-300 ${
+                                rightPanelTab === 'home' 
+                                    ? 'text-red-600 scale-110' 
+                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
+                            }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'home' ? 'font-extrabold' : 'font-bold'}`}>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                            rightPanelTab === 'home' 
+                                ? 'text-red-600 font-extrabold' 
+                                : 'text-black/65 group-hover:text-red-600 font-bold'
+                        }`}>
                             {selectedLang === 'EN' ? 'HOME' : 'INICIO'}
                         </span>
                     </div>
@@ -579,15 +959,19 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                         <button 
                             title={selectedLang === 'EN' ? 'Chat' : 'Chat'}
                             aria-label={selectedLang === 'EN' ? 'Chat' : 'Chat'}
-                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
-                                rightPanelTab === 'chat' 
-                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
-                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
-                            }`}
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <MessageSquare className="w-4.5 h-4.5 text-white" />
+                            <MessageSquare className={`w-6 h-6 transition-all duration-300 ${
+                                rightPanelTab === 'chat' 
+                                    ? 'text-red-600 scale-110' 
+                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
+                            }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'chat' ? 'font-extrabold' : 'font-bold'}`}>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                            rightPanelTab === 'chat' 
+                                ? 'text-red-600 font-extrabold' 
+                                : 'text-black/65 group-hover:text-red-600 font-bold'
+                        }`}>
                             CHAT
                         </span>
                     </div>
@@ -596,15 +980,19 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                         <button 
                             title={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
                             aria-label={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
-                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
-                                rightPanelTab === 'teachers' 
-                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
-                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
-                            }`}
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <Apple className="w-4.5 h-4.5 text-white" />
+                            <Apple className={`w-6 h-6 transition-all duration-300 ${
+                                rightPanelTab === 'teachers' 
+                                    ? 'text-red-600 scale-110' 
+                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
+                            }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'teachers' ? 'font-extrabold' : 'font-bold'}`}>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                            rightPanelTab === 'teachers' 
+                                ? 'text-red-600 font-extrabold' 
+                                : 'text-black/65 group-hover:text-red-600 font-bold'
+                        }`}>
                             {selectedLang === 'EN' ? 'TEACHER' : 'LA PROFE'}
                         </span>
                     </div>
@@ -613,36 +1001,191 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                         <button 
                             title={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
                             aria-label={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
-                            className={`w-9 h-9 rounded-full transition-all duration-300 cursor-pointer flex items-center justify-center ${
-                                rightPanelTab === 'roadmap' 
-                                    ? 'bg-red-600 text-white shadow-md scale-105 group-hover:bg-red-600' 
-                                    : 'bg-[#9c6b21] text-white hover:bg-red-600 group-hover:bg-red-600 shadow-sm'
-                            }`}
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <User className="w-4.5 h-4.5 text-white" />
+                            <User className={`w-6 h-6 transition-all duration-300 ${
+                                rightPanelTab === 'roadmap' 
+                                    ? 'text-red-600 scale-110' 
+                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
+                            }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap text-black ${rightPanelTab === 'roadmap' ? 'font-extrabold' : 'font-bold'}`}>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                            rightPanelTab === 'roadmap' 
+                                ? 'text-red-600 font-extrabold' 
+                                : 'text-black/65 group-hover:text-red-600 font-bold'
+                        }`}>
                             {selectedLang === 'EN' ? 'PROFILE' : 'PERFIL'}
                         </span>
                     </div>
                 </div>
-
-                {/* Fixed Settings Gear on far right */}
-                <div className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 flex items-center">
-                    <button 
-                        onClick={() => setRightPanelTab('settings')}
-                        title={selectedLang === 'EN' ? 'Settings' : 'Configura'}
-                        aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
-                        className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group"
-                    >
-                        <Settings className={`w-9 h-9 transition-all duration-300 ${
-                            rightPanelTab === 'settings' 
-                                ? 'text-red-600 rotate-90 scale-110' 
-                                : 'text-[#9c6b21] hover:text-red-600 group-hover:text-red-600'
-                        }`} />
-                    </button>
                 </div>
-            </div>
+
+                {/* Row 2: Mode Selector Toggles */}
+                {rightPanelTab === 'chat' && (
+                    <div className="flex items-center justify-center gap-4 sm:gap-6 flex-wrap w-full pt-1.5 pb-0.5">
+                        {/* 2. Spanish Option Toggle */}
+                        <button 
+                            onClick={() => {
+                                if (!isSpanishOnlyMode) {
+                                    setIsSpanishOnlyMode(true);
+                                    if (isPaused) {
+                                        resume();
+                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                            window.speechSynthesis.resume();
+                                        }
+                                    }
+                                }
+                            }}
+                            title={selectedLang === 'EN' ? 'Spanish Mode' : 'Modo Español'}
+                            style={{ fontFamily: "'Lato', sans-serif" }}
+                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                        >
+                            <MessageSquare 
+                                strokeWidth={isSpanishOnlyMode ? 3 : 2}
+                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                    isSpanishOnlyMode 
+                                        ? 'text-red-600 scale-110' 
+                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                }`} 
+                            />
+                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                isSpanishOnlyMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                            }`}>
+                                {selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL'}
+                            </span>
+                        </button>
+
+                        {/* 3. Bilingual Option Toggle */}
+                        <button 
+                            onClick={() => {
+                                if (!isBilingualMode) {
+                                    setIsBilingualMode(true);
+                                    if (isPaused) {
+                                        resume();
+                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                            window.speechSynthesis.resume();
+                                        }
+                                    }
+                                }
+                            }}
+                            title={selectedLang === 'EN' ? 'Bilingual Mode' : 'Modo Bilingüe'}
+                            style={{ fontFamily: "'Lato', sans-serif" }}
+                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                        >
+                            <MessageSquare 
+                                strokeWidth={isBilingualMode ? 3 : 2}
+                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                    isBilingualMode 
+                                        ? 'text-red-600 scale-110' 
+                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                }`} 
+                            />
+                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                isBilingualMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                            }`}>
+                                BILINGÜE
+                            </span>
+                        </button>
+
+                        {/* 4. English Option Toggle */}
+                        <button 
+                            onClick={() => {
+                                if (!isEnglishOnlyMode) {
+                                    setIsEnglishOnlyMode(true);
+                                    if (isPaused) {
+                                        resume();
+                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                            window.speechSynthesis.resume();
+                                        }
+                                    }
+                                }
+                            }}
+                            title={selectedLang === 'EN' ? 'English Mode' : 'Modo Inglés'}
+                            style={{ fontFamily: "'Lato', sans-serif" }}
+                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                        >
+                            <MessageSquare 
+                                strokeWidth={isEnglishOnlyMode ? 3 : 2}
+                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                    isEnglishOnlyMode 
+                                        ? 'text-red-600 scale-110' 
+                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                }`} 
+                            />
+                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                isEnglishOnlyMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                            }`}>
+                                {selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS'}
+                            </span>
+                        </button>
+
+                        {/* 5. Translate / Translator Option Toggle */}
+                        <button 
+                            onClick={() => {
+                                if (!isTranslateMode) {
+                                    setIsTranslateMode(true);
+                                    if (isPaused) {
+                                        resume();
+                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                            window.speechSynthesis.resume();
+                                        }
+                                    }
+                                }
+                            }}
+                            title={selectedLang === 'EN' ? 'Translator Mode' : 'Modo Traductor'}
+                            style={{ fontFamily: "'Lato', sans-serif" }}
+                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                        >
+                            <MessageSquare 
+                                strokeWidth={isTranslateMode ? 3 : 2}
+                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                    isTranslateMode 
+                                        ? 'text-red-600 scale-110' 
+                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                }`} 
+                            />
+                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                isTranslateMode ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                            }`}>
+                                {selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR'}
+                            </span>
+                        </button>
+
+                        {/* 6. Listen Only Option Toggle */}
+                        <button 
+                            onClick={() => {
+                                if (!isListenOnly) {
+                                    setIsListenOnly(true);
+                                    if (isPaused) {
+                                        resume();
+                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                            window.speechSynthesis.resume();
+                                        }
+                                    }
+                                }
+                            }}
+                            title={selectedLang === 'EN' ? 'Listening Mode' : 'Modo de Escucha'}
+                            style={{ fontFamily: "'Lato', sans-serif" }}
+                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
+                        >
+                            <MessageSquare 
+                                strokeWidth={isListenOnly ? 3 : 2}
+                                className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
+                                    isListenOnly 
+                                        ? 'text-red-600 scale-110' 
+                                        : 'text-black group-hover:text-red-600 group-hover:scale-110'
+                                }`} 
+                            />
+                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
+                                isListenOnly ? 'text-black font-extrabold' : 'text-black font-bold group-hover:text-red-600'
+                            }`}>
+                                {selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA'}
+                            </span>
+                        </button>
+                    </div>
+                )}
+              </div>
+            )}
 
 
                 {showReviewScreen ? (
@@ -679,156 +1222,47 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                     </div>
                 ) : (
                     <>
-                        {(hasInteracted || rightPanelTab === 'chat') && (
-                            <div className="w-full bg-transparent py-3 sm:py-4 px-2 sm:px-6 flex items-center justify-center flex-shrink-0 z-10">
-                                {rightPanelTab === 'chat' && (
-                                    <div className="flex items-center justify-between sm:justify-evenly w-full max-w-5xl gap-2 sm:gap-4 flex-wrap sm:flex-nowrap px-1 sm:px-2">
-                                        {/* 1. Pause / Resume Button */}
-                                        <div className="relative group/tooltip flex items-center justify-center">
-                                            <button 
-                                                onClick={() => {
-                                                    if (isPaused) {
-                                                        resume();
-                                                        if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                                            window.speechSynthesis.resume();
-                                                        }
-                                                    } else {
-                                                        pause();
-                                                        if (window.speechSynthesis && window.speechSynthesis.speaking) {
-                                                            window.speechSynthesis.pause();
-                                                        }
-                                                    }
-                                                }}
-                                                title={isPaused ? (selectedLang === 'EN' ? 'Resume chat' : 'Reanuda el chat') : (selectedLang === 'EN' ? 'Pause chat' : 'Pausa el chat')}
-                                                aria-label={isPaused ? (selectedLang === 'EN' ? 'Resume chat' : 'Reanuda el chat') : (selectedLang === 'EN' ? 'Pause chat' : 'Pausa el chat')}
-                                                className="flex items-center justify-center cursor-pointer p-1 select-none transition-colors duration-200"
-                                            >
-                                                {isPaused ? (
-                                                    <Play className="w-5 h-5 fill-current text-red-600 hover:text-red-700 transition-colors" />
-                                                ) : (
-                                                    <Pause className="w-5 h-5 fill-current text-[#9c6b21] hover:text-red-600 transition-colors" />
-                                                )}
-                                            </button>
-
-                                            {/* Hover Info Pop-up */}
-                                            <div className="absolute bottom-full mb-2 hidden group-hover/tooltip:flex flex-col items-center pointer-events-none z-50 transition-opacity duration-200 whitespace-nowrap">
-                                                <div className="bg-[#1b4079] text-white text-[11pt] font-sans px-3 py-1.5 rounded-lg shadow-xl border border-yellow-500/40 text-center leading-tight">
-                                                    {isPaused 
-                                                        ? (selectedLang === 'EN' ? 'Resume chat' : 'Reanuda el chat')
-                                                        : (selectedLang === 'EN' ? 'Pause chat' : 'Pausa el chat')
-                                                    }
-                                                </div>
-                                                <div className="w-2 h-2 -mt-1 bg-[#1b4079] rotate-45 border-r border-b border-yellow-500/40"></div>
-                                            </div>
-                                        </div>
-
-                                        {/* 2. Spanish Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsSpanishOnlyMode(!isSpanishOnlyMode)}
-                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                                        >
-                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
-                                                isSpanishOnlyMode 
-                                                ? 'bg-red-600' 
-                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
-                                            }`} />
-                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                isSpanishOnlyMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
-                                            }`}>
-                                                {selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL'}
-                                            </span>
-                                        </button>
-
-                                        {/* 3. Bilingual Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsBilingualMode(!isBilingualMode)}
-                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                                        >
-                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
-                                                isBilingualMode 
-                                                ? 'bg-red-600' 
-                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
-                                            }`} />
-                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                isBilingualMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
-                                            }`}>
-                                                BILINGÜE
-                                            </span>
-                                        </button>
-
-                                        {/* 4. English Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsEnglishOnlyMode(!isEnglishOnlyMode)}
-                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                                        >
-                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
-                                                isEnglishOnlyMode 
-                                                ? 'bg-red-600' 
-                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
-                                            }`} />
-                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                isEnglishOnlyMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
-                                            }`}>
-                                                {selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS'}
-                                            </span>
-                                        </button>
-
-                                        {/* 5. Translate / Translator Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsTranslateMode(!isTranslateMode)}
-                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                                        >
-                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
-                                                isTranslateMode 
-                                                ? 'bg-red-600' 
-                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
-                                            }`} />
-                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                isTranslateMode ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
-                                            }`}>
-                                                {selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR'}
-                                            </span>
-                                        </button>
-
-                                        {/* 6. Listen Only Option Toggle */}
-                                        <button 
-                                            onClick={() => setIsListenOnly(!isListenOnly)}
-                                            style={{ fontFamily: "'Lato', sans-serif" }}
-                                            className="flex items-center gap-1.5 cursor-pointer group py-1 select-none"
-                                        >
-                                            <span className={`w-3 h-3 rounded-full flex-shrink-0 transition-all duration-200 ${
-                                                isListenOnly 
-                                                ? 'bg-red-600' 
-                                                : 'bg-[#9c6b21] group-hover:bg-red-600'
-                                            }`} />
-                                            <span className={`text-[8pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                isListenOnly ? 'text-red-600 font-extrabold' : 'text-[#9c6b21] font-bold group-hover:text-red-600'
-                                            }`}>
-                                                {selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA'}
-                                            </span>
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        {/* Old sub-header bar has been removed */}
                         {rightPanelTab === 'home' ? (
                             <div className="flex-grow flex flex-col justify-between items-center text-center p-6 h-full animate-fade-in tab-content-area">
                                 <div className="flex-1 flex items-center justify-center py-6 w-full relative z-10">
                                     <img 
-                                      src="https://cdn.gamma.app/e61o72b77sp71e0/edited-images/xOsepr1r0_Xzzbxf.png" 
+                                      src={voyagerRobot} 
                                       alt="Voyager USA Mascot" 
                                       referrerPolicy="no-referrer"
-                                      className="w-[280px] h-[280px] md:w-[350px] md:h-[350px] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)]" 
+                                      className="w-[306px] h-[306px] md:w-[374px] md:h-[374px] max-w-[95%] max-h-[60vh] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)]" 
                                     />
                                 </div>
-                                <div className="pb-8 z-10 px-4">
-                                    <p style={{ fontFamily: '"Lato", sans-serif' }} className="text-xs md:text-sm font-medium text-black">
-                                      © 2026 Yo Soy Voger USA. All rights reserved. Derechos reservados
-                                    </p>
+                                <div className="pb-8 z-10 px-4 flex flex-col items-center flex-shrink-0 w-full">
+                                    {/* Footer Buttons Row */}
+                                    <div className="flex items-center justify-center gap-4 text-xs font-mono select-none">
+                                        {/* Copyright Button */}
+                                        <button 
+                                            onClick={() => setActivePolicyModal('copyright')}
+                                            className="flex items-center gap-1.5 text-neutral-600 hover:text-black transition-colors duration-300 tracking-wider cursor-pointer"
+                                        >
+                                            <span style={{ fontSize: '1.65em', lineHeight: '1' }} className="font-normal">©</span>
+                                            <span>Copyright</span>
+                                        </button>
+
+                                        {/* Privacy Button */}
+                                        <button 
+                                            onClick={() => setActivePolicyModal('privacy')}
+                                            className="flex items-center gap-1.5 text-neutral-600 hover:text-black transition-colors duration-300 tracking-wider cursor-pointer"
+                                        >
+                                            <Shield className="w-4 h-4" />
+                                            <span>Privacy</span>
+                                        </button>
+
+                                        {/* Terms Button */}
+                                        <button 
+                                            onClick={() => setActivePolicyModal('terms')}
+                                            className="flex items-center gap-1.5 text-neutral-600 hover:text-black transition-colors duration-300 tracking-wider cursor-pointer"
+                                        >
+                                            <FileText className="w-4 h-4" />
+                                            <span>Terms</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ) : rightPanelTab === 'chat' ? (
@@ -843,8 +1277,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                 </h2>
                                                 <p className="text-[10pt] text-black font-serif mt-1.5 max-w-lg mx-auto" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
                                                     {selectedLang === 'EN' 
-                                                        ? 'Choose your preferred conversation mode below to start practicing.' 
-                                                        : 'Selecciona el modo de conversación que prefieras para comenzar tu práctica.'}
+                                                        ? 'I have set the default mode to Spanish. You can click on the other modes to hear Voyager explain what each one does before starting your practice.' 
+                                                        : 'He configurado el modo Español como predeterminado. Puedes hacer clic en los otros modos para que Voyager te explique de qué trata cada uno antes de comenzar tu práctica.'}
                                                 </p>
                                             </div>
 
@@ -853,7 +1287,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                 {/* Left: Mascot */}
                                                 <div className="flex items-center justify-center">
                                                     <img 
-                                                        src="https://cdn.gamma.app/e61o72b77sp71e0/edited-images/xOsepr1r0_Xzzbxf.png" 
+                                                        src={voyagerRobot} 
                                                         alt="Voyager USA Mascot" 
                                                         referrerPolicy="no-referrer"
                                                         className="w-[160px] sm:w-[180px] md:w-[210px] object-contain drop-shadow-md" 
@@ -873,20 +1307,20 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     key={mode.id}
                                                                     onClick={() => handleModeSelection(mode.id as ConversationMode)}
-                                                                    className="w-full text-left py-2.5 px-1.5 flex items-start gap-3 transition-colors cursor-pointer rounded-lg group"
+                                                                    className="w-full text-left py-0.5 px-1.5 flex items-start gap-3 transition-colors cursor-pointer rounded-lg group"
                                                                 >
-                                                                    <div className="mt-1.5 flex-shrink-0">
+                                                                    <div className="mt-1.5 flex-shrink-0 w-3.5 h-3.5">
                                                                         <span className={`w-3.5 h-3.5 rounded-full flex-shrink-0 transition-all duration-200 block ${
                                                                             isSelected 
-                                                                            ? 'bg-red-600' 
-                                                                            : 'bg-[#9c6b21] group-hover:bg-red-600'
+                                                                            ? 'bg-red-600 opacity-100 scale-100 animate-bulb-glow' 
+                                                                            : 'bg-transparent opacity-0 scale-0'
                                                                         }`} />
                                                                     </div>
                                                                     <div className="flex-1 min-w-0">
-                                                                        <span className={`font-sans font-bold text-lg md:text-[1.18rem] block leading-tight transition-colors ${
+                                                                        <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-normal text-lg md:text-[1.18rem] block leading-tight transition-colors ${
                                                                             isSelected 
-                                                                            ? 'text-red-600' 
-                                                                            : 'text-[#9c6b21] group-hover:text-red-600'
+                                                                            ? 'text-black' 
+                                                                            : 'text-black/80 group-hover:text-black'
                                                                         }`}>
                                                                             {name}
                                                                         </span>
@@ -904,10 +1338,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                         <button 
                                                             id="home-mode-continua-btn"
                                                             onClick={handleContinuaClick}
-                                                            className="group py-2.5 px-8 bg-[#9c6b21] hover:bg-red-600 text-white font-bold text-xs md:text-sm tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center gap-2 min-w-[150px]"
+                                                            className="group py-2 px-6 bg-black/65 hover:bg-black text-white font-bold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg active:scale-95 flex items-center justify-center min-w-[120px]"
                                                         >
-                                                            <Sparkles className="w-4 h-4 text-white animate-pulse" />
-                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-white">
+                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-white">
                                                                 {selectedLang === 'EN' ? 'CONNECT' : 'CONECTA'}
                                                             </span>
                                                         </button>
@@ -918,8 +1351,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                     </div>
                                 ) : (
 
-                                <div className="flex-1 p-4 pt-2 tab-content-area overflow-y-auto max-h-[310px] md:max-h-[390px]">
-                                    <div className="min-h-full flex flex-col justify-end space-y-4">
+                                <div className="flex-1 px-3 pt-2 pb-4 tab-content-area overflow-y-auto min-h-0">
+                                    <div className="min-h-full flex flex-col justify-start space-y-4">
                                         {chatMessages.map((msg, index) => {
                             if (msg.sender === 'system') {
                                 return null;
@@ -933,46 +1366,30 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                             const isUser = msg.sender === 'user';
                             
-                            let showAvatar = true;
-                            if (index > 0) {
-                                let prevVisibleMsg = null;
-                                for (let i = index - 1; i >= 0; i--) {
-                                    const m = chatMessages[i];
-                                    if (m.sender !== 'system' && !(isConnected && m.id === 'welcome_1')) {
-                                        prevVisibleMsg = m;
-                                        break;
-                                    }
-                                }
-                                if (prevVisibleMsg && prevVisibleMsg.sender !== 'user') {
-                                    showAvatar = false;
-                                }
-                            }
-
                             return (
                                 <div key={msg.id} className={`flex items-start ${isUser ? 'justify-end' : 'justify-start'} gap-2.5 animate-fade-in`}>
-                                    {!isUser && (
-                                        <div className="w-10 h-10 md:w-12 md:h-12 flex-shrink-0 flex items-center justify-center rounded-full bg-white border border-zinc-200/60 shadow-sm overflow-hidden p-1.5">
-                                            {showAvatar ? (
-                                                <img 
-                                                    src={chatAvatarIcon} 
-                                                    alt="Voyager Tutor" 
-                                                    referrerPolicy="no-referrer"
-                                                    className="w-full h-full object-cover rounded-full" 
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full" />
-                                            )}
-                                        </div>
-                                    )}
-                                    <div className={`max-w-[78%] flex flex-col space-y-1 ${isUser ? 'items-end' : 'items-start'}`}>
+                                    <div className={`max-w-[88%] flex flex-col space-y-1 ${isUser ? 'items-end' : 'items-start'}`}>
                                         <div className={`
-                                            px-4 py-2.5 rounded-2xl text-sm leading-snug shadow-md transition-all
+                                            px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all
                                             ${isUser 
-                                                ? 'bg-gradient-to-br from-yellow-300/30 to-yellow-400/35 border border-yellow-200/20 backdrop-blur-md text-black rounded-tr-none font-normal' 
-                                                : 'bg-zinc-100 border border-zinc-200/60 text-zinc-800 rounded-tl-none'
+                                                ? 'bg-white border-[5px] border-blue-600/30 backdrop-blur-md text-black rounded-tr-none font-normal' 
+                                                : 'bg-white border-[5px] border-red-600/30 text-black rounded-tl-none'
                                             }
                                         `}>
-                                            <div className="chat-message-text whitespace-pre-line tracking-wider leading-snug">
+                                            {isUser ? (
+                                                <div className="flex justify-end mb-1 select-none">
+                                                    <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+                                                </div>
+                                            ) : (
+                                                <div 
+                                                    onClick={() => setHasInteracted(false)} 
+                                                    title={selectedLang === 'EN' ? 'Go to Welcome Page' : 'Ir a la página de bienvenida'} 
+                                                    className="flex justify-start mb-1 select-none cursor-pointer"
+                                                >
+                                                    <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600/70 hover:scale-110 active:scale-95 transition-all" />
+                                                </div>
+                                            )}
+                                            <div className={`chat-message-text whitespace-pre-line tracking-wider leading-snug ${isUser ? 'text-right' : 'text-left'}`}>
                                                 {(() => {
                                                     const rawText = getTranslatedMessageText(msg, selectedLang);
                                                     if (!isUser && rawText.includes(" / ")) {
@@ -980,15 +1397,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                         if (parts.length >= 2) {
                                                             return (
                                                                 <>
-                                                                    <div className="font-sans text-black leading-snug">{parseAndRenderEmojis(parts[0])}</div>
-                                                                    <div className="chat-message-english text-blue-900 font-sans leading-snug mt-2">
+                                                                    <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black font-semibold leading-snug">{parseAndRenderEmojis(parts[0])}</div>
+                                                                    <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="chat-message-english text-black leading-snug mt-2">
                                                                         {parseAndRenderEmojis(parts.slice(1).join(" / "))}
                                                                     </div>
                                                                 </>
                                                             );
                                                         }
                                                     }
-                                                    return <div className="font-sans text-black leading-snug">{parseAndRenderEmojis(rawText)}</div>;
+                                                    return <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black leading-snug">{parseAndRenderEmojis(rawText)}</div>;
                                                 })()}
                                             </div>
                                             
@@ -1297,7 +1714,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                 </div>
                                             )}
                                         </div>
-                                        {/* Timestamp removed */}
                                     </div>
                                 </div>
                             );
@@ -1323,16 +1739,20 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 onNavigateTab={(tab) => setRightPanelTab(tab)}
                             />
                         ) : rightPanelTab === 'teachers' ? (
-                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-[#FAF7F2]">
+                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">
                                 <TeacherInsightsPanel
                                     selectedLang={selectedLang}
                                     scores={scores}
                                     learnedWords={learnedWords}
                                     accentPatterns={accentPatterns}
+                                    onAskVoyager={(text) => {
+                                        setRightPanelTab('chat');
+                                        handleSuggestionClick(text);
+                                    }}
                                 />
                             </div>
                         ) : rightPanelTab === 'progress' ? (
-                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-[#f5efe6]">
+                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">
                                 <ProgressDashboard 
                                     selectedLang={selectedLang}
                                     scores={scores}
@@ -1362,25 +1782,21 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                         ) : null}
 
                     {!showReviewScreen && rightPanelTab === 'chat' && hasInteracted && (
-                        <div className="px-4 pb-4 bg-transparent flex items-start gap-2.5 w-full">
-                            <div className="w-10 flex-shrink-0 bg-transparent" />
-                            <form onSubmit={handleSendMessage} className="flex-1 max-w-[78%] relative rounded-3xl transition-all bg-[#ebd5a3] border border-[#dfc389]">
+                        <div className="px-3 pt-3 pb-6 md:pb-8 bg-[#d4d4d4] flex justify-end w-full">
+                            <form 
+                                onSubmit={handleSendMessage} 
+                                className="w-full max-w-[88%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
+                            >
+                                <div className="flex justify-end mb-1 select-none">
+                                    <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+                                </div>
                                 <input
                                     type="text"
                                     value={inputText}
                                     onChange={(e) => setInputText(e.target.value)}
                                     placeholder={placeholderText}
-                                    className="w-full pl-5 pr-12 py-2.5 focus:outline-none transition-all min-h-[44px] border-none rounded-3xl bg-transparent text-[#231d17] placeholder:text-[#231d17]/60 font-serif text-[15px] chat-input-text"
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={!inputText.trim()}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center bg-transparent border-none outline-none text-[#231d17] hover:text-[#231d17]/80 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed hover:scale-105"
-                                >
-                                    <svg className="w-4.5 h-4.5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                                    </svg>
-                                </button>
+                                    className="w-full focus:outline-none transition-all border-none bg-transparent text-black text-right placeholder:text-right placeholder:text-black/45 font-serif text-[14px] chat-input-text p-0"
+                                  />
                             </form>
                         </div>
                     )}
@@ -1390,6 +1806,68 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           )}
         </div>
       </div>
+      {/* Policy Modal Overlay */}
+      {activePolicyModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-neutral-300 border border-black/15 rounded-2xl max-w-xl w-full shadow-[0_25px_50px_rgba(0,0,0,0.4)] p-6 md:p-8 flex flex-col max-h-[85vh] animate-scale-up">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-neutral-300 pb-4 mb-4">
+              <h3 style={{ fontFamily: '"Lato", sans-serif' }} className="text-lg md:text-xl font-black text-black uppercase tracking-wider">
+                {activePolicyModal === 'copyright' ? (selectedLang === 'EN' ? 'Copyright Information' : 'Derechos de Autor') : activePolicyModal === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+              </h3>
+              <button 
+                onClick={() => setActivePolicyModal(null)}
+                className="text-neutral-500 hover:text-black transition-colors p-1 rounded-full hover:bg-neutral-200 cursor-pointer"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="overflow-y-auto pr-2 space-y-4 text-xs md:text-sm text-neutral-800 leading-relaxed font-sans select-text">
+              {activePolicyModal === 'copyright' ? (
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <span style={{ fontSize: '3em' }} className="font-bold text-amber-600 mb-4 block leading-none">©</span>
+                  <p className="font-semibold text-[#231d17] text-sm md:text-base max-w-sm leading-relaxed">
+                    © 2026 Yo Soy Voger USA. All rights reserved. Derechos reservados
+                  </p>
+                </div>
+              ) : activePolicyModal === 'privacy' ? (
+                <>
+                  <p className="font-semibold text-neutral-900">
+                    This policy applies exclusively to data collected through the M&K Customer Feedback Portal and does not govern any other data practices of M&K or its affiliated businesses.
+                  </p>
+                  <p>
+                    We collect your name, Google account email, star rating, review text, and submission timestamp via Google OAuth (no password stored) solely to process feedback, generate AI-enriched review suggestions for your approval, notify managers of low ratings, and log interactions in a secure Google Sheet for internal improvement. Your data is never sold or shared with third parties, is accessible only to authorized M&K team members, and is retained only as long as needed to support service improvement and accountability. You have the right to access, correct, or request deletion of your personal data at any time by contacting your designated M&K representative.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="font-semibold text-neutral-900">
+                    This policy applies exclusively to data collected through the M&K Customer Feedback Portal and does not govern any other data practices of M&K or its affiliated businesses.
+                  </p>
+                  <p>
+                    By accessing the M&K Customer Feedback Portal, you agree to use the service solely for its intended purpose of submitting genuine customer feedback — including optional AI-assisted enrichment and automated routing to M&K team members — and to provide accurate, truthful information at all times. M&K makes no guarantees, express or implied, regarding SEO outcomes, business results, or third-party platform visibility, and is not responsible for how submitted reviews are indexed or displayed. M&K reserves the right to modify, suspend, or discontinue the portal at any time without notice and, to the fullest extent permitted by law, shall not be liable for any indirect, incidental, or consequential damages arising from your use of or inability to use the service.
+                  </p>
+                </>
+              )}
+            </div>
+            
+            {/* Modal Footer */}
+            <div className="mt-6 flex justify-end border-t border-neutral-300 pt-4 flex-shrink-0">
+              <button 
+                onClick={() => setActivePolicyModal(null)}
+                style={{ fontFamily: "'Lato', sans-serif" }}
+                className="px-5 py-2 bg-neutral-800 hover:bg-black text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all cursor-pointer select-none"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

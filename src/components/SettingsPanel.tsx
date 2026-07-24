@@ -80,20 +80,42 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     : 'bilingual';
 
   return (
-    <div className="flex-1 p-4 md:p-6 overflow-y-auto tab-content-area bg-[#fcfaf7] text-[#231d17]">
+    <div className="flex-1 p-4 md:p-6 overflow-y-auto tab-content-area bg-neutral-300 text-black">
       <div className="max-w-3xl mx-auto space-y-6">
         
+        {/* SETTINGS SECTION EXPLANATION BANNER */}
+        <div className="bg-gradient-to-r from-zinc-700 via-zinc-800 to-[#231d17] rounded-2xl p-5 md:p-6 text-white text-left shadow-lg space-y-3 relative overflow-hidden border border-zinc-500/20 flex-shrink-0">
+          <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-8 translate-x-8">
+            <Settings className="w-48 h-48 text-white" />
+          </div>
+          <div className="relative z-10 flex flex-col justify-between gap-3">
+            <div className="space-y-1.5">
+              <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full border border-white/10 inline-block">
+                {isEn ? 'PREFERENCES & CONFIGURATION' : 'PREFERENCIAS Y CONFIGURACIÓN'}
+              </span>
+              <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-black tracking-tight uppercase">
+                {isEn ? 'Adjust Your Settings' : 'Ajusta tus Preferencias'}
+              </h2>
+              <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] text-white/90 leading-relaxed font-serif">
+                {isEn 
+                  ? 'Welcome to the Settings panel. Here you can configure the interface language, select translation and subtitle modes, toggle text-only listen-only mode, adjust voice speech rates, set your daily practice goals, and customize pedagogical feedback levels.'
+                  : 'Bienvenido al panel de Configuración. Aquí puedes graduar el idioma de la interfaz, elegir los modos de traducción y subtítulos, activar el modo de solo escucha (sin audio), ajustar la velocidad de reproducción de voz de Voyager, establecer tus metas de práctica diarias y personalizar el nivel de feedback pedagógico.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* HEADER */}
-        <div className="flex items-center justify-between pb-4 border-b border-[#e8ded0]">
+        <div className="flex items-center justify-between pb-4 border-b border-black/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#231d17] flex items-center justify-center text-amber-400 shadow-md">
               <Settings className="w-5 h-5 animate-spin-slow" />
             </div>
             <div>
-              <h2 className="text-lg font-serif font-bold text-[#231d17]">
+              <h2 className="text-lg font-serif font-bold text-black">
                 {isEn ? 'Application Settings' : 'Configuración de la Aplicación'}
               </h2>
-              <p className="text-xs text-[#231d17]/70">
+              <p className="text-xs text-black/70">
                 {isEn ? 'Customize voice output, subtitle modes, and learning targets.' : 'Personaliza la voz, subtítulos y metas de aprendizaje.'}
               </p>
             </div>

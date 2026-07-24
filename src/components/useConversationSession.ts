@@ -18,6 +18,7 @@ interface UseConversationSessionConfig {
   onClose: () => void;
   onAutoPause?: () => void;
   memory?: ConversationMemory;
+  hasInteracted: boolean;
 }
 
 export function useConversationSession(config: UseConversationSessionConfig) {
@@ -36,6 +37,7 @@ export function useConversationSession(config: UseConversationSessionConfig) {
     onClose,
     onAutoPause,
     memory,
+    hasInteracted,
   } = config;
 
   const [isConnected, setIsConnected] = useState(false);
@@ -205,25 +207,43 @@ export function useConversationSession(config: UseConversationSessionConfig) {
           if (msg.status === 'connected') {
             console.log('Gemini session active on backend. Mapping mode instructions via ConversationModePolicy.');
             
-            // Map state variables back to a typed Mode for ConversationModePolicy
-            const currentMode = isBilingualMode ? 'BILINGUAL'
-                              : isTranslateMode ? 'LIVE_TRANSLATOR'
-                              : isListenOnly ? 'LISTEN_ONLY'
-                              : isSpanishOnlyMode ? 'SPANISH'
-                              : isEnglishOnlyMode ? 'AMERICAN_ENGLISH'
-                              : 'BILINGUAL';
+            if (hasInteracted) {
+              // Map state variables back to a typed Mode for ConversationModePolicy
+              const currentMode = isBilingualMode ? 'BILINGUAL'
+                                : isTranslateMode ? 'LIVE_TRANSLATOR'
+                                : isListenOnly ? 'LISTEN_ONLY'
+                                : isSpanishOnlyMode ? 'SPANISH'
+                                : isEnglishOnlyMode ? 'AMERICAN_ENGLISH'
+                                : 'BILINGUAL';
 
-            let greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(currentMode, {
-              initialPrompt,
-              selectedLang
-            });
+              let greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(currentMode, {
+                initialPrompt,
+                selectedLang
+              });
 
-            if (memory) {
-              greetingPrompt += memory.getMemoryPayloadForPrompt();
-            }
-            
-            if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-              wsRef.current.send(JSON.stringify({ text: greetingPrompt }));
+              if (memory) {
+                greetingPrompt += memory.getMemoryPayloadForPrompt();
+              }
+              
+              if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({ text: greetingPrompt }));
+              }
+            } else {
+              // Speak welcome intro message on landing on Welcome page, without asking for name/age yet
+              const welcomeSpeech = selectedLang === 'EN'
+                ? "Hello! Welcome to USA Voyager. I have set the default mode to Spanish. You can click on the other modes to hear Voyager explain what each one does before starting your practice."
+                : "¡Hola! Bienvenido a USA Voyager. He configurado el modo Español como predeterminado. Puedes hacer clic en los otros modos para que Voyager te explique de qué trata cada uno antes de comenzar tu práctica.";
+              
+              const welcomeIntroPrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
+              
+              const lobbyReminderInstruction = `[SYSTEM INSTRUCTION: The user has NOT clicked the 'CONECTA' button on the screen yet to enter the active chat. You are allowed to chat, answer questions, and converse with them if they speak to you, but:
+1. Do NOT ask for the user's name or age yet. You must wait to ask for their name and age until they click CONECTA and enter the active chat section.
+2. In each response, you MUST softly and friendly remind them that they need to click the 'CONECTA' button on the right side of the screen to start the active chat and get the most out of USA VOYAGER (including written transcripts, interactive maps, scores, and personal recommendations).]`;
+
+              if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+                wsRef.current.send(JSON.stringify({ text: welcomeIntroPrompt }));
+                wsRef.current.send(JSON.stringify({ text: lobbyReminderInstruction }));
+              }
             }
             return;
           }

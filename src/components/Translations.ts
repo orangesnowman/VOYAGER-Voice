@@ -4,7 +4,7 @@ export const translations = {
   EN: {
     standby: "EN ESPERA",
     connecting: "Conectando...",
-    connect: "ENTER",
+    connect: "CONNECT",
     active: "ACTIVO",
     disconnected: "Desconectado",
     session: "Sesión",
@@ -54,7 +54,7 @@ export const translations = {
   ES: {
     standby: "EN ESPERA",
     connecting: "Conectando...",
-    connect: "ENTRADA",
+    connect: "CONECTAR",
     active: "ACTIVO",
     disconnected: "Desconectado",
     session: "Sesión",

@@ -206,7 +206,7 @@ export const Missions: React.FC<MissionsProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#F4F3EF] text-zinc-900 rounded-2xl p-4 font-sans overflow-hidden max-h-[380px] md:max-h-[440px] tab-content-area">
+    <div className="w-full h-full flex flex-col bg-neutral-300 text-zinc-900 rounded-2xl p-4 font-sans overflow-hidden max-h-[380px] md:max-h-[440px] tab-content-area">
       
       {/* Title Header */}
       <div className="flex justify-between items-center border-b border-zinc-200 pb-2.5 mb-3 flex-shrink-0">

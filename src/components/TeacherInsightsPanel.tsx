@@ -68,6 +68,28 @@ export const TeacherInsightsPanel: React.FC<TeacherInsightsPanelProps> = ({
   return (
     <div className="w-full font-sans text-[#0F172A] animate-fade-in space-y-5">
       
+      {/* EXPLANATORY HERO BANNER ABOUT HIRING LA PROFE */}
+      <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-[#231d17] rounded-2xl p-5 md:p-6 text-white text-left shadow-lg space-y-3 relative overflow-hidden border border-amber-500/20">
+        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-8 translate-x-8">
+          <Award className="w-48 h-48 text-white" />
+        </div>
+        <div className="relative z-10 flex flex-col justify-between gap-3">
+          <div className="space-y-1.5">
+            <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full border border-white/10 inline-block">
+              {selectedLang === 'EN' ? 'Hiring Availability' : 'OPCIÓN DE CONTRATACIÓN'}
+            </span>
+            <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-black tracking-tight uppercase">
+              {selectedLang === 'EN' ? 'Learn directly with La Profe!' : '¡Aprende inglés directamente con La Profe!'}
+            </h2>
+            <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] text-white/90 leading-relaxed font-serif">
+              {selectedLang === 'EN' 
+                ? 'You have the exclusive option to hire Alejandra Francois (La Profe), our Master English Immersion Coach. While USA Voyager guides your daily AI conversations, Alejandra offers personalized 1-on-1 private lessons to identify your phonetic blocks, refine your accent, and accelerate your path to fluency.'
+                : 'Tienes la opción exclusiva de contratar a Alejandra Francois (La Profe), nuestra Coach Maestra de Inmersión. Mientras USA Voyager guía tu práctica con Inteligencia Artificial, Alejandra te ayuda con clases particulares en vivo 1-a-1, identificando tus trabas de pronunciación y guiando tu aprendizaje paso a paso.'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* MAIN PROFILE & HIRING BANNER FOR ALEJANDRA FRANCOIS - LA PROFE */}
       <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm text-left space-y-6">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 border-b border-zinc-100 pb-5">
