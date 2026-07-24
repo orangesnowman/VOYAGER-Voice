@@ -1122,7 +1122,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                         <button 
                                                             id="home-mode-continua-btn"
                                                             onClick={handleContinuaClick}
-                                                            className="group py-2 px-6 border-2 border-black/65 hover:bg-black text-black/65 hover:text-white font-bold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 flex items-center justify-center min-w-[120px] bg-transparent"
+                                                            className="group py-2 px-6 border-2 border-black/65 hover:border-red-600 text-black/65 hover:text-red-600 font-bold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 flex items-center justify-center min-w-[120px] bg-transparent hover:bg-red-50/20"
                                                         >
                                                             <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-inherit transition-colors duration-300">
                                                                 {selectedLang === 'EN' ? 'CONNECT' : 'CONECTA'}
