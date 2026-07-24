@@ -1090,12 +1090,16 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     onClick={() => handleModeSelection(mode.id as ConversationMode)}
                                                                     className="w-full text-left py-0.5 px-1.5 flex items-start gap-3 transition-colors cursor-pointer rounded-lg group"
                                                                 >
-                                                                    <div className="mt-1.5 flex-shrink-0 w-3.5 h-3.5">
-                                                                        <span className={`w-3.5 h-3.5 rounded-full flex-shrink-0 transition-all duration-200 block ${
-                                                                            isSelected 
-                                                                            ? 'bg-red-600 opacity-100 scale-100 animate-bulb-glow' 
-                                                                            : 'bg-transparent opacity-0 scale-0'
-                                                                        }`} />
+                                                                    <div className="mt-1.5 flex-shrink-0 w-3.5 h-3.5 flex items-center justify-center">
+                                                                        {isSelected ? (
+                                                                            <MessageSquare 
+                                                                                strokeWidth={2.5} 
+                                                                                fill="currentColor" 
+                                                                                className="w-3.5 h-3.5 text-red-600 animate-bulb-glow" 
+                                                                            />
+                                                                        ) : (
+                                                                            <div className="w-3.5 h-3.5" />
+                                                                        )}
                                                                     </div>
                                                                     <div className="flex-1 min-w-0">
                                                                         <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-normal text-lg md:text-[1.18rem] block leading-tight transition-colors ${
