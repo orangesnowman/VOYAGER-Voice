@@ -1200,7 +1200,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             className={`text-[9px] font-black tracking-wider transition-all duration-300 ${
                                                                 isPaused 
                                                                     ? 'text-red-600 font-extrabold' 
-                                                                    : 'text-black/50 group-hover:text-red-600'
+                                                                    : 'text-blue-600/70 group-hover:text-red-600'
                                                             }`}
                                                         >
                                                             PAUSA
@@ -1229,7 +1229,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             {isPaused ? (
                                                                 <Play strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
                                                             ) : (
-                                                                <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-black/50 group-hover:text-red-600 transition-all duration-300" />
+                                                                <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
                                                             )}
                                                         </button>
                                                     </div>
