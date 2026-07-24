@@ -27,6 +27,8 @@ interface SettingsPanelProps {
   setIsSpanishOnlyMode: (val: boolean) => void;
   isEnglishOnlyMode: boolean;
   setIsEnglishOnlyMode: (val: boolean) => void;
+  showBubbles: boolean;
+  setShowBubbles: (val: boolean) => void;
   onClose?: () => void;
 }
 
@@ -43,6 +45,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
   setIsSpanishOnlyMode,
   isEnglishOnlyMode,
   setIsEnglishOnlyMode,
+  showBubbles,
+  setShowBubbles,
 }) => {
   const [voiceSpeed, setVoiceSpeed] = useState<'slow' | 'normal' | 'fast'>('normal');
   const [autoPlayAudio, setAutoPlayAudio] = useState<boolean>(true);
@@ -267,6 +271,30 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                   type="checkbox"
                   checked={isListenOnly}
                   onChange={(e) => setIsListenOnly(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-neutral-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#865918]"></div>
+              </label>
+            </div>
+
+            {/* Show Chat Bubbles Toggle */}
+            <div className="flex items-center justify-between p-3 bg-neutral-50 rounded-lg border border-[#e8ded0]">
+              <div className="flex items-center gap-2.5">
+                <Subtitles className="w-4 h-4 text-[#865918]" />
+                <div>
+                  <div className="text-xs font-bold text-[#231d17]">
+                    {isEn ? 'Show Chat Bubbles' : 'Ver Burbujas de Chat'}
+                  </div>
+                  <div className="text-[10px] text-neutral-500">
+                    {isEn ? 'Show transcription speech bubbles inside the conversation' : 'Muestra las burbujas de diálogo de la conversación'}
+                  </div>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={showBubbles}
+                  onChange={(e) => setShowBubbles(e.target.checked)}
                   className="sr-only peer"
                 />
                 <div className="w-9 h-5 bg-neutral-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#865918]"></div>

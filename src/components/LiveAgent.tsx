@@ -1170,27 +1170,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                 <div className="flex-1 px-3 pt-2 pb-4 tab-content-area overflow-y-auto min-h-0">
                                     <div className="min-h-full flex flex-col justify-start space-y-4">
-                                        {/* Toggle button to show/hide chat speech bubbles */}
-                                        <div className="flex justify-center select-none flex-shrink-0">
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowBubbles(!showBubbles)}
-                                                className="flex items-center gap-1.5 px-4 py-1.5 bg-white border border-black/10 hover:border-red-600/30 rounded-full text-[10px] font-bold text-black tracking-wider transition-all duration-300 cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
-                                            >
-                                                {showBubbles ? (
-                                                    <>
-                                                        <EyeOff className="w-3.5 h-3.5 text-red-600" />
-                                                        <span>{selectedLang === 'EN' ? 'HIDE BUBBLES' : 'OCULTAR BURBUJAS'}</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Eye className="w-3.5 h-3.5 text-blue-600" />
-                                                        <span>{selectedLang === 'EN' ? 'SHOW BUBBLES' : 'VER BURBUJAS'}</span>
-                                                    </>
-                                                )}
-                                            </button>
-                                        </div>
-
                                         {showBubbles && chatMessages.map((msg, index) => {
                             if (msg.sender === 'system') {
                                 return null;
@@ -1723,6 +1702,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 setIsSpanishOnlyMode={setIsSpanishOnlyMode}
                                 isEnglishOnlyMode={isEnglishOnlyMode}
                                 setIsEnglishOnlyMode={setIsEnglishOnlyMode}
+                                showBubbles={showBubbles}
+                                setShowBubbles={setShowBubbles}
                             />
                         ) : null}
 
