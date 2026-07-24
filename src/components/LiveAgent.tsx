@@ -1229,11 +1229,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
                                                                     isSpanishOnlyMode 
                                                                         ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/60 group-hover:text-red-600 group-hover:scale-110'
+                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
                                                                 }`} 
                                                             />
                                                             <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isSpanishOnlyMode ? 'text-black font-extrabold' : 'text-black/60 font-bold group-hover:text-red-600'
+                                                                isSpanishOnlyMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
                                                             }`}>
                                                                 {selectedLang === 'EN' ? 'SPANISH' : 'ESPAÑOL'}
                                                             </span>
@@ -1260,11 +1260,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
                                                                     isBilingualMode 
                                                                         ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/60 group-hover:text-red-600 group-hover:scale-110'
+                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
                                                                 }`} 
                                                             />
                                                             <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isBilingualMode ? 'text-black font-extrabold' : 'text-black/60 font-bold group-hover:text-red-600'
+                                                                isBilingualMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
                                                             }`}>
                                                                 BILINGÜE
                                                             </span>
@@ -1291,11 +1291,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
                                                                     isEnglishOnlyMode 
                                                                         ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/60 group-hover:text-red-600 group-hover:scale-110'
+                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
                                                                 }`} 
                                                             />
                                                             <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isEnglishOnlyMode ? 'text-black font-extrabold' : 'text-black/60 font-bold group-hover:text-red-600'
+                                                                isEnglishOnlyMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
                                                             }`}>
                                                                 {selectedLang === 'EN' ? 'ENGLISH' : 'INGLÉS'}
                                                             </span>
@@ -1322,11 +1322,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
                                                                     isTranslateMode 
                                                                         ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/60 group-hover:text-red-600 group-hover:scale-110'
+                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
                                                                 }`} 
                                                             />
                                                             <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isTranslateMode ? 'text-black font-extrabold' : 'text-black/60 font-bold group-hover:text-red-600'
+                                                                isTranslateMode ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
                                                             }`}>
                                                                 {selectedLang === 'EN' ? 'TRANSLATOR' : 'TRADUCTOR'}
                                                             </span>
@@ -1353,11 +1353,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 className={`w-3.5 h-3.5 flex-shrink-0 transition-all duration-200 ${
                                                                     isListenOnly 
                                                                         ? 'text-red-600 scale-110' 
-                                                                        : 'text-black/60 group-hover:text-red-600 group-hover:scale-110'
+                                                                        : 'text-black/45 group-hover:text-red-600 group-hover:scale-110'
                                                                 }`} 
                                                             />
                                                             <span className={`text-[7.5pt] tracking-wider uppercase whitespace-nowrap transition-colors ${
-                                                                isListenOnly ? 'text-black font-extrabold' : 'text-black/60 font-bold group-hover:text-red-600'
+                                                                isListenOnly ? 'text-black font-extrabold' : 'text-black/45 font-bold group-hover:text-red-600'
                                                             }`}>
                                                                 {selectedLang === 'EN' ? 'LISTEN' : 'ESCUCHA'}
                                                             </span>
