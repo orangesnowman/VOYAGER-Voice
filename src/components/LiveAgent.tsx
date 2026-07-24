@@ -920,7 +920,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                 {/* Row 1: Main Menu & Controls */}
                 <div className="w-full flex items-center justify-center relative">
                     {/* Settings Button */}
-                    <div className="absolute -right-1.5 sm:-right-[2px] top-0.5">
+                    <div className="absolute -right-4 sm:-right-3 top-0.5">
                         <button 
                             onClick={() => setRightPanelTab('settings')}
                             title={selectedLang === 'EN' ? 'Settings' : 'Configura'}
