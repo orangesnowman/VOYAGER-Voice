@@ -1094,8 +1094,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         {isSelected ? (
                                                                             <MessageSquare 
                                                                                 strokeWidth={2.5} 
-                                                                                fill="currentColor" 
-                                                                                className="w-3.5 h-3.5 text-red-600 animate-bulb-glow" 
+                                                                                className="w-3.5 h-3.5 text-red-600 scale-x-[-1]" 
                                                                             />
                                                                         ) : (
                                                                             <div className="w-3.5 h-3.5" />
