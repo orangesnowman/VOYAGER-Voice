@@ -206,6 +206,14 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
         </div>
       </div>
 
+      {/* SECTION TITLE: TU NIVEL / YOUR LEVEL */}
+      <div className="flex items-center justify-between mb-2 mt-1 text-left">
+        <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
+          <Award className="w-4 h-4 text-neutral-700" />
+          {selectedLang === 'EN' ? 'Your Level' : 'Tu Nivel'}
+        </h4>
+      </div>
+
       {/* Profile Header Block */}
       <div className="bg-white rounded-2xl p-4 border border-black/10 shadow-sm mb-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
