@@ -12,7 +12,7 @@ import { SettingsPanel } from './SettingsPanel';
 import { ShoppingPanel } from './ShoppingPanel';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
-import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart, Briefcase, BookOpen, Luggage, Rocket, Check } from 'lucide-react';
+import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart, Briefcase, BookOpen, Luggage, Rocket, Check, UserCheck, Presentation, MessageSquareText } from 'lucide-react';
 
 import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { TRAVEL_PRESETS } from './TravelPresets';
@@ -211,6 +211,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [onboardingStep, setOnboardingStep] = useState<number>(0);
   const [selectedGoal, setSelectedGoal] = useState<'PROFESSIONAL' | 'ESTUDIO' | 'VIAJANTE'>('PROFESSIONAL');
   const [selectedLevel, setSelectedLevel] = useState<'PRINCIPIANTE' | 'INTERMEDIO' | 'AVANZADO'>('INTERMEDIO');
+  const [selectedProfSubGoal, setSelectedProfSubGoal] = useState<'CONSEGUIR_EMPLEO' | 'COMUNICARME_TRABAJO' | 'CRECER_PROFESIONAL'>('COMUNICARME_TRABAJO');
   const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
   const [showReviewScreen, setShowReviewScreen] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
@@ -630,11 +631,19 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
   const handleCompleteOnboarding = () => {
     const saved = localStorage.getItem('voyager_user_account');
+    const getGoalText = () => {
+      if (selectedGoal === 'PROFESSIONAL') {
+        if (selectedProfSubGoal === 'CONSEGUIR_EMPLEO') return 'Professional: Conseguir Empleo';
+        if (selectedProfSubGoal === 'COMUNICARME_TRABAJO') return 'Professional: Comunicarme en el Trabajo';
+        return 'Professional: Crecer Profesionalmente';
+      }
+      return selectedGoal === 'ESTUDIO' ? 'Academic Study & Reading' : 'Travel & Daily Conversation';
+    };
     let u = {
       name: selectedLang === 'EN' ? 'Learner' : 'Estudiante',
       email: 'learner@usavoyager.com',
       provider: 'Guest' as const,
-      goal: selectedGoal === 'PROFESSIONAL' ? 'Business English & Networking' : (selectedGoal === 'ESTUDIO' ? 'Academic Study & Reading' : 'Travel & Daily Conversation'),
+      goal: getGoalText(),
       levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
       completedDays: [1],
       plan: 'FREE' as const
@@ -644,7 +653,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         const parsed = JSON.parse(saved);
         u = {
           ...parsed,
-          goal: selectedGoal === 'PROFESSIONAL' ? 'Business English & Networking' : (selectedGoal === 'ESTUDIO' ? 'Academic Study & Reading' : 'Travel & Daily Conversation'),
+          goal: getGoalText(),
           levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
         };
       } catch (e) {}
@@ -1135,7 +1144,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                             {/* Header */}
                                             <div className="text-center mb-5 md:mb-6 flex flex-col items-center">
                                                 <h2 className="text-2xl md:text-3xl font-bold text-black leading-tight">
-                                                    {selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!'}
+                                                    {onboardingStep === 11
+                                                        ? (selectedLang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?')
+                                                        : (selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!')
+                                                    }
                                                 </h2>
                                                 <p className="text-[10.5pt] text-black font-serif mt-1.5 max-w-lg mx-auto" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
                                                     {onboardingStep === 0 && (selectedLang === 'EN' 
@@ -1144,6 +1156,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 1 && (selectedLang === 'EN' 
                                                         ? 'What is your primary learning goal?' 
                                                         : '¿Cuál es tu objetivo de aprendizaje principal?')}
+                                                    {onboardingStep === 11 && (selectedLang === 'EN' 
+                                                        ? 'Choose your main goal. Voyager will customize work practices and situations for you.' 
+                                                        : 'Elige tu objetivo principal. Voyager personalizará las prácticas y situaciones de trabajo para ti.')}
                                                     {onboardingStep === 2 && (selectedLang === 'EN' 
                                                         ? 'What is your estimated English level?' 
                                                         : '¿Cuál es tu nivel estimado de inglés?')}
@@ -1231,6 +1246,67 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     <ArrowLeft className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                                 <button
+                                                                    onClick={() => {
+                                                                        if (selectedGoal === 'PROFESSIONAL') {
+                                                                            setOnboardingStep(11);
+                                                                        } else {
+                                                                            setOnboardingStep(2);
+                                                                        }
+                                                                    }}
+                                                                    title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
+                                                                >
+                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep === 11 && (
+                                                        <div className="space-y-3.5 w-full">
+                                                            {[
+                                                                { id: 'CONSEGUIR_EMPLEO', label: selectedLang === 'EN' ? 'CONSEGUIR EMPLEO' : 'CONSEGUIR EMPLEO', icon: UserCheck },
+                                                                { id: 'COMUNICARME_TRABAJO', label: selectedLang === 'EN' ? 'COMUNICARME EN EL TRABAJO' : 'COMUNICARME EN EL TRABAJO', icon: MessageSquareText },
+                                                                { id: 'CRECER_PROFESIONAL', label: selectedLang === 'EN' ? 'CRECER PROFESIONALMENTE' : 'CRECER PROFESIONALMENTE', icon: Presentation }
+                                                            ].map((opt) => {
+                                                                const IconComp = opt.icon;
+                                                                const isSel = selectedProfSubGoal === opt.id;
+                                                                return (
+                                                                    <div 
+                                                                        key={opt.id}
+                                                                        onClick={() => setSelectedProfSubGoal(opt.id as any)}
+                                                                        className={`flex items-center justify-between px-5 py-4 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
+                                                                            isSel 
+                                                                                ? 'border-red-600 bg-neutral-200/50' 
+                                                                                : 'border-black hover:border-neutral-800 bg-[#EAEAEA]/80'
+                                                                        }`}
+                                                                    >
+                                                                        <div className="flex items-center gap-3.5">
+                                                                            <IconComp className={`w-6 h-6 flex-shrink-0 ${isSel ? 'text-red-600' : 'text-black'}`} />
+                                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-xs md:text-sm font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                                {opt.label}
+                                                                            </span>
+                                                                        </div>
+                                                                        {isSel ? (
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
+                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+
+                                                            <div className="pt-4 flex gap-4 w-full justify-start">
+                                                                <button
+                                                                    onClick={() => setOnboardingStep(1)}
+                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
+                                                                >
+                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
+                                                                </button>
+                                                                <button
                                                                     onClick={() => setOnboardingStep(2)}
                                                                     title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
                                                                     className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
@@ -1279,7 +1355,13 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                             <div className="pt-4 flex gap-4 w-full justify-start">
                                                                 <button
-                                                                    onClick={() => setOnboardingStep(1)}
+                                                                    onClick={() => {
+                                                                        if (selectedGoal === 'PROFESSIONAL') {
+                                                                            setOnboardingStep(11);
+                                                                        } else {
+                                                                            setOnboardingStep(1);
+                                                                        }
+                                                                    }}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
                                                                     className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
                                                                 >
