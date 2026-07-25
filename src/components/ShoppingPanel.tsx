@@ -307,38 +307,40 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         return (
           <div 
             key={msg.id || index} 
-            className={`flex flex-col w-[85%] sm:w-[60%] ${isUser ? 'self-end items-end' : 'self-start items-start'} animate-fade-in flex-shrink-0`}
+            className={`flex items-start ${isUser ? 'justify-end' : 'justify-start'} gap-2.5 animate-fade-in flex-shrink-0 w-full`}
           >
-            <div className={`
-              w-full px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
-              ${isUser 
-                ? 'border-blue-600/30 text-black rounded-tr-none' 
-                : 'border-red-600/30 text-black rounded-tl-none font-serif'
-              }
-            `}>
-              {isUser ? (
-                <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
-                  <div className="flex items-center gap-1">
-                    <span 
-                      style={{ fontFamily: "'Lato', sans-serif" }} 
-                      className="text-[9px] font-black tracking-wider text-blue-600/70"
-                    >
-                      {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
-                    </span>
-                    <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70" />
+            <div className={`max-w-[88%] flex flex-col space-y-1 ${isUser ? 'items-end' : 'items-start'}`}>
+              <div className={`
+                px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
+                ${isUser 
+                  ? 'border-blue-600/30 text-black rounded-tr-none' 
+                  : 'border-red-600/30 text-black rounded-tl-none font-serif'
+                }
+              `}>
+                {isUser ? (
+                  <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
+                    <div className="flex items-center gap-1">
+                      <span 
+                        style={{ fontFamily: "'Lato', sans-serif" }} 
+                        className="text-[9px] font-black tracking-wider text-blue-600/70"
+                      >
+                        {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
+                      </span>
+                      <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70" />
+                    </div>
+                    <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
                   </div>
-                  <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+                ) : (
+                  <div className="flex items-center gap-2 mb-2 select-none">
+                    <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
+                  </div>
+                )}
+                <div 
+                  style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
+                  className={`text-black leading-snug tracking-wider whitespace-pre-line ${isUser ? 'text-right' : 'text-left'}`}
+                >
+                  {displayTxt}
                 </div>
-              ) : (
-                <div className="flex items-center gap-2 mb-2 select-none">
-                  <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
-                </div>
-              )}
-              <div 
-                style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                className={`text-black leading-snug tracking-wider whitespace-pre-line ${isUser ? 'text-right' : 'text-left'}`}
-              >
-                {displayTxt}
               </div>
             </div>
           </div>
