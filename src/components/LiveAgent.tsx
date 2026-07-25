@@ -1275,7 +1275,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         className={`flex items-center justify-between px-5 py-4 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
                                                                                 ? 'border-red-600 bg-neutral-200/50' 
-                                                                                : 'border-black hover:border-neutral-800 bg-[#EAEAEA]/80'
+                                                                                : 'border-black/65 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
@@ -1289,7 +1289,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/65 flex-shrink-0" />
                                                                         )}
                                                                     </div>
                                                                 );
@@ -1336,7 +1336,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         className={`flex items-center justify-between px-5 py-4 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
                                                                                 ? 'border-red-600 bg-neutral-200/50' 
-                                                                                : 'border-black hover:border-neutral-800 bg-[#EAEAEA]/80'
+                                                                                : 'border-black/65 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
@@ -1350,7 +1350,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/65 flex-shrink-0" />
                                                                         )}
                                                                     </div>
                                                                 );
@@ -1391,7 +1391,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         className={`flex items-center justify-between px-5 py-4 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
                                                                                 ? 'border-red-600 bg-neutral-200/50' 
-                                                                                : 'border-black hover:border-neutral-800 bg-[#EAEAEA]/80'
+                                                                                : 'border-black/65 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
@@ -1405,7 +1405,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/65 flex-shrink-0" />
                                                                         )}
                                                                     </div>
                                                                 );
