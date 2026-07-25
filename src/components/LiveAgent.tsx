@@ -842,8 +842,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       ? (selectedLang === 'EN' ? 'Connect' : 'Conecta') 
       : (selectedLang === 'EN' ? 'Next' : 'Siguiente');
   const nextBtnClasses = isFinalStep
-      ? "w-9 h-9 rounded-full border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-      : "w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent";
+      ? "w-9 h-9 rounded-full border-[3px] border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+      : "w-9 h-9 rounded-full border-[3px] border-black/40 text-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent";
 
   const placeholderText = selectedLang === 'EN' 
     ? 'Type your message or scenario...' 
@@ -1240,7 +1240,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
                                                                     title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-9 h-9 rounded-full border-[3px] border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                                                                 </button>
@@ -1432,7 +1432,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             <button
                                                                 onClick={handleOnboardingBack}
                                                                 title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                className="w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                className="w-9 h-9 rounded-full border-[3px] border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                             >
                                                                 <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
                                                             </button>
