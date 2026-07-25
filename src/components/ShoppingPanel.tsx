@@ -185,11 +185,11 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           </ul>
         </div>
 
-        <div>
+        <div className="flex justify-start">
           <button
             onClick={() => handlePurchaseClick(p.id)}
             disabled={isCurrentlyPro}
-            className={`w-full py-2.5 border-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs ${
+            className={`w-[50%] py-2.5 border-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs ${
               isCurrentlyPro 
                 ? 'bg-neutral-100 border-neutral-300 text-neutral-400 cursor-default'
                 : 'border-red-600 text-red-600 bg-transparent hover:bg-red-50/20 hover:border-red-700 hover:text-red-700 font-mono'
@@ -208,7 +208,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
     <div className="flex-1 flex flex-col p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
       
       {/* THE MAIN SHOP CONTAINER CARD WITH PINK BORDER */}
-      <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0 self-start w-[85%] sm:w-[60%]">
+      <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
         
         {/* Sub-tab Navigation Header Bar */}
         <div className="flex items-center gap-3 pb-3.5 border-b border-neutral-100 select-none text-[9.5px] md:text-[10.5px]">
@@ -307,7 +307,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               inputEl.value = '';
             }
           }}
-          className="w-[85%] sm:w-[60%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
+          className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
         >
           <div className="flex justify-end items-center gap-1.5 mb-1.5 text-[8.5pt] font-black text-blue-600 leading-none">
             <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>

@@ -138,7 +138,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
     <div className="flex-1 flex flex-col p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
       
       {/* THE MAIN PERFIL CONTAINER CARD WITH PINK BORDER */}
-      <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0 self-start w-[85%] sm:w-[60%]">
+      <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
         
         {/* Sub-tab Navigation Header Bar */}
         <div className="flex items-center gap-3 pb-3.5 border-b border-neutral-100 select-none text-[9.5px] md:text-[10.5px]">
@@ -556,7 +556,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
               inputEl.value = '';
             }
           }}
-          className="w-[85%] sm:w-[60%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
+          className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
         >
           <div className="flex justify-end items-center gap-1.5 mb-1.5 text-[8.5pt] font-black text-blue-600 leading-none">
             <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>
