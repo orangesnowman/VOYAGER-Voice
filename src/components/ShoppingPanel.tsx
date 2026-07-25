@@ -263,7 +263,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
 
               {/* Chat dialogue history list inside Compras welcome card */}
               {chatMessages.filter(msg => msg.sender === 'user' || msg.sender === 'model').length > 0 && (
-                <div className="pt-3.5 border-t border-neutral-100 space-y-3">
+                <div className="pt-3.5 border-t border-neutral-100 space-y-4 flex flex-col w-full">
                   {chatMessages
                     .filter(msg => msg.sender === 'user' || msg.sender === 'model')
                     .map((msg, index) => {
@@ -277,17 +277,36 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                         }
                       }
                       
+                      const isUser = msg.sender === 'user';
+                      
                       return (
-                        <div key={msg.id || index} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                          <span className="text-[8px] font-black uppercase text-neutral-400 tracking-wider mb-0.5 select-none">
-                            {msg.sender === 'user' ? (selectedLang === 'EN' ? 'YOU' : 'TÚ') : 'VOYAGER'}
-                          </span>
-                          <div className={`p-2.5 rounded-xl text-xs max-w-[85%] leading-relaxed ${
-                            msg.sender === 'user'
-                              ? 'bg-blue-50 text-blue-900 border border-blue-100 rounded-tr-none'
-                              : 'bg-red-50/50 text-red-900 border border-red-100/40 rounded-tl-none font-serif'
-                          }`}>
-                            {displayTxt}
+                        <div 
+                          key={msg.id || index} 
+                          className={`flex flex-col w-[88%] ${isUser ? 'self-end items-end' : 'self-start items-start'} animate-fade-in`}
+                        >
+                          <div className={`
+                            w-full px-4 py-2.5 rounded-2xl text-xs leading-relaxed transition-all bg-white border-[5px]
+                            ${isUser 
+                              ? 'border-blue-600/30 text-black rounded-tr-none' 
+                              : 'border-red-600/30 text-black rounded-tl-none font-serif'
+                            }
+                          `}>
+                            {isUser ? (
+                              <div className="flex items-center justify-end gap-2 mb-1 select-none text-[8px] font-black text-blue-600">
+                                <div className="flex items-center gap-1">
+                                  <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>
+                                  <Pause className="w-3 h-3 fill-blue-600 stroke-none" />
+                                </div>
+                                <User strokeWidth={2.5} className="w-3.5 h-3.5 text-blue-600/70" />
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2 mb-1.5 select-none">
+                                <Bot className="w-4 h-4 text-red-600" />
+                              </div>
+                            )}
+                            <p className={isUser ? 'text-right text-black font-normal' : 'text-left text-black font-normal'}>
+                              {displayTxt}
+                            </p>
                           </div>
                         </div>
                       );
