@@ -1711,7 +1711,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 accentPatterns={accentPatterns}
                                 onAskVoyager={(text) => {
                                     setRightPanelTab('chat');
-                                    handleSuggestionClick(text);
+                                    setHasInteracted(true);
+                                    addUserMessage(text);
+                                    const profilePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). Responde ÚNICAMENTE en español de forma clara, amigable y directa para que un usuario de habla hispana entienda perfectamente su avance y datos. No des explicaciones en inglés ni intentes enseñar inglés aquí. Pregunta del usuario: "${text}"]`;
+                                    sendText(profilePrompt);
                                 }}
                                 onNavigateTab={(tab) => setRightPanelTab(tab)}
                             />
@@ -1779,7 +1782,10 @@ Pregunta del usuario: "${text}"]`;
                                     accentPatterns={accentPatterns}
                                     onAskVoyager={(text) => {
                                         setRightPanelTab('chat');
-                                        handleSuggestionClick(text);
+                                        setHasInteracted(true);
+                                        addUserMessage(text);
+                                        const teachersPrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre la sección de La Profe (Alejandra Francois, acompañamiento de clases en vivo, grabaciones de acento o logs de pronunciación). Responde ÚNICAMENTE en español de forma clara, directa y comprensible para que un usuario de habla hispana entienda perfectamente cómo funciona el acompañamiento docente. No uses inglés ni enseñes inglés aquí. Pregunta del usuario: "${text}"]`;
+                                        sendText(teachersPrompt);
                                     }}
                                 />
                             </div>
