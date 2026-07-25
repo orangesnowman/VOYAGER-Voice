@@ -310,28 +310,36 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
             className={`flex flex-col w-[85%] sm:w-[60%] ${isUser ? 'self-end items-end' : 'self-start items-start'} animate-fade-in flex-shrink-0`}
           >
             <div className={`
-              w-full px-4 py-2.5 rounded-2xl text-xs leading-relaxed transition-all bg-white border-[5px]
+              w-full px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
               ${isUser 
                 ? 'border-blue-600/30 text-black rounded-tr-none' 
                 : 'border-red-600/30 text-black rounded-tl-none font-serif'
               }
             `}>
               {isUser ? (
-                <div className="flex items-center justify-end gap-2 mb-1 select-none text-[8px] font-black text-blue-600">
+                <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
                   <div className="flex items-center gap-1">
-                    <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>
-                    <Pause className="w-3 h-3 fill-blue-600 stroke-none" />
+                    <span 
+                      style={{ fontFamily: "'Lato', sans-serif" }} 
+                      className="text-[9px] font-black tracking-wider text-blue-600/70"
+                    >
+                      {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
+                    </span>
+                    <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70" />
                   </div>
-                  <User strokeWidth={2.5} className="w-3.5 h-3.5 text-blue-600/70" />
+                  <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
                 </div>
               ) : (
-                <div className="flex items-center gap-2 mb-1.5 select-none">
-                  <Bot className="w-4 h-4 text-red-600" />
+                <div className="flex items-center gap-2 mb-2 select-none">
+                  <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
                 </div>
               )}
-              <p className={isUser ? 'text-right text-black font-normal' : 'text-left text-black font-normal'}>
+              <div 
+                style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
+                className={`text-black leading-snug tracking-wider whitespace-pre-line ${isUser ? 'text-right' : 'text-left'}`}
+              >
                 {displayTxt}
-              </p>
+              </div>
             </div>
           </div>
         );
