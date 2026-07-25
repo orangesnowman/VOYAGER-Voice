@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Sparkles, Check, ShieldCheck, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User } from 'lucide-react';
+import { ShoppingCart, Sparkles, Check, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User } from 'lucide-react';
 import { StripePaymentModal } from './StripePaymentModal';
 
 interface ShoppingPanelProps {
@@ -258,14 +258,6 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                   ? 'Welcome to the Voyager Shop! Here you can check our immersion packages, buy sessions, or upgrade your account to PRO. Click on the tabs above to explore each choice!'
                   : '¡Bienvenido a la Tienda de Voyager! Aquí puedes ver nuestros paquetes de inmersión, comprar clases o cambiar tu cuenta a PRO. ¡Haz clic en las pestañas superiores para ver el detalle de cada opción!'}
               </p>
-
-              {/* Secure Checkout Alert bar */}
-              <div className="bg-neutral-100 border border-neutral-200 p-3 rounded-2xl flex items-center justify-center gap-2 select-none">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                <span className="text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider">
-                  {selectedLang === 'EN' ? 'Secure 256-Bit Stripe Checkout' : 'Pago Seguro de Stripe de 256 Bits'}
-                </span>
-              </div>
             </div>
           )}
 
