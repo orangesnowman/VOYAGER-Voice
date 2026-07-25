@@ -1175,14 +1175,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                             </div>
 
                                             {/* Main grid: Mascot on Left, Steps on Right */}
-                                            <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] md:grid-cols-[210px_1fr] gap-4 md:gap-6 items-center w-full">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10 items-center w-full">
                                                 {/* Left: Mascot */}
-                                                <div className="flex items-center justify-center">
+                                                <div className="flex items-center justify-center w-full">
                                                     <img 
                                                         src={voyagerRobot} 
                                                         alt="Voyager USA Mascot" 
                                                         referrerPolicy="no-referrer"
-                                                        className="w-[160px] sm:w-[180px] md:w-[210px] object-contain drop-shadow-md animate-float-zero-g" 
+                                                        className="w-full max-w-[220px] md:max-w-[260px] object-contain drop-shadow-md animate-float-zero-g" 
                                                     />
                                                 </div>
 
