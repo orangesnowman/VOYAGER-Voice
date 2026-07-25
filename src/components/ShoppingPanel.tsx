@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Sparkles, Check, CreditCard, ShieldCheck, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User } from 'lucide-react';
 import { StripePaymentModal } from './StripePaymentModal';
-import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 
 interface ShoppingPanelProps {
   selectedLang: 'EN' | 'ES';
@@ -296,25 +295,11 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           {activeSubTab === 'welcome' && (
             <div className="animate-fade-in flex flex-col space-y-4">
               {/* Voyager welcome text */}
-              <div className="flex items-start gap-3">
-                <div className="w-[45px] h-[45px] rounded-full bg-slate-900 border-2 border-red-600/30 flex-shrink-0 overflow-hidden flex items-center justify-center shadow-md">
-                  <img 
-                    src={voyagerRobot} 
-                    alt="Voyager Mascot" 
-                    className="w-full h-full object-contain" 
-                  />
-                </div>
-                <div className="flex-1">
-                  <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] font-black uppercase tracking-widest text-red-600/70 block mb-1">
-                    VOYAGER
-                  </span>
-                  <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black">
-                    {selectedLang === 'EN' 
-                      ? 'Welcome to the Voyager Shop! Here you can check our immersion packages, buy sessions, or upgrade your account to PRO. Click on the tabs above to explore each choice!'
-                      : '¡Bienvenido a la Tienda de Voyager! Aquí puedes ver nuestros paquetes de inmersión, comprar clases o cambiar tu cuenta a PRO. ¡Haz clic en las pestañas superiores para ver el detalle de cada opción!'}
-                  </p>
-                </div>
-              </div>
+              <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black">
+                {selectedLang === 'EN' 
+                  ? 'Welcome to the Voyager Shop! Here you can check our immersion packages, buy sessions, or upgrade your account to PRO. Click on the tabs above to explore each choice!'
+                  : '¡Bienvenido a la Tienda de Voyager! Aquí puedes ver nuestros paquetes de inmersión, comprar clases o cambiar tu cuenta a PRO. ¡Haz clic en las pestañas superiores para ver el detalle de cada opción!'}
+              </p>
 
               {/* Secure Checkout Alert bar */}
               <div className="bg-neutral-100 border border-neutral-200 p-3 rounded-2xl flex items-center justify-center gap-2 select-none">
