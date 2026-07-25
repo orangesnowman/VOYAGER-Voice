@@ -12,7 +12,7 @@ import { SettingsPanel } from './SettingsPanel';
 import { ShoppingPanel } from './ShoppingPanel';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
-import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart, Briefcase, BookOpen, Luggage, Rocket, Check, UserCheck, Presentation, MessageSquareText, Plane } from 'lucide-react';
+import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart, Briefcase, BookOpen, Luggage, Rocket, Check, UserCheck, Presentation, MessageSquareText, Plane, Sprout, Flower, TreeDeciduous } from 'lucide-react';
 
 import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { TRAVEL_PRESETS } from './TravelPresets';
@@ -1317,9 +1317,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 2 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'PRINCIPIANTE', label: selectedLang === 'EN' ? 'BEGINNER' : 'PRINCIPIANTE', icon: Sparkles },
-                                                                { id: 'INTERMEDIO', label: selectedLang === 'EN' ? 'INTERMEDIATE' : 'INTERMEDIO', icon: Compass },
-                                                                { id: 'AVANZADO', label: selectedLang === 'EN' ? 'ADVANCED' : 'AVANZADO', icon: Rocket }
+                                                                { id: 'PRINCIPIANTE', label: selectedLang === 'EN' ? 'BEGINNER' : 'PRINCIPIANTE', icon: Sprout },
+                                                                { id: 'INTERMEDIO', label: selectedLang === 'EN' ? 'INTERMEDIATE' : 'INTERMEDIO', icon: Flower },
+                                                                { id: 'AVANZADO', label: selectedLang === 'EN' ? 'ADVANCED' : 'AVANZADO', icon: TreeDeciduous }
                                                             ].map((opt) => {
                                                                 const IconComp = opt.icon;
                                                                 const isSel = selectedLevel === opt.id;
