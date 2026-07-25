@@ -420,10 +420,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           }}
           className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
         >
-          <div className="flex justify-end items-center gap-1.5 mb-1.5 text-[8.5pt] font-black text-blue-600 leading-none">
-            <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>
-            <Pause className="w-3.5 h-3.5 fill-blue-600 stroke-none" />
-            <User strokeWidth={2.5} className="w-4.5 h-4.5 ml-0.5 text-blue-600/70" />
+          <div className="flex justify-end items-center gap-1.5 mb-1 text-blue-600/70 select-none">
+            <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
           </div>
           <input
             type="text"
