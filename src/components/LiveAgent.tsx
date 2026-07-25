@@ -1245,9 +1245,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             </span>
                                                         )}
                                                         {isPaused ? (
-                                                            <Play strokeWidth={2.5} className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
+                                                            <Play fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
                                                         ) : (
-                                                            <Pause strokeWidth={2.5} className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
+                                                            <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
                                                         )}
                                                     </button>
                                                     <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
@@ -1755,9 +1755,18 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 onAskVoyager={(text) => {
                                     setHasInteracted(true);
                                     addUserMessage(text);
-                                    const storePrompt = selectedLang === 'EN'
-                                        ? `[SYSTEM INSTRUCTION: The user is asking about the store / purchases. Please answer strictly in relation to our subscriptions, diagnostic coaching classes, and packages. Keep it brief. Question: "${text}"]`
-                                        : `[SYSTEM INSTRUCTION: El usuario está preguntando sobre la tienda / compras. Responde estrictamente sobre nuestras suscripciones, clases de coaching diagnóstico y paquetes. Sé breve. Pregunta: "${text}"]`;
+                                    const storePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está en la pestaña de COMPRAS de USA Voyager.
+Tu rol actual es el de un VENDEDOR EXPERTO (expert salesperson) de USA Voyager.
+Tu objetivo principal es convencer al usuario de adquirir uno de nuestros planes de pago (PRO, Sesión Diagnóstica, Coaching de Inmersión o Coaching Intensivo) explicando sus beneficios de manera altamente persuasiva, profesional y vendedora.
+Sigue estrictamente las siguientes reglas:
+1. Responde ÚNICAMENTE en español (no des explicaciones ni respuestas en inglés, ni intentes enseñar inglés aquí). Su propósito en este panel no es aprender, sino informarse sobre la compra.
+2. Habla ÚNICAMENTE de los productos y servicios oficiales descritos a continuación. No inventes precios, número de sesiones ni características fuera de estas:
+   - Plan USA Voyager PRO: $9.99/mes. Desbloquea todas las lecciones del Día 2 en adelante de la ruta de aprendizaje, escenarios avanzados de conversación y feedback avanzado de acento/pronunciación.
+   - Sesión Diagnóstica: $29.00 pago único. Videollamada de 30 minutos 1-a-1 en vivo con Alejandra Francois (La Profe) para evaluar nivel, acento y fluidez + reporte personalizado + soporte de chat directo por 7 días.
+   - Coaching de Inmersión: $199.00/mes. 4 clases al mes 1-a-1 en vivo con La Profe + acompañamiento de audios por chat privado diario + plan PRO gratis incluido.
+   - Coaching Intensivo: $349.00/mes. 8 clases al mes 1-a-1 en vivo con La Profe (2 clases semanales) + revisiones diarias prioritarias de audios + soporte directo 24/7 + plan PRO gratis incluido.
+3. Sé muy persuasivo y enfocado en cerrar la venta, animando activamente al usuario a dar el paso para suscribirse o comprar ya mismo.
+Pregunta del usuario: "${text}"]`;
                                     sendText(storePrompt);
                                 }}
                             />
