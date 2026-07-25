@@ -1193,7 +1193,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             <div className="flex items-center mb-3">
                                                                 <span 
                                                                     style={{ fontFamily: "'Lato', sans-serif" }} 
-                                                                    className="text-xs md:text-sm font-extrabold tracking-wider text-[#1A365D]"
+                                                                    className="text-xs md:text-sm font-extrabold tracking-wider text-black"
                                                                 >
                                                                     {`${currentStepIdx}/${totalOnboardingSteps}`}
                                                                 </span>
@@ -1218,12 +1218,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <div className="relative flex justify-between items-center w-full z-10">
                                                                     {Array.from({ length: totalOnboardingSteps }).map((_, i) => {
                                                                         const stepNum = i + 1;
-                                                                        const isActive = stepNum <= currentStepIdx;
+                                                                        const isSelected = stepNum === currentStepIdx;
                                                                         return (
                                                                             <div 
                                                                                 key={i} 
                                                                                 className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                                                                    isActive ? 'bg-[#1A365D] scale-105' : 'bg-[#1A365D]/35'
+                                                                                    isSelected ? 'bg-black scale-105' : 'bg-[#1A365D]'
                                                                                 }`}
                                                                             >
                                                                                 <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[10px] font-extrabold text-white">
