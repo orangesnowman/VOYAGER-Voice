@@ -1209,7 +1209,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                 <div className="flex flex-col w-full text-left">
                                                     {/* Header */}
                                                     <div className="w-full text-left mb-6 flex flex-col items-start">
-                                                         <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-black leading-tight">
+                                                         <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight">
                                                              {onboardingStep === 0 && (selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!')}
                                                              {onboardingStep === 1 && (selectedLang === 'EN' ? 'What is your primary learning goal?' : '¿Cuál es tu objetivo de aprendizaje principal?')}
                                                              {onboardingStep === 11 && (selectedLang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?')}
