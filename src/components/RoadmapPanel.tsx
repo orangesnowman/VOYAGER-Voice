@@ -585,7 +585,11 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
       </div>
 
         {/* Separate Chat messages sibling list */}
-        {chatMessages.filter(msg => msg.sender === 'user' || msg.sender === 'model').map((msg, index) => {
+        {chatMessages.filter(msg => {
+          if (msg.sender === 'system') return false;
+          if (msg.sender === 'user' && msg.text.startsWith('[')) return false;
+          return true;
+        }).map((msg, index) => {
           const isUser = msg.sender === 'user';
           let displayTxt = msg.text || '';
           
