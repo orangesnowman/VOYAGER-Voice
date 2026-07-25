@@ -1161,7 +1161,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                         : (selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!')
                                                     }
                                                 </h2>
-                                                <p className="text-[10.5pt] text-black font-serif mt-1.5 max-w-lg mx-auto" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
+                                                <p className="text-[10.5pt] text-black mt-1.5 max-w-lg mx-auto" style={{ fontFamily: "'Lato', sans-serif" }}>
                                                     {onboardingStep === 0 && (selectedLang === 'EN' 
                                                         ? 'Let us customize your English immersion experience with a few quick questions.' 
                                                         : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.')}
@@ -1245,7 +1245,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                     {onboardingStep === 0 && (
                                                         <div className="space-y-4 text-center sm:text-left">
-                                                            <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-sm text-neutral-800 leading-relaxed font-serif">
+                                                            <p style={{ fontFamily: "'Lato', sans-serif" }} className="text-sm text-neutral-800 leading-relaxed">
                                                                 {selectedLang === 'EN'
                                                                     ? "Before entering, USA Voyager will evaluate your profile and goals to align our AI tutor persona to your daily professional, academic, or travel needs."
                                                                     : "Antes de ingresar, USA Voyager evaluará tu perfil y metas para alinear nuestro tutor de IA a tus necesidades profesionales, académicas o de viaje."}
@@ -1254,7 +1254,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
                                                                     title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 hover:border-red-600 text-black/40 hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
@@ -1283,7 +1283,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
                                                                             <IconComp className={`w-6 h-6 flex-shrink-0 ${isSel ? 'text-red-600' : 'text-black'}`} />
-                                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1302,7 +1302,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(0)}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
@@ -1315,7 +1315,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }
                                                                     }}
                                                                     title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 hover:border-red-600 text-black/40 hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
@@ -1344,7 +1344,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
                                                                             <IconComp className={`w-6 h-6 flex-shrink-0 ${isSel ? 'text-red-600' : 'text-black'}`} />
-                                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-xs md:text-sm font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-xs md:text-sm font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1363,14 +1363,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setOnboardingStep(2)}
                                                                     title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 hover:border-red-600 text-black/40 hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
@@ -1399,7 +1399,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
                                                                             <IconComp className={`w-6 h-6 flex-shrink-0 ${isSel ? 'text-red-600' : 'text-black'}`} />
-                                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1424,14 +1424,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }
                                                                     }}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={handleCompleteOnboarding}
                                                                     title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
@@ -1460,7 +1460,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         <div className="flex items-start gap-2.5 flex-1 min-w-0 pr-2">
                                                                             <MessageSquare className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isSel ? 'text-red-600' : 'text-neutral-500'}`} />
                                                                             <div className="flex-1 min-w-0">
-                                                                                <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-sm font-extrabold tracking-wide block leading-tight ${isSel ? 'text-red-600' : 'text-neutral-800'}`}>
+                                                                                <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-sm font-extrabold tracking-wide block leading-tight ${isSel ? 'text-red-600' : 'text-neutral-800'}`}>
                                                                                     {name.toUpperCase()}
                                                                                 </span>
                                                                                 <p className="text-[10px] text-neutral-500 font-serif mt-0.5 leading-snug">
@@ -1483,14 +1483,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(2)}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={handleCompleteOnboarding}
                                                                     title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
-                                                                    className="w-6 h-6 rounded-full border-2 border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
