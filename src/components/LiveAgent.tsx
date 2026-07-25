@@ -805,6 +805,46 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   }
   const stepsLeft = totalOnboardingSteps - currentStepIdx;
 
+  const handleOnboardingBack = () => {
+    if (onboardingStep === 1) {
+      setOnboardingStep(0);
+    } else if (onboardingStep === 11) {
+      setOnboardingStep(1);
+    } else if (onboardingStep === 2) {
+      if (selectedGoal === 'PROFESSIONAL') {
+        setOnboardingStep(11);
+      } else {
+        setOnboardingStep(1);
+      }
+    } else if (onboardingStep === 3) {
+      setOnboardingStep(2);
+    }
+  };
+
+  const handleOnboardingNext = () => {
+    if (onboardingStep === 1) {
+      if (selectedGoal === 'PROFESSIONAL') {
+        setOnboardingStep(11);
+      } else {
+        setOnboardingStep(2);
+      }
+    } else if (onboardingStep === 11) {
+      setOnboardingStep(2);
+    } else if (onboardingStep === 2) {
+      handleCompleteOnboarding();
+    } else if (onboardingStep === 3) {
+      handleCompleteOnboarding();
+    }
+  };
+
+  const isFinalStep = onboardingStep === 2 || onboardingStep === 3;
+  const nextTitle = isFinalStep 
+      ? (selectedLang === 'EN' ? 'Connect' : 'Conecta') 
+      : (selectedLang === 'EN' ? 'Next' : 'Siguiente');
+  const nextBtnClasses = isFinalStep
+      ? "w-9 h-9 rounded-full border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+      : "w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent";
+
   const placeholderText = selectedLang === 'EN' 
     ? 'Type your message or scenario...' 
     : 'Escribe tu mensaje o escenario...';
@@ -1238,29 +1278,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     </div>
                                                                 );
                                                             })}
-
-                                                            <div className="pt-4 flex gap-4 w-full justify-start">
-                                                                <button
-                                                                    onClick={() => setOnboardingStep(0)}
-                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => {
-                                                                        if (selectedGoal === 'PROFESSIONAL') {
-                                                                            setOnboardingStep(11);
-                                                                        } else {
-                                                                            setOnboardingStep(2);
-                                                                        }
-                                                                    }}
-                                                                    title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                            </div>
                                                         </div>
                                                     )}
 
@@ -1294,23 +1311,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     </div>
                                                                 );
                                                             })}
-
-                                                            <div className="pt-4 flex gap-4 w-full justify-start">
-                                                                <button
-                                                                    onClick={() => setOnboardingStep(1)}
-                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                                <button
-                                                                    onClick={() => setOnboardingStep(2)}
-                                                                    title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                            </div>
                                                         </div>
                                                     )}
 
@@ -1344,29 +1344,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     </div>
                                                                 );
                                                             })}
-
-                                                            <div className="pt-4 flex gap-4 w-full justify-start">
-                                                                <button
-                                                                    onClick={() => {
-                                                                        if (selectedGoal === 'PROFESSIONAL') {
-                                                                            setOnboardingStep(11);
-                                                                        } else {
-                                                                            setOnboardingStep(1);
-                                                                        }
-                                                                    }}
-                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                                <button
-                                                                    onClick={handleCompleteOnboarding}
-                                                                    title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                            </div>
                                                         </div>
                                                     )}
 
@@ -1404,23 +1381,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     </div>
                                                                 );
                                                             })}
-
-                                                            <div className="pt-4 flex gap-4 w-full justify-start">
-                                                                <button
-                                                                    onClick={() => setOnboardingStep(2)}
-                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                                <button
-                                                                    onClick={handleCompleteOnboarding}
-                                                                    title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
-                                                                    className="w-9 h-9 rounded-full border-2 border-red-600 text-red-600 hover:bg-red-600 hover:text-white flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                            </div>
                                                         </div>
                                                     )}
 
@@ -1436,12 +1396,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             </div>
                                                             
                                                             <div className="relative w-full px-2 mb-2">
-                                                                {/* Wrapper for connecting line to prevent it from sticking out */}
                                                                 <div className="absolute top-1/2 left-[11px] right-[11px] h-[5px] -translate-y-1/2">
-                                                                    {/* Background connecting line */}
                                                                     <div className="w-full h-full bg-[#1A365D]/15 rounded-full" />
-                                                                    
-                                                                    {/* Active progress connecting line */}
                                                                     <div 
                                                                         className="absolute top-0 left-0 h-full bg-[#1A365D] rounded-full transition-all duration-300" 
                                                                         style={{ 
@@ -1449,8 +1405,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }} 
                                                                     />
                                                                 </div>
-                                                                
-                                                                {/* Step circles */}
                                                                 <div className="relative flex justify-between items-center w-full z-10">
                                                                     {Array.from({ length: totalOnboardingSteps }).map((_, i) => {
                                                                         const stepNum = i + 1;
@@ -1470,6 +1424,25 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     })}
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep > 0 && (
+                                                        <div className="pt-4 flex gap-4 w-full justify-start select-none animate-fade-in">
+                                                            <button
+                                                                onClick={handleOnboardingBack}
+                                                                title={selectedLang === 'EN' ? 'Back' : 'Volver'}
+                                                                className="w-9 h-9 rounded-full border-2 border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                                                            >
+                                                                <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
+                                                            </button>
+                                                            <button
+                                                                onClick={handleOnboardingNext}
+                                                                title={nextTitle}
+                                                                className={nextBtnClasses}
+                                                            >
+                                                                <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                                                            </button>
                                                         </div>
                                                     )}
                                                 </div>
