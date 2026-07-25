@@ -1216,14 +1216,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                              {onboardingStep === 2 && (selectedLang === 'EN' ? 'What is your estimated English level?' : '¿Cuál es tu nivel estimado de inglés?')}
                                                              {onboardingStep === 3 && (selectedLang === 'EN' ? 'Select your starting conversation mode:' : 'Selecciona tu modo de conversación para iniciar:')}
                                                          </h2>
-                                                         {(onboardingStep === 0 || onboardingStep === 11) && (
+                                                         {onboardingStep === 0 && (
                                                              <p className="text-[10.5pt] text-black/60 mt-1.5 max-w-lg" style={{ fontFamily: "'Lato', sans-serif" }}>
-                                                                 {onboardingStep === 0 && (selectedLang === 'EN' 
+                                                                 {selectedLang === 'EN' 
                                                                      ? 'Let us customize your English immersion experience with a few quick questions.' 
-                                                                     : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.')}
-                                                                 {onboardingStep === 11 && (selectedLang === 'EN' 
-                                                                     ? 'Choose your main goal. Voyager will customize work practices and situations for you.' 
-                                                                     : 'Elige tu objetivo principal. Voyager personalizará las prácticas y situaciones de trabajo para ti.')}
+                                                                     : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.'}
                                                              </p>
                                                          )}
                                                     </div>
