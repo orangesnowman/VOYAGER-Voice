@@ -166,7 +166,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                     className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none transition-all duration-300 animate-fade-in"
                   >
                     {activeSubTab === tab && (
-                      <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+                      <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-none scale-x-[-1] mt-0.5" />
                     )}
                     <span className={activeSubTab === tab ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
                       {label}
