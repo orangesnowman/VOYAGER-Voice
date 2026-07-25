@@ -5,6 +5,7 @@ import { StripePaymentModal } from './StripePaymentModal';
 interface ShoppingPanelProps {
   selectedLang: 'EN' | 'ES';
   userPlan: 'FREE' | 'PRO';
+  chatMessages: any[];
   onUpgradeSuccess: () => void;
   onAskVoyager: (text: string) => void;
 }
@@ -12,6 +13,7 @@ interface ShoppingPanelProps {
 export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   selectedLang,
   userPlan,
+  chatMessages,
   onUpgradeSuccess,
   onAskVoyager
 }) => {
@@ -251,13 +253,47 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         {/* Tab Body Content */}
         <div className="pt-1">
           {activeSubTab === 'welcome' && (
-            <div className="animate-fade-in flex flex-col space-y-4">
+            <div className="animate-fade-in flex flex-col space-y-4 max-h-[280px] overflow-y-auto pr-1">
               {/* Voyager welcome text */}
               <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black">
                 {selectedLang === 'EN' 
                   ? 'Welcome to the Voyager Shop! Here you can check our immersion packages, buy sessions, or upgrade your account to PRO. Click on the tabs above to explore each choice!'
                   : '¡Bienvenido a la Tienda de Voyager! Aquí puedes ver nuestros paquetes de inmersión, comprar clases o cambiar tu cuenta a PRO. ¡Haz clic en las pestañas superiores para ver el detalle de cada opción!'}
               </p>
+
+              {/* Chat dialogue history list inside Compras welcome card */}
+              {chatMessages.filter(msg => msg.sender === 'user' || msg.sender === 'model').length > 0 && (
+                <div className="pt-3.5 border-t border-neutral-100 space-y-3">
+                  {chatMessages
+                    .filter(msg => msg.sender === 'user' || msg.sender === 'model')
+                    .map((msg, index) => {
+                      let displayTxt = msg.text || '';
+                      if (displayTxt.includes('SYSTEM INSTRUCTION:')) {
+                        const match = displayTxt.match(/Question:\s*"(.*)"/i);
+                        if (match && match[1]) {
+                          displayTxt = match[1];
+                        } else {
+                          displayTxt = displayTxt.replace(/\[SYSTEM INSTRUCTION:.*Question:\s*"/i, '').replace(/"\]$/, '');
+                        }
+                      }
+                      
+                      return (
+                        <div key={msg.id || index} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                          <span className="text-[8px] font-black uppercase text-neutral-400 tracking-wider mb-0.5 select-none">
+                            {msg.sender === 'user' ? (selectedLang === 'EN' ? 'YOU' : 'TÚ') : 'VOYAGER'}
+                          </span>
+                          <div className={`p-2.5 rounded-xl text-xs max-w-[85%] leading-relaxed ${
+                            msg.sender === 'user'
+                              ? 'bg-blue-50 text-blue-900 border border-blue-100 rounded-tr-none'
+                              : 'bg-red-50/50 text-red-900 border border-red-100/40 rounded-tl-none font-serif'
+                          }`}>
+                            {displayTxt}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
             </div>
           )}
 
@@ -297,6 +333,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
             if (inputEl && inputEl.value.trim()) {
               onAskVoyager(inputEl.value.trim());
               inputEl.value = '';
+              setActiveSubTab('welcome');
             }
           }}
           className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"

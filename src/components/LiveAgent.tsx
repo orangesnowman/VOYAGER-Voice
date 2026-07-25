@@ -1749,9 +1749,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                     localStorage.setItem('voyager_user_account', JSON.stringify(u));
                                     setRightPanelTab('roadmap');
                                 }}
+                                chatMessages={chatMessages}
                                 onAskVoyager={(text) => {
-                                    setRightPanelTab('chat');
-                                    handleSuggestionClick(text);
+                                    setHasInteracted(true);
+                                    addUserMessage(text);
+                                    const storePrompt = selectedLang === 'EN'
+                                        ? `[SYSTEM INSTRUCTION: The user is asking about the store / purchases. Please answer strictly in relation to our subscriptions, diagnostic coaching classes, and packages. Keep it brief. Question: "${text}"]`
+                                        : `[SYSTEM INSTRUCTION: El usuario está preguntando sobre la tienda / compras. Responde estrictamente sobre nuestras suscripciones, clases de coaching diagnóstico y paquetes. Sé breve. Pregunta: "${text}"]`;
+                                    sendText(storePrompt);
                                 }}
                             />
                         ) : rightPanelTab === 'teachers' ? (
