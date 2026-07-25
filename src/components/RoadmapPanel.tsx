@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { User, LogOut, Compass, Calendar, Award, CheckCircle2, Circle, Target, ChevronRight, Mail, Key, Users, Sparkles, Activity, BookOpen, Volume2, Apple, Lock, Bot, MessageSquare, Pause, TrendingUp } from 'lucide-react';
+import { User, LogOut, Compass, Calendar, Award, CheckCircle2, Circle, Target, ChevronRight, Mail, Key, Users, Sparkles, Activity, BookOpen, Volume2, Apple, Lock, Bot, MessageSquare, Pause, TrendingUp, Play } from 'lucide-react';
 import { googleSignIn, logout, auth } from '../services/firebaseAuth';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import { IMMERSION_CURRICULUM } from '../constants';
 import { TeacherInsightsPanel } from './TeacherInsightsPanel';
+import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 interface RoadmapPanelProps {
   selectedLang: 'EN' | 'ES';
   learnedWordsCount: number;
   grammarScore: number;
   pronunciationScore: number;
+  chatMessages: any[];
+  isPaused: boolean;
+  isConnected: boolean;
+  pause: () => void;
+  resume: () => void;
   scores?: {
     grammar: number;
     pronunciation: number;
@@ -41,6 +47,11 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
   learnedWordsCount,
   grammarScore,
   pronunciationScore,
+  chatMessages,
+  isPaused,
+  isConnected,
+  pause,
+  resume,
   scores,
   learnedWords,
   accentPatterns,
@@ -62,12 +73,17 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
-        console.error(e);
-      }
+      } catch (e) {}
     }
     return defaultUser;
   });
+
+  const chatEndRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages]);
 
   // Roadmap preferences
   const [selectedGoal, setSelectedGoal] = useState('General Confidence');
@@ -545,8 +561,107 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
             </div>
           )}
         </div>
-
       </div>
+
+        {/* Separate Chat messages sibling list */}
+        {chatMessages.filter(msg => msg.sender === 'user' || msg.sender === 'model').map((msg, index) => {
+          const isUser = msg.sender === 'user';
+          let displayTxt = msg.text || '';
+          
+          // Clean system tags from user profile / roadmap questions
+          if (displayTxt.includes('INSTRUCCIÓN DE SISTEMA:')) {
+            const match = displayTxt.match(/Pregunta del usuario:\s*"(.*)"/i) || displayTxt.match(/Pregunta:\s*"(.*)"/i) || displayTxt.match(/Question:\s*"(.*)"/i);
+            if (match && match[1]) {
+              displayTxt = match[1];
+            } else {
+              displayTxt = displayTxt
+                .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta del usuario:\s*"/i, '')
+                .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta:\s*"/i, '')
+                .replace(/"\]$/, '');
+            }
+          }
+
+          return (
+            <div 
+              key={msg.id || index}
+              className={`w-full flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
+            >
+              <div className={`max-w-[88%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+                <div className={`
+                  px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
+                  ${isUser 
+                    ? 'border-blue-600/30 text-black rounded-tr-none' 
+                    : 'border-red-600/30 text-black rounded-tl-none font-serif'
+                  }
+                `}>
+                  {isUser ? (
+                    <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!isConnected) return;
+                          if (isPaused) {
+                            resume();
+                            if (window.speechSynthesis && window.speechSynthesis.paused) {
+                              window.speechSynthesis.resume();
+                            }
+                          } else {
+                            pause();
+                            if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                              window.speechSynthesis.pause();
+                            }
+                          }
+                        }}
+                        disabled={!isConnected}
+                        className={`flex items-center gap-1 group cursor-pointer transition-all duration-300 ${
+                          !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                        }`}
+                      >
+                        {!isPaused && (
+                          <span 
+                            style={{ fontFamily: "'Lato', sans-serif" }} 
+                            className="text-[9px] font-black tracking-wider transition-all duration-300 text-blue-600/70 group-hover:text-red-600"
+                          >
+                            {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
+                          </span>
+                        )}
+                        {isPaused ? (
+                          <Play fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
+                        ) : (
+                          <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
+                        )}
+                      </button>
+                      <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mb-2 select-none">
+                      <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
+                    </div>
+                  )}
+                  <div className={`chat-message-text whitespace-pre-line tracking-wider leading-snug ${isUser ? 'text-right font-normal' : 'text-left'}`}>
+                    {(() => {
+                      if (!isUser && displayTxt.includes(" / ")) {
+                        const parts = displayTxt.split(" / ");
+                        if (parts.length >= 2) {
+                          return (
+                            <>
+                              <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black font-semibold leading-snug">{parseAndRenderEmojis(parts[0])}</div>
+                              <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="chat-message-english text-black leading-snug mt-2">
+                                {parseAndRenderEmojis(parts.slice(1).join(" / "))}
+                              </div>
+                            </>
+                          );
+                        }
+                      }
+                      return <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black leading-snug">{parseAndRenderEmojis(displayTxt)}</div>;
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={chatEndRef} />
       </div>
 
       {/* Row 2: User's Input Box (Styled exactly like the Chat section input box with PAUSA and User icon) */}

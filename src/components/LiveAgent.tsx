@@ -1709,15 +1709,19 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 scores={scores}
                                 learnedWords={learnedWords}
                                 accentPatterns={accentPatterns}
-                                onAskVoyager={(text) => {
-                                    setRightPanelTab('chat');
-                                    setHasInteracted(true);
-                                    addUserMessage(text);
-                                    const profilePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, amigable y directa para que un usuario de habla hispana entienda perfectamente su avance y datos. No des explicaciones en inglés ni intentes enseñar inglés aquí. Pregunta del usuario: "${text}"]`;
-                                    sendText(profilePrompt);
-                                }}
-                                onNavigateTab={(tab) => setRightPanelTab(tab)}
-                            />
+                                 chatMessages={chatMessages}
+                                 isPaused={isPaused}
+                                 isConnected={isConnected}
+                                 pause={pause}
+                                 resume={resume}
+                                 onAskVoyager={(text) => {
+                                     setHasInteracted(true);
+                                     addUserMessage(text);
+                                     const profilePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, amigable y directa para que un usuario de habla hispana entienda perfectamente su avance y datos. No des explicaciones en inglés ni intentes enseñar inglés aquí. Pregunta del usuario: "${text}"]`;
+                                     sendText(profilePrompt);
+                                 }}
+                                 onNavigateTab={(tab) => setRightPanelTab(tab)}
+                             />
                         ) : rightPanelTab === 'shopping' ? (
                             <ShoppingPanel
                                 selectedLang={selectedLang}
