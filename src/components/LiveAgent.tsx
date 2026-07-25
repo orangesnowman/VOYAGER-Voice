@@ -1196,22 +1196,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                 <div className="flex flex-col w-full text-left">
                                                     {onboardingStep > 0 && (
                                                         <div className="w-full mb-6 select-none animate-fade-in">
-                                                            <div className="flex justify-between items-center mb-3">
+                                                            <div className="flex items-center mb-3">
                                                                 <span 
                                                                     style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                                                                    className="font-mono text-[10px] md:text-xs font-extrabold uppercase tracking-widest text-neutral-500"
+                                                                    className="font-mono text-xs md:text-sm font-extrabold tracking-wider text-black"
                                                                 >
-                                                                    {selectedLang === 'EN' 
-                                                                        ? `STEP ${currentStepIdx} OF ${totalOnboardingSteps}` 
-                                                                        : `PASO ${currentStepIdx} DE ${totalOnboardingSteps}`}
-                                                                </span>
-                                                                <span 
-                                                                    style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                                                                    className="font-mono text-[9px] md:text-[10px] font-extrabold uppercase tracking-widest text-red-600"
-                                                                >
-                                                                    {selectedLang === 'EN' 
-                                                                        ? (stepsLeft === 0 ? 'FINAL STEP' : `${stepsLeft} STEPS LEFT`) 
-                                                                        : (stepsLeft === 0 ? 'ÚLTIMO PASO' : `FALTAN ${stepsLeft} PASOS`)}
+                                                                    {`${currentStepIdx}/${totalOnboardingSteps}`}
                                                                 </span>
                                                             </div>
                                                             
