@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Sparkles, Check, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User } from 'lucide-react';
+import { ShoppingCart, Sparkles, Check, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User, Play } from 'lucide-react';
 import { StripePaymentModal } from './StripePaymentModal';
 
 interface ShoppingPanelProps {
   selectedLang: 'EN' | 'ES';
   userPlan: 'FREE' | 'PRO';
   chatMessages: any[];
+  isPaused: boolean;
+  isConnected: boolean;
+  pause: () => void;
+  resume: () => void;
   onUpgradeSuccess: () => void;
   onAskVoyager: (text: string) => void;
 }
@@ -14,6 +18,10 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   selectedLang,
   userPlan,
   chatMessages,
+  isPaused,
+  isConnected,
+  pause,
+  resume,
   onUpgradeSuccess,
   onAskVoyager
 }) => {
@@ -322,15 +330,41 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               `}>
                 {isUser ? (
                   <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
-                    <div className="flex items-center gap-1">
-                      <span 
-                        style={{ fontFamily: "'Lato', sans-serif" }} 
-                        className="text-[9px] font-black tracking-wider text-blue-600/70"
-                      >
-                        {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
-                      </span>
-                      <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70" />
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (!isConnected) return;
+                        if (isPaused) {
+                          resume();
+                          if (window.speechSynthesis && window.speechSynthesis.paused) {
+                            window.speechSynthesis.resume();
+                          }
+                        } else {
+                          pause();
+                          if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                            window.speechSynthesis.pause();
+                          }
+                        }
+                      }}
+                      disabled={!isConnected}
+                      className={`flex items-center gap-1 group cursor-pointer transition-all duration-300 ${
+                        !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                      }`}
+                    >
+                      {!isPaused && (
+                        <span 
+                          style={{ fontFamily: "'Lato', sans-serif" }} 
+                          className="text-[9px] font-black tracking-wider transition-all duration-300 text-blue-600/70 group-hover:text-red-600"
+                        >
+                          {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
+                        </span>
+                      )}
+                      {isPaused ? (
+                        <Play strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
+                      ) : (
+                        <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
+                      )}
+                    </button>
                     <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
                   </div>
                 ) : (

@@ -1215,7 +1215,27 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                         `}>
                                             {isUser ? (
                                                 <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
-                                                    <div className="flex items-center gap-1 group">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            if (!isConnected) return;
+                                                            if (isPaused) {
+                                                                resume();
+                                                                if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                                    window.speechSynthesis.resume();
+                                                                }
+                                                            } else {
+                                                                pause();
+                                                                if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                                                                    window.speechSynthesis.pause();
+                                                                }
+                                                            }
+                                                        }}
+                                                        disabled={!isConnected}
+                                                        className={`flex items-center gap-1 group cursor-pointer transition-all duration-300 ${
+                                                            !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                                                        }`}
+                                                    >
                                                         {!isPaused && (
                                                             <span 
                                                                 style={{ fontFamily: "'Lato', sans-serif" }} 
@@ -1224,34 +1244,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 PAUSA
                                                             </span>
                                                         )}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => {
-                                                                if (!isConnected) return;
-                                                                if (isPaused) {
-                                                                    resume();
-                                                                    if (window.speechSynthesis && window.speechSynthesis.paused) {
-                                                                        window.speechSynthesis.resume();
-                                                                    }
-                                                                } else {
-                                                                    pause();
-                                                                    if (window.speechSynthesis && window.speechSynthesis.speaking) {
-                                                                        window.speechSynthesis.pause();
-                                                                    }
-                                                                }
-                                                            }}
-                                                            disabled={!isConnected}
-                                                            className={`p-0.5 cursor-pointer flex items-center justify-center transition-all duration-300 ${
-                                                                !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-110 active:scale-95'
-                                                            }`}
-                                                        >
-                                                            {isPaused ? (
-                                                                <Play strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
-                                                            ) : (
-                                                                <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
-                                                            )}
-                                                        </button>
-                                                    </div>
+                                                        {isPaused ? (
+                                                            <Play strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
+                                                        ) : (
+                                                            <Pause strokeWidth={2.5} fill="currentColor" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
+                                                        )}
+                                                    </button>
                                                     <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
                                                 </div>
                                             ) : (
@@ -1750,6 +1748,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                     setRightPanelTab('roadmap');
                                 }}
                                 chatMessages={chatMessages}
+                                isPaused={isPaused}
+                                isConnected={isConnected}
+                                pause={pause}
+                                resume={resume}
                                 onAskVoyager={(text) => {
                                     setHasInteracted(true);
                                     addUserMessage(text);
