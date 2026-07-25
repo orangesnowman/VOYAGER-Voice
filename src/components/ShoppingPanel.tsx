@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Sparkles, Check, CreditCard, ShieldCheck, Lock, Award, BookOpen, Clock, Star } from 'lucide-react';
+import { ShoppingCart, Sparkles, Check, CreditCard, ShieldCheck, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User } from 'lucide-react';
 import { StripePaymentModal } from './StripePaymentModal';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 
@@ -16,6 +16,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   onUpgradeSuccess,
   onAskVoyager
 }) => {
+  const [activeSubTab, setActiveSubTab] = useState<'welcome' | 'pro' | 'sample' | 'monthly_4' | 'monthly_8'>('welcome');
   const [stripeModalOpen, setStripeModalOpen] = useState(false);
   const [activeStripeItemType, setActiveStripeItemType] = useState<'sample' | 'monthly_4' | 'monthly_8' | 'pro_upgrade'>('pro_upgrade');
   
@@ -23,8 +24,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   const [bookingDate, setBookingDate] = useState('2026-07-30');
   const [bookingTime, setBookingTime] = useState('10:00 AM');
 
-  const products = [
-    {
+  const products = {
+    pro: {
       id: 'pro_upgrade',
       titleEn: 'USA Voyager PRO Plan',
       titleEs: 'Plan USA Voyager PRO',
@@ -52,7 +53,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       buttonEs: 'Cambiar a PRO',
       isPro: true
     },
-    {
+    sample: {
       id: 'sample',
       titleEn: '30-Min Diagnostic Session',
       titleEs: 'Sesión Diagnóstica (30 Min)',
@@ -80,7 +81,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       buttonEs: 'Reservar Sesión',
       isPro: false
     },
-    {
+    monthly_4: {
       id: 'monthly_4',
       titleEn: 'Monthly Immersion Coaching',
       titleEs: 'Coaching de Inmersión',
@@ -108,7 +109,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       buttonEs: 'Suscribirse (4/mes)',
       isPro: false
     },
-    {
+    monthly_8: {
       id: 'monthly_8',
       titleEn: 'Intensive Immersion Coaching',
       titleEs: 'Coaching Intensivo',
@@ -119,7 +120,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       descEs: 'Dos clases semanales 1-a-1 en vivo con La Profe + coaching prioritario y revisión diaria de mensajes de voz.',
       featuresEn: [
         '8 private 1-on-1 sessions per month',
-        'Priority diagnostic evaluations',
+        'Priority daily diagnostics',
         '24/7 direct access communication line',
         'Free USA Voyager PRO Plan included'
       ],
@@ -136,7 +137,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       buttonEs: 'Suscribirse (8/mes)',
       isPro: false
     }
-  ];
+  };
 
   const handlePurchaseClick = (itemId: string) => {
     setActiveStripeItemType(itemId as any);
@@ -150,113 +151,235 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
     }
   };
 
+  // Render product details inside the tab body
+  const renderProductContent = (p: typeof products.pro) => {
+    const ProductIcon = p.icon;
+    const isCurrentlyPro = p.isPro && userPlan === 'PRO';
+
+    return (
+      <div className={`p-4 border border-black/10 rounded-2xl flex flex-col justify-between transition-all ${p.bgColor}`}>
+        <div className="text-left">
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <div className={`p-1.5 rounded-lg border bg-white ${p.color}`}>
+              <ProductIcon className="w-5 h-5" />
+            </div>
+            <div className="flex items-baseline gap-0.5">
+              <span className="text-xl font-black text-neutral-900 font-mono">{p.price}</span>
+              <span className="text-[9px] font-bold text-neutral-400 uppercase font-mono">
+                {selectedLang === 'EN' ? p.billingEn : p.billingEs}
+              </span>
+            </div>
+          </div>
+
+          <h5 style={{ fontFamily: "'Lato', sans-serif" }} className="text-sm font-black uppercase tracking-wider text-neutral-800 mb-1.5">
+            {selectedLang === 'EN' ? p.titleEn : p.titleEs}
+          </h5>
+          
+          <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[11px] text-neutral-500 leading-relaxed mb-4">
+            {selectedLang === 'EN' ? p.descEn : p.descEs}
+          </p>
+
+          {/* Features list */}
+          <ul className="space-y-1.5 mb-5 select-none">
+            {(selectedLang === 'EN' ? p.featuresEn : p.featuresEs).map((f, i) => (
+              <li key={i} className="flex items-start gap-1.5 text-[10.5px] text-neutral-600 font-serif leading-tight">
+                <Check className="w-3.5 h-3.5 text-emerald-600 mt-0.5 flex-shrink-0" />
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <button
+            onClick={() => handlePurchaseClick(p.id)}
+            disabled={isCurrentlyPro}
+            className={`w-full py-2.5 border-none rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm ${
+              isCurrentlyPro 
+                ? 'bg-neutral-100 text-neutral-400 cursor-default'
+                : p.isPro
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white font-mono'
+                  : 'bg-red-600 hover:bg-red-700 text-white font-mono'
+            }`}
+          >
+            <CreditCard className="w-4 h-4" />
+            {isCurrentlyPro 
+              ? (selectedLang === 'EN' ? 'Active Plan' : 'Plan Activo')
+              : (selectedLang === 'EN' ? p.buttonEn : p.buttonEs)}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex-1 flex flex-col p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
       
-      {/* VOYAGER SHOP INTRODUCTION CHAT BUBBLE */}
-      <div className="flex items-start gap-3 mb-5 flex-shrink-0 animate-fade-in text-left">
-        {/* Avatar image container */}
-        <div className="w-[50px] h-[50px] rounded-full bg-slate-900 border-2 border-red-600/30 flex-shrink-0 overflow-hidden flex items-center justify-center shadow-md">
-          <img 
-            src={voyagerRobot} 
-            alt="Voyager Mascot" 
-            className="w-full h-full object-contain" 
-          />
-        </div>
+      {/* THE MAIN SHOP CONTAINER CARD WITH PINK BORDER */}
+      <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0 animate-fade-in">
         
-        {/* Voyager's chat bubble */}
-        <div className="flex-grow max-w-[calc(100%-62px)] bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm relative text-black">
-          <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] font-black uppercase tracking-widest text-red-600/70 block mb-1">
-            VOYAGER
-          </span>
-          <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed">
-            {selectedLang === 'EN' 
-              ? "Welcome to the Voyager Shop! Here you can upgrade your plan to unlock all interactive lessons or purchase custom coaching packages with La Profe. Click on any package to proceed securely!"
-              : "¡Bienvenido a la Tienda de Voyager! Aquí puedes actualizar tu plan para desbloquear todas las lecciones interactivas o comprar paquetes personalizados de coaching con La Profe. ¡Haz clic en cualquier plan para proceder de forma segura!"}
-          </p>
-        </div>
-      </div>
-
-      {/* SECTION TITLE: COMPRAS / SHOPPING */}
-      <div className="flex items-center justify-between mb-3 text-left">
-        <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
-          <ShoppingCart className="w-4 h-4 text-neutral-700" />
-          {selectedLang === 'EN' ? 'Purchases & Plans' : 'Compras y Planes'}
-        </h4>
-      </div>
-
-      {/* PRODUCTS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-4">
-        {products.map((p) => {
-          const ProductIcon = p.icon;
-          const isCurrentlyPro = p.isPro && userPlan === 'PRO';
-
-          return (
-            <div 
-              key={p.id}
-              className={`bg-white rounded-2xl p-4 border border-black/10 shadow-sm flex flex-col justify-between transition-all hover:shadow-md ${p.bgColor}`}
+        {/* Sub-tab Navigation Header Bar */}
+        <div className="flex items-center gap-3 pb-3.5 border-b border-neutral-100 select-none text-[9.5px] md:text-[10.5px]">
+          {/* Red robot icon */}
+          <Bot className="w-5 h-5 text-red-600 flex-shrink-0" />
+          
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+            {/* Tab 1: BIENVENIDOS */}
+            <button 
+              onClick={() => setActiveSubTab('welcome')}
+              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
             >
-              <div className="text-left">
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <div className={`p-1.5 rounded-lg border bg-white ${p.color}`}>
-                    <ProductIcon className="w-4 h-4" />
-                  </div>
-                  <div className="flex items-baseline gap-0.5">
-                    <span className="text-lg font-black text-neutral-900 font-mono">{p.price}</span>
-                    <span className="text-[9px] font-bold text-neutral-400 uppercase font-mono">
-                      {selectedLang === 'EN' ? p.billingEn : p.billingEs}
-                    </span>
-                  </div>
+              {activeSubTab === 'welcome' && (
+                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+              )}
+              <span className={activeSubTab === 'welcome' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                {selectedLang === 'EN' ? 'Welcome' : 'Bienvenidos'}
+              </span>
+            </button>
+
+            {/* Tab 2: PRO */}
+            <button 
+              onClick={() => setActiveSubTab('pro')}
+              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
+            >
+              {activeSubTab === 'pro' && (
+                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+              )}
+              <span className={activeSubTab === 'pro' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                PRO
+              </span>
+            </button>
+
+            {/* Tab 3: DIAGNOSTICO */}
+            <button 
+              onClick={() => setActiveSubTab('sample')}
+              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
+            >
+              {activeSubTab === 'sample' && (
+                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+              )}
+              <span className={activeSubTab === 'sample' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                {selectedLang === 'EN' ? 'Diagnostic' : 'Diagnóstico'}
+              </span>
+            </button>
+
+            {/* Tab 4: INMERSION */}
+            <button 
+              onClick={() => setActiveSubTab('monthly_4')}
+              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
+            >
+              {activeSubTab === 'monthly_4' && (
+                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+              )}
+              <span className={activeSubTab === 'monthly_4' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                {selectedLang === 'EN' ? 'Immersion' : 'Inmersión'}
+              </span>
+            </button>
+
+            {/* Tab 5: INTENSIVO */}
+            <button 
+              onClick={() => setActiveSubTab('monthly_8')}
+              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
+            >
+              {activeSubTab === 'monthly_8' && (
+                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+              )}
+              <span className={activeSubTab === 'monthly_8' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                {selectedLang === 'EN' ? 'Intensive' : 'Intensivo'}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Body Content */}
+        <div className="pt-1">
+          {activeSubTab === 'welcome' && (
+            <div className="animate-fade-in flex flex-col space-y-4">
+              {/* Voyager welcome text */}
+              <div className="flex items-start gap-3">
+                <div className="w-[45px] h-[45px] rounded-full bg-slate-900 border-2 border-red-600/30 flex-shrink-0 overflow-hidden flex items-center justify-center shadow-md">
+                  <img 
+                    src={voyagerRobot} 
+                    alt="Voyager Mascot" 
+                    className="w-full h-full object-contain" 
+                  />
                 </div>
-
-                <h5 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xs font-black uppercase tracking-wider text-neutral-800 mb-1">
-                  {selectedLang === 'EN' ? p.titleEn : p.titleEs}
-                </h5>
-                
-                <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10px] text-neutral-500 leading-snug mb-3">
-                  {selectedLang === 'EN' ? p.descEn : p.descEs}
-                </p>
-
-                {/* Features list */}
-                <ul className="space-y-1 mb-4 select-none">
-                  {(selectedLang === 'EN' ? p.featuresEn : p.featuresEs).map((f, i) => (
-                    <li key={i} className="flex items-start gap-1.5 text-[9.5px] text-neutral-600 font-serif leading-tight">
-                      <Check className="w-3 h-3 text-emerald-600 mt-0.5 flex-shrink-0" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="flex-1">
+                  <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] font-black uppercase tracking-widest text-red-600/70 block mb-1">
+                    VOYAGER
+                  </span>
+                  <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black">
+                    {selectedLang === 'EN' 
+                      ? 'Welcome to the Voyager Shop! Here you can check our immersion packages, buy sessions, or upgrade your account to PRO. Click on the tabs above to explore each choice!'
+                      : '¡Bienvenido a la Tienda de Voyager! Aquí puedes ver nuestros paquetes de inmersión, comprar clases o cambiar tu cuenta a PRO. ¡Haz clic en las pestañas superiores para ver el detalle de cada opción!'}
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <button
-                  onClick={() => handlePurchaseClick(p.id)}
-                  disabled={isCurrentlyPro}
-                  className={`w-full py-2 border-none rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm ${
-                    isCurrentlyPro 
-                      ? 'bg-neutral-100 text-neutral-400 cursor-default'
-                      : p.isPro
-                        ? 'bg-amber-500 hover:bg-amber-600 text-white font-mono'
-                        : 'bg-red-600 hover:bg-red-700 text-white font-mono'
-                  }`}
-                >
-                  <CreditCard className="w-3.5 h-3.5" />
-                  {isCurrentlyPro 
-                    ? (selectedLang === 'EN' ? 'Active Plan' : 'Plan Activo')
-                    : (selectedLang === 'EN' ? p.buttonEn : p.buttonEs)}
-                </button>
+              {/* Secure Checkout Alert bar */}
+              <div className="bg-neutral-100 border border-neutral-200 p-3 rounded-2xl flex items-center justify-center gap-2 select-none">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                <span className="text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider">
+                  {selectedLang === 'EN' ? 'Secure 256-Bit Stripe Checkout' : 'Pago Seguro de Stripe de 256 Bits'}
+                </span>
               </div>
             </div>
-          );
-        })}
+          )}
+
+          {activeSubTab === 'pro' && (
+            <div className="animate-fade-in">
+              {renderProductContent(products.pro)}
+            </div>
+          )}
+
+          {activeSubTab === 'sample' && (
+            <div className="animate-fade-in">
+              {renderProductContent(products.sample)}
+            </div>
+          )}
+
+          {activeSubTab === 'monthly_4' && (
+            <div className="animate-fade-in">
+              {renderProductContent(products.monthly_4)}
+            </div>
+          )}
+
+          {activeSubTab === 'monthly_8' && (
+            <div className="animate-fade-in">
+              {renderProductContent(products.monthly_8)}
+            </div>
+          )}
+        </div>
+
       </div>
 
-      {/* SECURE CHECKOUT SHIELD */}
-      <div className="mt-2 bg-neutral-200/50 rounded-xl p-3 border border-neutral-300/40 flex items-center justify-center gap-2 select-none">
-        <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-        <span className="text-[9px] font-bold text-neutral-600 font-mono uppercase tracking-wider">
-          {selectedLang === 'EN' ? 'Secure 256-Bit Stripe Checkout' : 'Pago Seguro de Stripe de 256 Bits'}
-        </span>
+      {/* Row 2: User's Input Box (Styled exactly like the Chat section input box with PAUSA and User icon) */}
+      <div className="flex justify-end w-full mt-3 select-none flex-shrink-0">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const inputEl = e.currentTarget.elements.namedItem('shopQuestion') as HTMLInputElement;
+            if (inputEl && inputEl.value.trim()) {
+              onAskVoyager(inputEl.value.trim());
+              inputEl.value = '';
+            }
+          }}
+          className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
+        >
+          <div className="flex justify-end items-center gap-1.5 mb-1.5 text-[8.5pt] font-black text-blue-600 leading-none">
+            <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>
+            <Pause className="w-3.5 h-3.5 fill-blue-600 stroke-none" />
+            <User strokeWidth={2.5} className="w-4.5 h-4.5 ml-0.5 text-blue-600/70" />
+          </div>
+          <input
+            type="text"
+            name="shopQuestion"
+            required
+            placeholder={selectedLang === 'EN' ? "Ask Voyager about the shop..." : "Pregúntale a Voyager sobre la tienda..."}
+            style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}
+            className="w-full focus:outline-none transition-all border-none bg-transparent text-black text-right placeholder:text-right placeholder:text-black/45 font-serif text-[12.5px] p-0"
+          />
+        </form>
       </div>
 
       {/* STRIPE PAYMENT GATEWAY MODAL */}
@@ -271,6 +394,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         initialTime={bookingTime}
         onPaymentSuccess={handlePaymentCompleted}
       />
+
     </div>
   );
 };
