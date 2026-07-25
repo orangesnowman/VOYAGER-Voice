@@ -793,6 +793,20 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     return days;
   };
 
+  const totalOnboardingSteps = selectedGoal === 'PROFESSIONAL' ? 4 : 3;
+  let currentStepIdx = 1;
+  if (selectedGoal === 'PROFESSIONAL') {
+    if (onboardingStep === 1) currentStepIdx = 1;
+    else if (onboardingStep === 11) currentStepIdx = 2;
+    else if (onboardingStep === 2) currentStepIdx = 3;
+    else if (onboardingStep === 3) currentStepIdx = 4;
+  } else {
+    if (onboardingStep === 1) currentStepIdx = 1;
+    else if (onboardingStep === 2) currentStepIdx = 2;
+    else if (onboardingStep === 3) currentStepIdx = 3;
+  }
+  const stepsLeft = totalOnboardingSteps - currentStepIdx;
+
   const placeholderText = selectedLang === 'EN' 
     ? 'Type your message or scenario...' 
     : 'Escribe tu mensaje o escenario...';
@@ -1182,6 +1196,42 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                 {/* Right: Steps */}
                                                 <div className="flex flex-col w-full text-left">
+                                                    {onboardingStep > 0 && (
+                                                        <div className="w-full mb-5 select-none animate-fade-in">
+                                                            <div className="flex justify-between items-center mb-2">
+                                                                <span 
+                                                                    style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
+                                                                    className="font-mono text-[10px] md:text-xs font-extrabold uppercase tracking-widest text-neutral-500"
+                                                                >
+                                                                    {selectedLang === 'EN' 
+                                                                        ? `STEP ${currentStepIdx} OF ${totalOnboardingSteps}` 
+                                                                        : `PASO ${currentStepIdx} DE ${totalOnboardingSteps}`}
+                                                                </span>
+                                                                <span 
+                                                                    style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
+                                                                    className="font-mono text-[9px] md:text-[10px] font-extrabold uppercase tracking-widest text-red-600"
+                                                                >
+                                                                    {selectedLang === 'EN' 
+                                                                        ? (stepsLeft === 0 ? 'FINAL STEP' : `${stepsLeft} STEPS LEFT`) 
+                                                                        : (stepsLeft === 0 ? 'ÚLTIMO PASO' : `FALTAN ${stepsLeft} PASOS`)}
+                                                                </span>
+                                                            </div>
+                                                            <div className="flex gap-2">
+                                                                {Array.from({ length: totalOnboardingSteps }).map((_, i) => {
+                                                                    const isActive = (i + 1) <= currentStepIdx;
+                                                                    return (
+                                                                        <div 
+                                                                            key={i} 
+                                                                            className={`h-2 flex-1 rounded-full border-2 border-black transition-all duration-300 ${
+                                                                                isActive ? 'bg-red-600' : 'bg-neutral-200'
+                                                                            }`}
+                                                                        />
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
                                                     {onboardingStep === 0 && (
                                                         <div className="space-y-4 text-center sm:text-left">
                                                             <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-sm text-neutral-800 leading-relaxed font-serif">
