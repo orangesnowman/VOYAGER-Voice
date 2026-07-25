@@ -1386,15 +1386,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                     {onboardingStep > 0 && (
                                                         <div className="w-[75%] mt-6 select-none animate-fade-in">
-                                                            <div className="flex items-center mb-3">
-                                                                <span 
-                                                                    style={{ fontFamily: "'Lato', sans-serif" }} 
-                                                                    className="text-xs md:text-sm font-extrabold tracking-wider text-black"
-                                                                >
-                                                                    {`${currentStepIdx}/${totalOnboardingSteps}`}
-                                                                </span>
-                                                            </div>
-                                                            
+
                                                             <div className="relative w-full px-2 mb-2">
                                                                 <div className="absolute top-1/2 left-[11px] right-[11px] h-[5px] -translate-y-1/2">
                                                                     <div className="w-full h-full bg-[#1A365D]/15 rounded-full" />
