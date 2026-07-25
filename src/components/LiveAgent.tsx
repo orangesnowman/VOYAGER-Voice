@@ -1198,8 +1198,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     <div 
                                                                         key={opt.id}
                                                                         onClick={() => setSelectedGoal(opt.id as any)}
-                                                                        className={`flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all cursor-pointer bg-white/70 backdrop-blur-xs select-none w-full ${
-                                                                            isSel ? 'border-red-600 shadow-xs bg-red-50/10' : 'border-black hover:border-neutral-700 bg-white/40'
+                                                                        className={`flex items-center justify-between px-5 py-4 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
+                                                                            isSel 
+                                                                                ? 'border-red-600 bg-neutral-200/50' 
+                                                                                : 'border-black hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
@@ -1209,11 +1211,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                             </span>
                                                                         </div>
                                                                         {isSel ? (
-                                                                            <div className="w-[28px] h-[28px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0">
-                                                                                <Check className="w-4 h-4 text-white stroke-[4]" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
+                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="w-[28px] h-[28px] rounded-full bg-transparent border-2 border-black flex-shrink-0" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
                                                                         )}
                                                                     </div>
                                                                 );
@@ -1249,8 +1251,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     <div 
                                                                         key={opt.id}
                                                                         onClick={() => setSelectedLevel(opt.id as any)}
-                                                                        className={`flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all cursor-pointer bg-white/70 backdrop-blur-xs select-none w-full ${
-                                                                            isSel ? 'border-red-600 shadow-xs bg-red-50/10' : 'border-black hover:border-neutral-700 bg-white/40'
+                                                                        className={`flex items-center justify-between px-5 py-4 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
+                                                                            isSel 
+                                                                                ? 'border-red-600 bg-neutral-200/50' 
+                                                                                : 'border-black hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
@@ -1260,11 +1264,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                             </span>
                                                                         </div>
                                                                         {isSel ? (
-                                                                            <div className="w-[28px] h-[28px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0">
-                                                                                <Check className="w-4 h-4 text-white stroke-[4]" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
+                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="w-[28px] h-[28px] rounded-full bg-transparent border-2 border-black flex-shrink-0" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
                                                                         )}
                                                                     </div>
                                                                 );
@@ -1299,8 +1303,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     <div 
                                                                         key={mode.id}
                                                                         onClick={() => handleModeSelection(mode.id as ConversationMode)}
-                                                                        className={`flex items-center justify-between p-2.5 rounded-xl border-2 transition-all cursor-pointer bg-white/70 backdrop-blur-xs select-none w-full ${
-                                                                            isSel ? 'border-red-600 shadow-xs bg-red-50/10' : 'border-zinc-300 hover:border-neutral-500 bg-white/40'
+                                                                        className={`flex items-center justify-between p-3 rounded-xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
+                                                                            isSel 
+                                                                                ? 'border-red-600 bg-neutral-200/50' 
+                                                                                : 'border-zinc-300 hover:border-neutral-500 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-start gap-2.5 flex-1 min-w-0 pr-2">
@@ -1315,11 +1321,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                             </div>
                                                                         </div>
                                                                         {isSel ? (
-                                                                            <div className="w-5.5 h-5.5 rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0">
-                                                                                <Check className="w-3.5 h-3.5 text-white stroke-[4]" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
+                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="w-5.5 h-5.5 rounded-full bg-transparent border border-black flex-shrink-0" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
                                                                         )}
                                                                     </div>
                                                                 );
