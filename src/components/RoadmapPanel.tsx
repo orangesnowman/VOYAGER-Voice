@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, LogOut, Compass, Calendar, Award, CheckCircle2, Circle, Target, ChevronRight, Mail, Key, Users, Sparkles, Activity, BookOpen, Volume2, Apple } from 'lucide-react';
+import { User, LogOut, Compass, Calendar, Award, CheckCircle2, Circle, Target, ChevronRight, Mail, Key, Users, Sparkles, Activity, BookOpen, Volume2, Apple, Lock } from 'lucide-react';
 import { googleSignIn, logout, auth } from '../services/firebaseAuth';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import { IMMERSION_CURRICULUM } from '../constants';
@@ -29,6 +29,7 @@ interface UserProfile {
   goal: string;
   levelEstimate: string;
   completedDays: number[];
+  plan?: 'FREE' | 'PRO';
   bookedLesson?: {
     teacherName: string;
     dateTime: string;
@@ -52,7 +53,8 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
     provider: 'Guest',
     goal: 'Business English & Networking',
     levelEstimate: 'Intermediate',
-    completedDays: [1]
+    completedDays: [1],
+    plan: 'FREE'
   };
 
   const [user, setUser] = useState<UserProfile>(() => {
@@ -224,6 +226,36 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
             <div>
               <h4 className="text-sm font-bold text-neutral-900 font-serif leading-tight">{user.name}</h4>
               <p className="text-[10px] text-neutral-500 font-mono leading-none">{user.email} • {user.provider} Auth</p>
+              <div className="flex items-center gap-1.5 mt-1.5 select-none">
+                <span className={`text-[8px] md:text-[9px] font-black uppercase px-2 py-0.5 rounded-full border leading-none ${
+                  (user.plan || 'FREE') === 'PRO' 
+                    ? 'bg-amber-50 text-amber-600 border-amber-300/60' 
+                    : 'bg-neutral-50 text-neutral-500 border-neutral-300/60'
+                }`}>
+                  {selectedLang === 'EN' ? `PLAN: ${user.plan || 'FREE'}` : `CUENTA: ${user.plan === 'PRO' ? 'PRO' : 'GRATIS'}`}
+                </span>
+                {(user.plan || 'FREE') === 'FREE' ? (
+                  <button 
+                    onClick={() => {
+                      const updated = { ...user, plan: 'PRO' as const };
+                      saveUser(updated);
+                    }}
+                    className="text-[8px] font-extrabold uppercase text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-2 py-0.5 cursor-pointer transition-colors"
+                  >
+                    {selectedLang === 'EN' ? 'Upgrade to PRO' : 'Cambiar a PRO'}
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => {
+                      const updated = { ...user, plan: 'FREE' as const };
+                      saveUser(updated);
+                    }}
+                    className="text-[8px] font-extrabold uppercase text-neutral-500 hover:text-neutral-700 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/50 rounded-full px-2 py-0.5 cursor-pointer transition-colors"
+                  >
+                    {selectedLang === 'EN' ? 'Downgrade' : 'Volver a Gratis'}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -357,7 +389,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
           <div className="flex items-center justify-between">
             <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
               <Compass className="w-4 h-4 text-neutral-700" />
-              {selectedLang === 'EN' ? 'Your Living Roadmap' : 'Tu Mapa de Ruta Activo'}
+              {selectedLang === 'EN' ? 'Lessons' : 'Lecciones'}
             </h4>
             <span className="text-[10px] font-mono font-bold bg-neutral-200 text-neutral-700 px-2 py-0.5 rounded-full uppercase">
               {user.completedDays.length} / {IMMERSION_CURRICULUM.length} {selectedLang === 'EN' ? 'Completed' : 'Completados'}
@@ -367,46 +399,74 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
           <div className="bg-white rounded-2xl p-3 border border-black/10 shadow-sm max-h-[290px] overflow-y-auto space-y-2.5">
             {IMMERSION_CURRICULUM.map((day) => {
               const isCompleted = user.completedDays.includes(day.dayNum);
+              const isLocked = (user.plan || 'FREE') === 'FREE' && day.dayNum > 1;
+
               return (
                 <div 
                   key={day.dayNum}
                   className={`p-2.5 rounded-xl border transition-all ${
-                    isCompleted 
-                      ? 'bg-emerald-50/20 border-emerald-500/20' 
-                      : 'bg-neutral-50/50 border-neutral-200/50 hover:border-neutral-300'
+                    isLocked
+                      ? 'bg-neutral-100/50 border-neutral-200 opacity-65'
+                      : isCompleted 
+                        ? 'bg-emerald-50/20 border-emerald-500/20' 
+                        : 'bg-neutral-50/50 border-neutral-200/50 hover:border-neutral-300'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-start gap-2">
-                      <button
-                        onClick={() => toggleDayCompleted(day.dayNum)}
-                        className="mt-0.5 bg-transparent border-none p-0 cursor-pointer text-neutral-400 hover:text-neutral-600"
-                      >
-                        {isCompleted ? (
-                          <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 fill-emerald-100" />
-                        ) : (
-                          <Circle className="w-4.5 h-4.5 text-neutral-300" />
-                        )}
-                      </button>
+                      {isLocked ? (
+                        <div className="mt-0.5 text-neutral-400 select-none">
+                          <Lock className="w-4.5 h-4.5" />
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => toggleDayCompleted(day.dayNum)}
+                          className="mt-0.5 bg-transparent border-none p-0 cursor-pointer text-neutral-400 hover:text-neutral-600"
+                        >
+                          {isCompleted ? (
+                            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 fill-emerald-100" />
+                          ) : (
+                            <Circle className="w-4.5 h-4.5 text-neutral-300" />
+                          )}
+                        </button>
+                      )}
                       <div>
-                        <h5 className="text-[11px] font-bold text-neutral-800 leading-tight">
+                        <h5 className={`text-[11px] font-bold leading-tight ${isLocked ? 'text-neutral-500' : 'text-neutral-800'}`}>
                           Day {day.dayNum}: {selectedLang === 'EN' ? day.title : day.titleEs}
+                          {isLocked && (
+                            <span className="ml-1.5 text-[8px] bg-red-100 text-red-600 font-extrabold uppercase px-1 rounded select-none">
+                              PRO
+                            </span>
+                          )}
                         </h5>
                         <p className="text-[10px] text-neutral-500 line-clamp-2 mt-0.5 leading-snug">
                           {selectedLang === 'EN' ? day.objectives[0] : day.objectivesEs[0]}
                         </p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => onAskVoyager(selectedLang === 'EN' 
-                        ? `Let's practice the Day ${day.dayNum} topic: ${day.title}. What is the first mission?`
-                        : `¡Practiquemos el tema del Día ${day.dayNum}: ${day.titleEs}! ¿Cuál es la primera misión?`
+                    {isLocked ? (
+                      <button
+                        onClick={() => alert(selectedLang === 'EN' 
+                          ? 'This lesson requires a PRO account. Change your account to PRO above to unlock all lessons!'
+                          : 'Esta lección requiere una cuenta PRO. ¡Cambia tu cuenta a PRO arriba para desbloquear todas las lecciones!'
+                        )}
+                        className="px-2 py-0.5 bg-neutral-200 text-neutral-400 rounded-md text-[8px] font-bold uppercase transition-all flex items-center cursor-pointer border-none"
+                      >
+                        <Lock className="w-2.5 h-2.5 mr-0.5" />
+                        {selectedLang === 'EN' ? 'Locked' : 'Bloqueado'}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => onAskVoyager(selectedLang === 'EN' 
+                          ? `Let's practice the Day ${day.dayNum} topic: ${day.title}. What is the first mission?`
+                          : `¡Practiquemos el tema del Día ${day.dayNum}: ${day.titleEs}! ¿Cuál es la primera misión?`
                       )}
-                      className="px-2 py-0.5 bg-neutral-100 hover:bg-[#ebd5a3] hover:text-[#9c6b21] rounded-md text-[8px] font-bold uppercase transition-all flex items-center cursor-pointer border-none"
-                    >
-                      {selectedLang === 'EN' ? 'Start' : 'Iniciar'}
-                      <ChevronRight className="w-2 h-2 ml-0.5" />
-                    </button>
+                        className="px-2 py-0.5 bg-neutral-100 hover:bg-[#ebd5a3] hover:text-[#9c6b21] rounded-md text-[8px] font-bold uppercase transition-all flex items-center cursor-pointer border-none"
+                      >
+                        {selectedLang === 'EN' ? 'Start' : 'Iniciar'}
+                        <ChevronRight className="w-2 h-2 ml-0.5" />
+                      </button>
+                    )}
                   </div>
                 </div>
               );
