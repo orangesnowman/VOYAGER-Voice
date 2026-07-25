@@ -1530,14 +1530,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     )}
 
                                                     {onboardingStep > 0 && (
-                                                        <div className="w-[75%] mt-6 select-none animate-fade-in flex items-center gap-4">
+                                                        <div className="w-full mt-6 select-none animate-fade-in flex items-center gap-4">
                                                             {/* Left Arrow (Back) */}
                                                             <button
                                                                 onClick={handleOnboardingBack}
                                                                 title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                className="w-9 h-9 rounded-full border-[3px] border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent flex-shrink-0"
+                                                                className="text-black/40 hover:text-black hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer bg-transparent flex-shrink-0 flex items-center justify-center p-1.5"
                                                             >
-                                                                <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
+                                                                <ArrowLeft className="w-6 h-6 stroke-[2.5]" />
                                                             </button>
 
                                                             {/* Progress bar and clickable circles */}
@@ -1576,9 +1576,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             <button
                                                                 onClick={handleOnboardingNext}
                                                                 title={nextTitle}
-                                                                className={nextBtnClasses}
+                                                                className={`${isFinalStep ? 'text-red-600 hover:text-red-700' : 'text-black/40 hover:text-black'} hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer bg-transparent flex-shrink-0 flex items-center justify-center p-1.5`}
                                                             >
-                                                                <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                                                                <ArrowRight className="w-6 h-6 stroke-[2.5]" />
                                                             </button>
                                                         </div>
                                                     )}
