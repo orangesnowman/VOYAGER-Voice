@@ -1251,9 +1251,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
                                                                     title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/65 hover:border-red-600 text-black/65 hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -1299,9 +1299,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(0)}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/65 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => {
@@ -1312,9 +1312,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }
                                                                     }}
                                                                     title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/65 hover:border-red-600 text-black/65 hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -1360,16 +1360,16 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/65 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setOnboardingStep(2)}
                                                                     title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/65 hover:border-red-600 text-black/65 hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -1421,16 +1421,16 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }
                                                                     }}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/65 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={handleCompleteOnboarding}
                                                                     title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -1451,7 +1451,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         className={`flex items-center justify-between p-3 rounded-xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
                                                                                 ? 'border-red-600 bg-neutral-200/50' 
-                                                                                : 'border-zinc-300 hover:border-neutral-500 bg-[#EAEAEA]/80'
+                                                                                : 'border-black/65 hover:border-neutral-500 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-start gap-2.5 flex-1 min-w-0 pr-2">
@@ -1470,7 +1470,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
                                                                             </div>
                                                                         ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black flex-shrink-0" />
+                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/65 flex-shrink-0" />
                                                                         )}
                                                                     </div>
                                                                 );
@@ -1480,16 +1480,16 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 <button
                                                                     onClick={() => setOnboardingStep(2)}
                                                                     title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-black/65 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={handleCompleteOnboarding}
                                                                     title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
+                                                                    className="w-6 h-6 rounded-full border-2 border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                                                                 >
-                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
+                                                                    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
                                                                 </button>
                                                             </div>
                                                         </div>
