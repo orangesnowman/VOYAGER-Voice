@@ -9,9 +9,10 @@ import { ProgressDashboard } from './ProgressDashboard';
 import { RoadmapPanel } from './RoadmapPanel';
 import { TeacherInsightsPanel } from './TeacherInsightsPanel';
 import { SettingsPanel } from './SettingsPanel';
+import { ShoppingPanel } from './ShoppingPanel';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
-import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff } from 'lucide-react';
+import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart } from 'lucide-react';
 
 import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { TRAVEL_PRESETS } from './TravelPresets';
@@ -204,7 +205,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     setHasInteracted,
   } = useConversationEngine();
 
-  const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings'>('home');
+  const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings' | 'shopping'>('home');
   const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
   const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
@@ -515,6 +516,16 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       const speech = selectedLang === 'EN'
         ? "Welcome to the Settings panel! Here you can configure the interface language, select translation and subtitle modes, toggle text-only listen-only mode, adjust voice speech rates, set your daily practice goals, and customize pedagogical feedback levels."
         : "¡Bienvenido al panel de Configuración! Aquí puedes configurar el idioma de la interfaz, elegir los modos de traducción y subtítulos, activar el modo de solo escucha sin audio, ajustar la velocidad de reproducción de voz de Voyager, establecer tus metas de práctica diarias y personalizar el nivel de feedback pedagógico.";
+
+      if (isConnected && !isPaused) {
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
+      } else {
+        speakText(speech);
+      }
+    } else if (rightPanelTab === 'shopping' && lastVisitedTabRef.current !== 'shopping') {
+      const speech = selectedLang === 'EN'
+        ? "Welcome to the Shopping section! Here you can upgrade to a PRO account to unlock all lessons, book private 1-on-1 diagnostic sessions, or select monthly intensive coaching packages."
+        : "¡Bienvenido a la sección de Compras! Aquí puedes actualizar tu cuenta a PRO para desbloquear todas las lecciones, reservar sesiones de diagnóstico individuales, o elegir paquetes de coaching intensivo mensual.";
 
       if (isConnected && !isPaused) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
@@ -899,7 +910,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                             }`} />
                         </button>
                     </div>
-                    <div className="grid grid-cols-4 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-sm sm:max-w-lg">
+                    <div className="grid grid-cols-5 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-md sm:max-w-xl">
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Home' : 'Inicio'}
@@ -981,6 +992,27 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
                         }`}>
                             {selectedLang === 'EN' ? 'PROFILE' : 'PERFIL'}
+                        </span>
+                    </div>
+
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('shopping')}>
+                        <button 
+                            title={selectedLang === 'EN' ? 'Shopping' : 'Compras'}
+                            aria-label={selectedLang === 'EN' ? 'Shopping' : 'Compras'}
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
+                        >
+                            <ShoppingCart className={`w-6 h-6 transition-all duration-300 ${
+                                rightPanelTab === 'shopping' 
+                                    ? 'text-red-600 scale-110' 
+                                    : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
+                            }`} />
+                        </button>
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                            rightPanelTab === 'shopping' 
+                                ? 'text-red-600 font-extrabold' 
+                                : 'text-black/65 group-hover:text-red-600 font-bold'
+                        }`}>
+                            {selectedLang === 'EN' ? 'SHOPPING' : 'COMPRAS'}
                         </span>
                     </div>
                 </div>
@@ -1684,6 +1716,43 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                     handleSuggestionClick(text);
                                 }}
                                 onNavigateTab={(tab) => setRightPanelTab(tab)}
+                            />
+                        ) : rightPanelTab === 'shopping' ? (
+                            <ShoppingPanel
+                                selectedLang={selectedLang}
+                                userPlan={(() => {
+                                    const saved = localStorage.getItem('voyager_user_account');
+                                    if (saved) {
+                                        try {
+                                            const u = JSON.parse(saved);
+                                            return u.plan || 'FREE';
+                                        } catch (e) {}
+                                    }
+                                    return 'FREE';
+                                })()}
+                                onUpgradeSuccess={() => {
+                                    const saved = localStorage.getItem('voyager_user_account');
+                                    let u = {
+                                        name: selectedLang === 'EN' ? 'Learner' : 'Estudiante',
+                                        email: 'learner@usavoyager.com',
+                                        provider: 'Guest' as const,
+                                        goal: 'Business English & Networking',
+                                        levelEstimate: 'Intermediate',
+                                        completedDays: [1],
+                                        plan: 'PRO' as const
+                                    };
+                                    if (saved) {
+                                        try {
+                                            u = { ...JSON.parse(saved), plan: 'PRO' };
+                                        } catch (e) {}
+                                    }
+                                    localStorage.setItem('voyager_user_account', JSON.stringify(u));
+                                    setRightPanelTab('roadmap');
+                                }}
+                                onAskVoyager={(text) => {
+                                    setRightPanelTab('chat');
+                                    handleSuggestionClick(text);
+                                }}
                             />
                         ) : rightPanelTab === 'teachers' ? (
                             <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">

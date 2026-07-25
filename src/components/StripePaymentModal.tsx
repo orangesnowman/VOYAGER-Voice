@@ -18,7 +18,7 @@ interface StripePaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedLang: 'EN' | 'ES';
-  itemType: 'sample' | 'monthly_4' | 'monthly_8';
+  itemType: 'sample' | 'monthly_4' | 'monthly_8' | 'pro_upgrade';
   initialName?: string;
   initialEmail?: string;
   initialDate?: string;
@@ -40,6 +40,14 @@ export const StripePaymentModal: React.FC<StripePaymentModalProps> = ({
   // Details depending on itemType
   const getItemDetails = () => {
     switch (itemType) {
+      case 'pro_upgrade':
+        return {
+          title: selectedLang === 'EN' ? 'USA Voyager PRO Plan Upgrade' : 'Actualización de Cuenta USA Voyager PRO',
+          description: selectedLang === 'EN' ? 'Unlock all interactive English lessons on the roadmap + advanced practice tools.' : 'Desbloquea todas las lecciones de inglés de la ruta + herramientas de práctica avanzada.',
+          priceCents: 999,
+          priceFormatted: '$9.99 USD',
+          priceAmount: 9.99
+        };
       case 'sample':
         return {
           title: selectedLang === 'EN' ? '30-Min Diagnostic Sample Class' : 'Clase de Prueba Diagnóstica (30 Min)',
