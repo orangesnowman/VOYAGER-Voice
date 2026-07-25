@@ -146,57 +146,34 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
           <Bot className="w-5 h-5 text-red-600 flex-shrink-0" />
           
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-            {/* Tab 1: BIENVENIDO */}
-            <button 
-              onClick={() => setActiveSubTab('welcome')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'welcome' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'welcome' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Welcome' : 'Bienvenido'}
-              </span>
-            </button>
+            {[...(['welcome', 'level', 'lessons', 'progress'] as const)]
+              .sort((a, b) => {
+                if (a === activeSubTab) return -1;
+                if (b === activeSubTab) return 1;
+                return 0;
+              })
+              .map((tab) => {
+                const label = 
+                  tab === 'welcome' ? (selectedLang === 'EN' ? 'Welcome' : 'Bienvenido') :
+                  tab === 'level' ? (selectedLang === 'EN' ? 'Your Level' : 'Tu Nivel') :
+                  tab === 'lessons' ? (selectedLang === 'EN' ? 'Lessons' : 'Lecciones') :
+                  (selectedLang === 'EN' ? 'Progress' : 'Progreso');
 
-            {/* Tab 2: TU NIVEL */}
-            <button 
-              onClick={() => setActiveSubTab('level')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'level' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'level' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Your Level' : 'Tu Nivel'}
-              </span>
-            </button>
-
-            {/* Tab 3: LECCIONES */}
-            <button 
-              onClick={() => setActiveSubTab('lessons')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'lessons' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'lessons' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Lessons' : 'Lecciones'}
-              </span>
-            </button>
-
-            {/* Tab 4: PROGRESO */}
-            <button 
-              onClick={() => setActiveSubTab('progress')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'progress' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'progress' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Progress' : 'Progreso'}
-              </span>
-            </button>
+                return (
+                  <button 
+                    key={tab}
+                    onClick={() => setActiveSubTab(tab)}
+                    className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none transition-all duration-300 animate-fade-in"
+                  >
+                    {activeSubTab === tab && (
+                      <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+                    )}
+                    <span className={activeSubTab === tab ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                      {label}
+                    </span>
+                  </button>
+                );
+              })}
           </div>
         </div>
 

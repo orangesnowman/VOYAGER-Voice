@@ -223,70 +223,35 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           <Bot className="w-5 h-5 text-red-600 flex-shrink-0" />
           
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
-            {/* Tab 1: BIENVENIDOS */}
-            <button 
-              onClick={() => setActiveSubTab('welcome')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'welcome' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'welcome' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Welcome' : 'Bienvenidos'}
-              </span>
-            </button>
+            {[...(['welcome', 'pro', 'sample', 'monthly_4', 'monthly_8'] as const)]
+              .sort((a, b) => {
+                if (a === activeSubTab) return -1;
+                if (b === activeSubTab) return 1;
+                return 0;
+              })
+              .map((tab) => {
+                const label = 
+                  tab === 'welcome' ? (selectedLang === 'EN' ? 'Welcome' : 'Bienvenidos') :
+                  tab === 'pro' ? 'PRO' :
+                  tab === 'sample' ? (selectedLang === 'EN' ? 'Diagnostic' : 'Diagnóstico') :
+                  tab === 'monthly_4' ? (selectedLang === 'EN' ? 'Immersion' : 'Inmersión') :
+                  (selectedLang === 'EN' ? 'Intensive' : 'Intensivo');
 
-            {/* Tab 2: PRO */}
-            <button 
-              onClick={() => setActiveSubTab('pro')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'pro' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'pro' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                PRO
-              </span>
-            </button>
-
-            {/* Tab 3: DIAGNOSTICO */}
-            <button 
-              onClick={() => setActiveSubTab('sample')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'sample' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'sample' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Diagnostic' : 'Diagnóstico'}
-              </span>
-            </button>
-
-            {/* Tab 4: INMERSION */}
-            <button 
-              onClick={() => setActiveSubTab('monthly_4')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'monthly_4' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'monthly_4' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Immersion' : 'Inmersión'}
-              </span>
-            </button>
-
-            {/* Tab 5: INTENSIVO */}
-            <button 
-              onClick={() => setActiveSubTab('monthly_8')}
-              className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-            >
-              {activeSubTab === 'monthly_8' && (
-                <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
-              )}
-              <span className={activeSubTab === 'monthly_8' ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
-                {selectedLang === 'EN' ? 'Intensive' : 'Intensivo'}
-              </span>
-            </button>
+                return (
+                  <button 
+                    key={tab}
+                    onClick={() => setActiveSubTab(tab)}
+                    className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none transition-all duration-300 animate-fade-in"
+                  >
+                    {activeSubTab === tab && (
+                      <MessageSquare className="w-3.5 h-3.5 text-red-600 fill-red-600/10 scale-x-[-1] mt-0.5" />
+                    )}
+                    <span className={activeSubTab === tab ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                      {label}
+                    </span>
+                  </button>
+                );
+              })}
           </div>
         </div>
 
