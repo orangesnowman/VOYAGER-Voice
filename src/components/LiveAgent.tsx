@@ -1717,7 +1717,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                  onAskVoyager={(text) => {
                                      setHasInteracted(true);
                                      addUserMessage(text);
-                                     const profilePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, amigable y directa para que un usuario de habla hispana entienda perfectamente su avance y datos. No des explicaciones en inglés ni intentes enseñar inglés aquí. Pregunta del usuario: "${text}"]`;
+                                     const profilePrompt = `[INSTRUCCIÓN DE SISTEMA CRÍTICA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). 
+Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. 
+Responde ÚNICAMENTE en español de forma clara, directa e informativa para que un usuario de habla hispana entienda perfectamente su avance y datos. 
+REGLA INQUEBRANTABLE: NO intentes enseñar inglés, NO invites al usuario a practicar inglés, NO inicies juegos de conversación en inglés y NO ofrezcas lecciones. Tu único trabajo en este panel es explicar de manera informativa en español los datos y la información del Perfil del usuario, y preguntarle si tiene alguna duda sobre esta sección.
+Pregunta del usuario: "${text}"]`;
                                      sendText(profilePrompt);
                                  }}
                                  onNavigateTab={(tab) => setRightPanelTab(tab)}
