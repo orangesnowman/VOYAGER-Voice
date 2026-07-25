@@ -46,7 +46,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         'Seguimiento prioritario de vocabulario'
       ],
       icon: Sparkles,
-      color: 'border-amber-500/30 text-amber-600',
+      color: 'text-amber-600',
       bgColor: 'bg-amber-50/10',
       buttonEn: 'Upgrade to PRO',
       buttonEs: 'Cambiar a PRO',
@@ -74,7 +74,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         'Soporte por chat directo por 7 días'
       ],
       icon: Clock,
-      color: 'border-blue-500/30 text-blue-600',
+      color: 'text-blue-600',
       bgColor: 'bg-blue-50/10',
       buttonEn: 'Book Diagnostic',
       buttonEs: 'Reservar Sesión',
@@ -102,7 +102,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         'Plan USA Voyager PRO incluido gratis'
       ],
       icon: BookOpen,
-      color: 'border-emerald-500/30 text-emerald-600',
+      color: 'text-emerald-600',
       bgColor: 'bg-emerald-50/10',
       buttonEn: 'Subscribe (4/mo)',
       buttonEs: 'Suscribirse (4/mes)',
@@ -130,7 +130,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         'Plan USA Voyager PRO incluido gratis'
       ],
       icon: Star,
-      color: 'border-purple-500/30 text-purple-600',
+      color: 'text-purple-600',
       bgColor: 'bg-purple-50/10',
       buttonEn: 'Subscribe (8/mo)',
       buttonEs: 'Suscribirse (8/mes)',
@@ -159,9 +159,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       <div className={`p-4 border border-black/10 rounded-2xl flex flex-col justify-between transition-all ${p.bgColor}`}>
         <div className="text-left">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <div className={`p-1.5 rounded-lg border bg-white ${p.color}`}>
-              <ProductIcon className="w-5 h-5" />
-            </div>
+            <ProductIcon className={`w-7 h-7 flex-shrink-0 ${p.color}`} />
             <div className="flex items-baseline gap-0.5">
               <span className="text-xl font-black text-neutral-900 font-mono">{p.price}</span>
               <span className="text-[9px] font-bold text-neutral-400 uppercase font-mono">
