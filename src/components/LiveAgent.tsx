@@ -12,7 +12,7 @@ import { SettingsPanel } from './SettingsPanel';
 import { ShoppingPanel } from './ShoppingPanel';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
-import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart, Briefcase, BookOpen, Luggage, Rocket, Check, UserCheck, Presentation, MessageSquareText } from 'lucide-react';
+import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart, Briefcase, BookOpen, Luggage, Rocket, Check, UserCheck, Presentation, MessageSquareText, Plane } from 'lucide-react';
 
 import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { TRAVEL_PRESETS } from './TravelPresets';
@@ -1264,7 +1264,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             {[
                                                                 { id: 'PROFESSIONAL', label: selectedLang === 'EN' ? 'PROFESSIONAL' : 'PROFESSIONAL', icon: Briefcase },
                                                                 { id: 'ESTUDIO', label: selectedLang === 'EN' ? 'STUDY' : 'ESTUDIO', icon: BookOpen },
-                                                                { id: 'VIAJANTE', label: selectedLang === 'EN' ? 'TRAVELER' : 'VIAJANTE', icon: Luggage }
+                                                                { id: 'VIAJANTE', label: selectedLang === 'EN' ? 'TRAVELER' : 'VIAJANTE', icon: Plane }
                                                             ].map((opt) => {
                                                                 const IconComp = opt.icon;
                                                                 const isSel = selectedGoal === opt.id;
