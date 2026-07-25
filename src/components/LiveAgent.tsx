@@ -1388,7 +1388,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                         <div className="w-[75%] mt-6 select-none animate-fade-in">
 
                                                             <div className="relative w-full px-2 mb-2">
-                                                                <div className="absolute top-1/2 left-[11px] right-[11px] h-[5px] -translate-y-1/2">
+                                                                <div className="absolute top-1/2 left-[11px] right-[11px] h-[3px] -translate-y-1/2">
                                                                     <div className="w-full h-full bg-[#1A365D]/15 rounded-full" />
                                                                     <div 
                                                                         className="absolute top-0 left-0 h-full bg-[#1A365D] rounded-full transition-all duration-300" 
