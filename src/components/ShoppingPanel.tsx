@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingCart, Sparkles, Check, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User, Play } from 'lucide-react';
 import { StripePaymentModal } from './StripePaymentModal';
+import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 interface ShoppingPanelProps {
   selectedLang: 'EN' | 'ES';
@@ -27,6 +28,13 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'welcome' | 'pro' | 'sample' | 'monthly_4' | 'monthly_8'>('welcome');
   const [stripeModalOpen, setStripeModalOpen] = useState(false);
+
+  const chatEndRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages]);
   const [activeStripeItemType, setActiveStripeItemType] = useState<'sample' | 'monthly_4' | 'monthly_8' | 'pro_upgrade'>('pro_upgrade');
   
   // Custom states for booking details
@@ -372,17 +380,30 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                     <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
                   </div>
                 )}
-                <div 
-                  style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                  className={`text-black leading-snug tracking-wider whitespace-pre-line ${isUser ? 'text-right' : 'text-left'}`}
-                >
-                  {displayTxt}
+                <div className={`chat-message-text whitespace-pre-line tracking-wider leading-snug ${isUser ? 'text-right font-normal' : 'text-left'}`}>
+                  {(() => {
+                    if (!isUser && displayTxt.includes(" / ")) {
+                      const parts = displayTxt.split(" / ");
+                      if (parts.length >= 2) {
+                        return (
+                          <>
+                            <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black font-semibold leading-snug">{parseAndRenderEmojis(parts[0])}</div>
+                            <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="chat-message-english text-black leading-snug mt-2">
+                              {parseAndRenderEmojis(parts.slice(1).join(" / "))}
+                            </div>
+                          </>
+                        );
+                      }
+                    }
+                    return <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black leading-snug">{parseAndRenderEmojis(displayTxt)}</div>;
+                  })()}
                 </div>
               </div>
             </div>
           </div>
         );
       })}
+        <div ref={chatEndRef} />
       </div>
 
       {/* Row 2: User's Input Box (Styled exactly like the Chat section input box with PAUSA and User icon) */}
