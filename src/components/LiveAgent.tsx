@@ -857,6 +857,20 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     }
   };
 
+  const handleJumpToStep = (stepNum: number) => {
+    if (stepNum === 1) {
+      setOnboardingStep(1);
+    } else if (stepNum === 2) {
+      if (selectedGoal === 'PROFESSIONAL') setOnboardingStep(11);
+      else if (selectedGoal === 'ESTUDIO') setOnboardingStep(12);
+      else if (selectedGoal === 'VIAJANTE') setOnboardingStep(13);
+    } else if (stepNum === 3) {
+      setOnboardingStep(2);
+    } else if (stepNum === 4) {
+      setOnboardingStep(4);
+    }
+  };
+
   const isFinalStep = onboardingStep === 4 || onboardingStep === 3;
   const nextTitle = isFinalStep 
       ? (selectedLang === 'EN' ? 'Connect' : 'Conecta') 
@@ -1516,9 +1530,18 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     )}
 
                                                     {onboardingStep > 0 && (
-                                                        <div className="w-[75%] mt-6 select-none animate-fade-in">
+                                                        <div className="w-[75%] mt-6 select-none animate-fade-in flex items-center gap-4">
+                                                            {/* Left Arrow (Back) */}
+                                                            <button
+                                                                onClick={handleOnboardingBack}
+                                                                title={selectedLang === 'EN' ? 'Back' : 'Volver'}
+                                                                className="w-9 h-9 rounded-full border-[3px] border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent flex-shrink-0"
+                                                            >
+                                                                <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
+                                                            </button>
 
-                                                            <div className="relative w-full px-2 mb-2">
+                                                            {/* Progress bar and clickable circles */}
+                                                            <div className="relative flex-1 py-4">
                                                                 <div className="absolute top-1/2 left-[11px] right-[11px] h-[3px] -translate-y-1/2">
                                                                     <div className="w-full h-full bg-[#1A365D]/15 rounded-full" />
                                                                     <div 
@@ -1535,11 +1558,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         return (
                                                                             <div 
                                                                                 key={i} 
-                                                                                className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                                                                    isSelected ? 'bg-black scale-105' : 'bg-[#1A365D]'
+                                                                                onClick={() => handleJumpToStep(stepNum)}
+                                                                                className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer hover:scale-110 active:scale-95 ${
+                                                                                    isSelected ? 'bg-[#1A365D] scale-105 shadow-md' : 'bg-[#EAEAEA] border-[2px] border-black/30 text-black/50'
                                                                                 }`}
                                                                             >
-                                                                                <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[10px] font-extrabold text-white">
+                                                                                <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[10px] font-extrabold ${isSelected ? 'text-white' : 'text-black/60'}`}>
                                                                                     {stepNum}
                                                                                 </span>
                                                                             </div>
@@ -1547,18 +1571,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     })}
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    )}
 
-                                                    {onboardingStep > 0 && (
-                                                        <div className="pt-4 flex gap-4 w-full justify-start select-none animate-fade-in">
-                                                            <button
-                                                                onClick={handleOnboardingBack}
-                                                                title={selectedLang === 'EN' ? 'Back' : 'Volver'}
-                                                                className="w-9 h-9 rounded-full border-[3px] border-black/40 text-black/40 hover:bg-black hover:text-white hover:border-black flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                            >
-                                                                <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
-                                                            </button>
+                                                            {/* Right Arrow (Next) */}
                                                             <button
                                                                 onClick={handleOnboardingNext}
                                                                 title={nextTitle}
