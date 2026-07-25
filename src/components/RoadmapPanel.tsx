@@ -141,7 +141,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
       <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
         
         {/* Sub-tab Navigation Header Bar */}
-        <div className="flex items-center gap-3 pb-3.5 border-b border-neutral-100 select-none text-[9.5px] md:text-[10.5px]">
+        <div className="flex items-center gap-3 pb-3.5 select-none text-[9.5px] md:text-[10.5px]">
           {/* Red robot icon */}
           <Bot className="w-5 h-5 text-red-600 flex-shrink-0" />
           
