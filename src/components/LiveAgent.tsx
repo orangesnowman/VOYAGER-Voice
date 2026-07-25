@@ -1265,11 +1265,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                     {onboardingStep === 0 && (
                                                         <div className="space-y-4 text-center sm:text-left">
-                                                            <p style={{ fontFamily: "'Lato', sans-serif" }} className="text-sm text-neutral-800 leading-relaxed">
-                                                                {selectedLang === 'EN'
-                                                                    ? "Before entering, USA Voyager will evaluate your profile and goals to align our AI tutor persona to your daily professional, academic, or travel needs."
-                                                                    : "Antes de ingresar, USA Voyager evaluará tu perfil y metas para alinear nuestro tutor de IA a tus necesidades profesionales, académicas o de viaje."}
-                                                            </p>
                                                             <div className="pt-4 flex justify-center sm:justify-start">
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
