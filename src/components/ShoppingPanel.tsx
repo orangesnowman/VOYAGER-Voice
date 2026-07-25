@@ -152,14 +152,12 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
 
   // Render product details inside the tab body
   const renderProductContent = (p: typeof products.pro) => {
-    const ProductIcon = p.icon;
     const isCurrentlyPro = p.isPro && userPlan === 'PRO';
 
     return (
       <div className="flex flex-col justify-between transition-all pt-2">
         <div className="text-left">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <ProductIcon className={`w-7 h-7 flex-shrink-0 ${p.color}`} />
             <div className="flex items-baseline gap-0.5">
               <span className="text-xl font-black text-neutral-900 font-mono">{p.price}</span>
               <span className="text-[9px] font-bold text-neutral-400 uppercase font-mono">
