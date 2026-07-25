@@ -1177,9 +1177,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             <div className="pt-4 flex justify-center sm:justify-start">
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
-                                                                    className="py-2.5 px-7 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 flex items-center justify-center min-w-[140px] bg-transparent font-mono"
+                                                                    title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
                                                                 >
-                                                                    {selectedLang === 'EN' ? 'START' : 'COMENZAR'}
+                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -1221,18 +1222,20 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 );
                                                             })}
 
-                                                            <div className="pt-4 flex gap-3 w-full">
+                                                            <div className="pt-4 flex gap-4 w-full justify-start">
                                                                 <button
                                                                     onClick={() => setOnboardingStep(0)}
-                                                                    className="flex-1 py-2 px-5 border-2 border-black/50 text-black/65 hover:border-black font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs active:scale-95 font-mono"
+                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
                                                                 >
-                                                                    {selectedLang === 'EN' ? 'BACK' : 'VOLVER'}
+                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setOnboardingStep(2)}
-                                                                    className="flex-1 py-2 px-5 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 font-mono"
+                                                                    title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
                                                                 >
-                                                                    {selectedLang === 'EN' ? 'NEXT' : 'SIGUIENTE'}
+                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -1274,18 +1277,20 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 );
                                                             })}
 
-                                                            <div className="pt-4 flex gap-3 w-full">
+                                                            <div className="pt-4 flex gap-4 w-full justify-start">
                                                                 <button
                                                                     onClick={() => setOnboardingStep(1)}
-                                                                    className="flex-1 py-2 px-5 border-2 border-black/50 text-black/65 hover:border-black font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs active:scale-95 font-mono"
+                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
                                                                 >
-                                                                    {selectedLang === 'EN' ? 'BACK' : 'VOLVER'}
+                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={() => setOnboardingStep(3)}
-                                                                    className="flex-1 py-2 px-5 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 font-mono"
+                                                                    title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
                                                                 >
-                                                                    {selectedLang === 'EN' ? 'NEXT' : 'SIGUIENTE'}
+                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -1331,18 +1336,20 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 );
                                                             })}
 
-                                                            <div className="pt-4 flex gap-3 w-full">
+                                                            <div className="pt-4 flex gap-4 w-full justify-start">
                                                                 <button
                                                                     onClick={() => setOnboardingStep(2)}
-                                                                    className="flex-1 py-2 px-5 border-2 border-black/50 text-black/65 hover:border-black font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs active:scale-95 font-mono"
+                                                                    title={selectedLang === 'EN' ? 'Back' : 'Volver'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-black/50 text-black/65 hover:border-black hover:text-black flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs active:scale-95 bg-transparent"
                                                                 >
-                                                                    {selectedLang === 'EN' ? 'BACK' : 'VOLVER'}
+                                                                    <ArrowLeft className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                                 <button
                                                                     onClick={handleCompleteOnboarding}
-                                                                    className="flex-1 py-2 px-5 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 font-mono"
+                                                                    title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
                                                                 >
-                                                                    {selectedLang === 'EN' ? 'CONNECT' : 'CONECTA'}
+                                                                    <ArrowRight className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                             </div>
                                                         </div>
