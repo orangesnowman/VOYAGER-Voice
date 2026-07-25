@@ -1197,8 +1197,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                 {/* Right: Steps */}
                                                 <div className="flex flex-col w-full text-left">
                                                     {onboardingStep > 0 && (
-                                                        <div className="w-full mb-5 select-none animate-fade-in">
-                                                            <div className="flex justify-between items-center mb-2">
+                                                        <div className="w-full mb-6 select-none animate-fade-in">
+                                                            <div className="flex justify-between items-center mb-3">
                                                                 <span 
                                                                     style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
                                                                     className="font-mono text-[10px] md:text-xs font-extrabold uppercase tracking-widest text-neutral-500"
@@ -1216,18 +1216,38 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         : (stepsLeft === 0 ? 'ÚLTIMO PASO' : `FALTAN ${stepsLeft} PASOS`)}
                                                                 </span>
                                                             </div>
-                                                            <div className="flex gap-2">
-                                                                {Array.from({ length: totalOnboardingSteps }).map((_, i) => {
-                                                                    const isActive = (i + 1) <= currentStepIdx;
-                                                                    return (
-                                                                        <div 
-                                                                            key={i} 
-                                                                            className={`h-2 flex-1 rounded-full border-2 border-black transition-all duration-300 ${
-                                                                                isActive ? 'bg-red-600' : 'bg-neutral-200'
-                                                                            }`}
-                                                                        />
-                                                                    );
-                                                                })}
+                                                            
+                                                            <div className="relative w-full px-2 mb-2">
+                                                                {/* Background connecting line */}
+                                                                <div className="absolute top-1/2 left-2 right-2 h-[3px] bg-neutral-200 -translate-y-1/2 rounded-full" />
+                                                                
+                                                                {/* Active progress connecting line */}
+                                                                <div 
+                                                                    className="absolute top-1/2 left-2 h-[3px] bg-red-600 -translate-y-1/2 rounded-full transition-all duration-300" 
+                                                                    style={{ 
+                                                                        width: `${((currentStepIdx - 1) / (totalOnboardingSteps - 1)) * 100}%` 
+                                                                    }} 
+                                                                />
+                                                                
+                                                                {/* Step circles */}
+                                                                <div className="relative flex justify-between items-center w-full z-10">
+                                                                    {Array.from({ length: totalOnboardingSteps }).map((_, i) => {
+                                                                        const stepNum = i + 1;
+                                                                        const isActive = stepNum <= currentStepIdx;
+                                                                        return (
+                                                                            <div 
+                                                                                key={i} 
+                                                                                className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                                                                    isActive ? 'bg-red-600 scale-105' : 'bg-neutral-300'
+                                                                                }`}
+                                                                            >
+                                                                                <span className="text-[9px] font-mono font-extrabold text-white">
+                                                                                    {stepNum}
+                                                                                </span>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     )}
