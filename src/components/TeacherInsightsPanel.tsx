@@ -1,25 +1,36 @@
 import React, { useState } from 'react';
 import { 
   Star, 
-  CheckCircle,
-  Calendar,
   Award,
   Sparkles,
-  Send,
   UserCheck,
   Globe,
   Clock,
-  ShieldCheck,
   Check,
   MessageSquareText,
   Video,
   CreditCard,
-  Lock
+  Lock,
+  Bot,
+  MessageSquare,
+  Pause,
+  Play,
+  Apple,
+  ChevronRight,
+  User,
+  BookOpen
 } from 'lucide-react';
 import { StripePaymentModal } from './StripePaymentModal';
+import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 interface TeacherInsightsPanelProps {
   selectedLang: 'EN' | 'ES';
+  chatMessages: any[];
+  isPaused: boolean;
+  isConnected: boolean;
+  pause: () => void;
+  resume: () => void;
+  onAskVoyager: (text: string) => void;
   scores?: {
     grammar: number;
     pronunciation: number;
@@ -31,12 +42,23 @@ interface TeacherInsightsPanelProps {
 }
 
 export const TeacherInsightsPanel: React.FC<TeacherInsightsPanelProps> = ({
-  selectedLang
+  selectedLang,
+  chatMessages,
+  isPaused,
+  isConnected,
+  pause,
+  resume,
+  onAskVoyager,
+  scores,
+  learnedWords,
+  accentPatterns
 }) => {
+  const [activeSubTab, setActiveSubTab] = useState<'welcome' | 'classes' | 'phonetics' | 'support' | 'hire'>('welcome');
+  
   // Booking state
   const [bookingModal, setBookingModal] = useState<'sample' | 'monthly' | null>(null);
   const [stripeModalOpen, setStripeModalOpen] = useState(false);
-  const [bookingDate, setBookingDate] = useState('');
+  const [bookingDate, setBookingDate] = useState('2026-07-30');
   const [bookingTime, setBookingTime] = useState('10:00 AM');
   const [bookingName, setBookingName] = useState('');
   const [bookingEmail, setBookingEmail] = useState('');
@@ -46,6 +68,25 @@ export const TeacherInsightsPanel: React.FC<TeacherInsightsPanelProps> = ({
   const activeStripeItemType = bookingModal === 'sample' 
     ? 'sample' 
     : (monthlyPackage === '8_sessions' ? 'monthly_8' : 'monthly_4');
+
+  const triggerAutoExplanation = (tab: 'welcome' | 'classes' | 'phonetics' | 'support' | 'hire') => {
+    let prompt = '';
+    const noTutoringRule = 'REGLA INQUEBRANTABLE: NO intentes enseñar inglés, NO invites al usuario a practicar inglés, NO inicies juegos de conversación en inglés y NO ofrezcas lecciones. Tu único trabajo aquí es explicar en español la información de esta subsección de La Profe, y preguntarle amigablemente si tiene alguna duda sobre la información mostrada.';
+    if (tab === 'welcome') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección 'BIENVENIDO' de La Profe. Explícale brevemente en español quién es Alejandra Francois (La Profe), su especialidad en acento de Nueva York (NYC) y su metodología 1-a-1 en vivo. ${noTutoringRule}]`;
+    } else if (tab === 'classes') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección 'CLASES' de La Profe. Explícale en español las opciones de clases particulares semanales (4 clases) y clases intensivas (8 clases), las videollamadas privadas de 30 minutos o 1 hora, y cómo se calendarizan. ${noTutoringRule}]`;
+    } else if (tab === 'phonetics') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección 'FONETICA' de La Profe. Explícale en español los análisis de acento personalizado, la corrección de vicios de pronunciación comunes en hispanohablantes (como la diferencia de B vs V o reducción de vocales) y cómo Alejandra diseña las metas fonéticas del estudiante. ${noTutoringRule}]`;
+    } else if (tab === 'support') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección 'SOPORTE' de La Profe. Explícale en español que Alejandra ofrece soporte asincrónico directo por chat para revisar audios diariamente, aclarar dudas de tareas y acompañamiento diario para acelerar la fluidez. ${noTutoringRule}]`;
+    } else if (tab === 'hire') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección 'CONTRATA' de La Profe. Explícale en español los paquetes oficiales disponibles: Clase Diagnóstica única de $29, el Coaching Mensual de $199 (4 sesiones) o el Coaching Intensivo de $349 (8 sesiones), todos incluyendo plan PRO gratis. ${noTutoringRule}]`;
+    }
+    if (prompt) {
+      onAskVoyager(prompt);
+    }
+  };
 
   const handleProceedToStripe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,391 +106,526 @@ export const TeacherInsightsPanel: React.FC<TeacherInsightsPanelProps> = ({
     );
   };
 
+  const chatEndRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [chatMessages]);
+
   return (
-    <div className="w-full font-sans text-[#0F172A] animate-fade-in space-y-5">
+    <div className="flex-1 flex flex-col bg-neutral-300 max-h-[480px] md:max-h-[550px] overflow-hidden animate-fade-in font-sans text-[#231d17]">
       
-      {/* EXPLANATORY HERO BANNER ABOUT HIRING LA PROFE */}
-      <div className="bg-gradient-to-r from-amber-600 via-amber-700 to-[#231d17] rounded-2xl p-5 md:p-6 text-white text-left shadow-lg space-y-3 relative overflow-hidden border border-amber-500/20">
-        <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-y-8 translate-x-8">
-          <Award className="w-48 h-48 text-white" />
-        </div>
-        <div className="relative z-10 flex flex-col justify-between gap-3">
-          <div className="space-y-1.5">
-            <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-white/20 px-2.5 py-0.5 rounded-full border border-white/10 inline-block">
-              {selectedLang === 'EN' ? 'Hiring Availability' : 'OPCIÓN DE CONTRATACIÓN'}
-            </span>
-            <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-black tracking-tight uppercase">
-              {selectedLang === 'EN' ? 'Learn directly with La Profe!' : '¡Aprende inglés directamente con La Profe!'}
-            </h2>
-            <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] text-white/90 leading-relaxed font-serif">
-              {selectedLang === 'EN' 
-                ? 'You have the exclusive option to hire Alejandra Francois (La Profe), our Master English Immersion Coach. While USA Voyager guides your daily AI conversations, Alejandra offers personalized 1-on-1 private lessons to identify your phonetic blocks, refine your accent, and accelerate your path to fluency.'
-                : 'Tienes la opción exclusiva de contratar a Alejandra Francois (La Profe), nuestra Coach Maestra de Inmersión. Mientras USA Voyager guía tu práctica con Inteligencia Artificial, Alejandra te ayuda con clases particulares en vivo 1-a-1, identificando tus trabas de pronunciación y guiando tu aprendizaje paso a paso.'}
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 min-h-0">
+        
+        {/* THE MAIN LA PROFE CONTAINER CARD WITH PINK BORDER */}
+        <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
+          
+          {/* Sub-tab Navigation Header Bar */}
+          <div className="flex items-center gap-3 pb-3.5 select-none text-[9.5px] md:text-[10.5px]">
+            {/* Red robot icon */}
+            <Bot className="w-5 h-5 text-red-600 flex-shrink-0" />
+            
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+              {[...(['welcome', 'classes', 'phonetics', 'support', 'hire'] as const)].map((tab) => {
+                const label = 
+                  tab === 'welcome' ? (selectedLang === 'EN' ? 'Welcome' : 'Bienvenido') :
+                  tab === 'classes' ? (selectedLang === 'EN' ? 'Classes' : 'Clases') :
+                  tab === 'phonetics' ? (selectedLang === 'EN' ? 'Phonetics' : 'Fonética') :
+                  tab === 'support' ? (selectedLang === 'EN' ? 'Support' : 'Soporte') :
+                  (selectedLang === 'EN' ? 'Hire' : 'Contrata');
 
-      {/* MAIN PROFILE & HIRING BANNER FOR ALEJANDRA FRANCOIS - LA PROFE */}
-      <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm text-left space-y-6">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-5 border-b border-zinc-100 pb-5">
-          <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-600 via-amber-700 to-[#231d17] p-0.5 shadow-md flex items-center justify-center text-white font-serif font-black text-3xl">
-                AF
-              </div>
-              <div className="absolute -bottom-1 -right-1 bg-amber-500 text-white rounded-full p-1.5 border-2 border-white shadow-xs" title="Verified Master Instructor">
-                <Award className="w-4 h-4" />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold font-sans text-black tracking-tight">Alejandra Francois</h3>
-                <span className="bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border border-amber-300">
-                  La Profe
-                </span>
-              </div>
-              <p className="text-xs font-semibold text-black font-serif mt-0.5">
-                {selectedLang === 'EN' 
-                  ? 'Master English Immersion Coach & NYC Accent Specialist' 
-                  : 'Coach Maestra de Inmersión en Inglés y Especialista en Acento NYC'}
-              </p>
-              <div className="flex items-center gap-3 mt-2 text-[11px] text-black font-medium">
-                <span className="flex items-center gap-1 text-amber-700 font-bold">
-                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" /> 5.0 (140+ {selectedLang === 'EN' ? 'Graduates' : 'Estudiantes Graduados'})
-                </span>
-                <span>•</span>
-                <span className="flex items-center gap-1 text-black font-semibold">
-                  <Globe className="w-3.5 h-3.5 text-blue-600" /> {selectedLang === 'EN' ? 'Bilingual NYC Native' : 'Bilingüe Nativa de NYC'}
-                </span>
-              </div>
+                return (
+                  <button 
+                    key={tab}
+                    onClick={() => {
+                      if (activeSubTab !== tab) {
+                        setActiveSubTab(tab);
+                        triggerAutoExplanation(tab);
+                      }
+                    }}
+                    className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none transition-all duration-300 animate-fade-in"
+                  >
+                    {activeSubTab === tab && (
+                      <MessageSquare strokeWidth={3} className="w-3.5 h-3.5 text-red-600 fill-none scale-x-[-1] mt-0.5" />
+                    )}
+                    <span className={activeSubTab === tab ? 'text-black font-extrabold tracking-wider uppercase' : 'text-neutral-400 font-bold tracking-wider hover:text-red-600 transition-colors uppercase'}>
+                      {label}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          <div className="text-left md:text-right">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-black block mb-1 font-sans">
-              {selectedLang === 'EN' ? '1-on-1 Private Availability' : 'Disponibilidad Clases 1-a-1'}
-            </span>
-            <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 border border-emerald-300 px-3 py-1 rounded-full text-xs font-bold font-mono">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              {selectedLang === 'EN' ? 'Open for Enrollment' : 'Cupos Abiertos'}
-            </span>
-          </div>
-        </div>
+          {/* Tab Body Content */}
+          <div className="pt-1">
+            {activeSubTab === 'welcome' && (
+              <div className="animate-fade-in space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-600 via-amber-700 to-[#231d17] p-0.5 shadow-md flex items-center justify-center text-white font-serif font-black text-2xl">
+                      AF
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-amber-500 text-white rounded-full p-1 border-2 border-white shadow-xs">
+                      <Award className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
 
-        {/* ABOUT LA PROFE & METHODOLOGY */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-[#FAF7F2] p-4 rounded-xl border border-amber-200/70 text-xs text-black">
-          <div className="flex items-start gap-2.5">
-            <Video className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold text-black block font-sans">
-                {selectedLang === 'EN' ? 'Live Interactive 1-on-1' : 'Clases 1-a-1 En Vivo'}
-              </span>
-              <p className="text-[11px] text-black mt-0.5 font-serif">
-                {selectedLang === 'EN' 
-                  ? 'Real-time video or audio sessions focusing on practical American speech, tone, and confidence.'
-                  : 'Sesiones de video o audio en tiempo real enfocadas en el habla estadounidense, tono y confianza.'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2.5">
-            <Sparkles className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold text-black block font-sans">
-                {selectedLang === 'EN' ? 'Personalized Accent Correction' : 'Corrección Fonética Personalizada'}
-              </span>
-              <p className="text-[11px] text-black mt-0.5 font-serif">
-                {selectedLang === 'EN' 
-                  ? 'Target Spanish-to-English phonetic shifts (/v/ vs /b/, vowel reduction) for immediate naturalness.'
-                  : 'Tratamiento de vicios fonéticos común (v vs b, reducciones vocálicas) para sonar nativo rápidamente.'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2.5">
-            <MessageSquareText className="w-4 h-4 text-amber-700 flex-shrink-0 mt-0.5" />
-            <div>
-              <span className="font-bold text-black block font-sans">
-                {selectedLang === 'EN' ? 'Direct Whatsapp Support' : 'Soporte Directo por Chat'}
-              </span>
-              <p className="text-[11px] text-black mt-0.5 font-serif">
-                {selectedLang === 'EN' 
-                  ? 'Receive async audio reviews and homework guidance between sessions.'
-                  : 'Recibe retroalimentación en audio de tus tareas e inmersión entre cada sesión.'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* HIRE OPTIONS CARDS */}
-        <div>
-          <h4 className="text-xs font-bold uppercase tracking-wider text-black mb-3 font-sans flex items-center gap-1.5">
-            <UserCheck className="w-4 h-4 text-amber-700" />
-            {selectedLang === 'EN' ? 'Choose a Hire Option with Alejandra Francois' : 'Selecciona una Opción de Contratación con Alejandra Francois'}
-          </h4>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* SAMPLE CLASS CARD */}
-            <div className="bg-[#FAF7F2] p-5 rounded-2xl border-2 border-zinc-200 hover:border-amber-400 transition-all shadow-xs flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-0.5 rounded-md border border-amber-300 font-sans">
-                    {selectedLang === 'EN' ? 'Introductory Trial' : 'Clase de Prueba'}
-                  </span>
-                  <span className="text-lg font-extrabold text-black font-sans">$29 USD</span>
-                </div>
-                <h5 className="text-base font-bold text-black font-sans">
-                  {selectedLang === 'EN' ? '30-Min Diagnostic Sample Class' : 'Clase de Prueba Diagnóstica (30 Min)'}
-                </h5>
-                <p className="text-xs text-black mt-2 leading-relaxed font-serif">
-                  {selectedLang === 'EN'
-                    ? '1-on-1 private diagnostic session with Alejandra Francois. Ideal to test the live immersion method, identify your key pronunciation blocks, and build your custom roadmap.'
-                    : 'Sesión privada 1-a-1 con Alejandra Francois. Ideal para probar la metodología de inmersión, identificar tus principales trabas de pronunciación y armar tu plan.'}
-                </p>
-
-                <ul className="mt-3.5 space-y-1.5 text-[11px] text-slate-700">
-                  <li className="flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 text-amber-600" />
-                    {selectedLang === 'EN' ? 'Live diagnostic evaluation' : 'Evaluación diagnóstica en vivo'}
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 text-amber-600" />
-                    {selectedLang === 'EN' ? 'Custom accent action plan' : 'Plan de acción fonético personalizado'}
-                  </li>
-                </ul>
-              </div>
-
-              <button
-                onClick={() => setBookingModal('sample')}
-                className="mt-5 w-full py-2.5 px-4 bg-[#231d17] hover:bg-black text-amber-400 font-mono text-xs font-bold rounded-xl border border-amber-500/40 shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-              >
-                <CreditCard className="w-4 h-4" />
-                {selectedLang === 'EN' ? 'BUY' : 'COMPRA'}
-              </button>
-            </div>
-
-            {/* MONTHLY MULTIPLE SESSIONS CARD */}
-            <div className="bg-gradient-to-br from-amber-50 via-white to-amber-100/50 p-5 rounded-2xl border-2 border-amber-400 shadow-sm flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-amber-500 text-white text-[9px] font-extrabold uppercase px-2.5 py-0.5 rounded-bl-lg shadow-xs">
-                {selectedLang === 'EN' ? 'Best Value' : 'Mejor Opción'}
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-black bg-white px-2.5 py-0.5 rounded-md border border-amber-300 font-sans">
-                    {selectedLang === 'EN' ? 'Monthly Coaching' : 'Plan Mensual Recurrente'}
-                  </span>
-                  <span className="text-lg font-extrabold text-black font-sans">$199<span className="text-xs font-normal text-black">/mo</span></span>
-                </div>
-                <h5 className="text-base font-bold text-black font-sans">
-                  {selectedLang === 'EN' ? 'Multiple Sessions Package (4 or 8 / month)' : 'Paquete de Varias Sesiones (4 u 8 / mes)'}
-                </h5>
-                <p className="text-xs text-black mt-2 leading-relaxed font-serif">
-                  {selectedLang === 'EN'
-                    ? 'Complete immersion coaching with La Profe. Weekly 1-on-1 live video calls, daily audio homework feedback, and priority scheduling.'
-                    : 'Acompañamiento integral con La Profe. Clases semanales en vivo 1-a-1, revisión diaria de audios y prioridad de agenda.'}
-                </p>
-
-                <ul className="mt-3.5 space-y-1.5 text-[11px] text-slate-700">
-                  <li className="flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 text-amber-600" />
-                    {selectedLang === 'EN' ? 'Choice of 4 or 8 1-on-1 sessions per month' : 'Opción de 4 u 8 sesiones privadas al mes'}
-                  </li>
-                  <li className="flex items-center gap-1.5">
-                    <Check className="w-3.5 h-3.5 text-amber-600" />
-                    {selectedLang === 'EN' ? 'Continuous async chat & audio feedback' : 'Retroalimentación continua por voz y chat'}
-                  </li>
-                </ul>
-              </div>
-
-              <button
-                onClick={() => setBookingModal('monthly')}
-                className="mt-5 w-full py-2.5 px-4 bg-amber-600 hover:bg-amber-700 text-white font-mono text-xs font-bold rounded-xl border border-amber-700 shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-              >
-                <CreditCard className="w-4 h-4" />
-                {selectedLang === 'EN' ? 'BUY' : 'COMPRA'}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* GUARANTEE & STUDENT REVIEWS */}
-        <div className="pt-4 border-t border-zinc-100 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-600">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-            <span>
-              {selectedLang === 'EN' 
-                ? '100% Satisfaction Guarantee: Free reschedule if you cancel 24 hours prior.' 
-                : 'Garantía 100% Satisfacción: Reagendamiento libre avisando con 24h de anticipación.'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-amber-700 font-bold">
-            <Clock className="w-4 h-4 text-amber-600" />
-            <span>{selectedLang === 'EN' ? 'Flexible EST & PST schedules' : 'Horarios flexibles en EST y PST'}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* BOOKING MODAL */}
-      {bookingModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 border-2 border-amber-400 shadow-2xl text-left relative space-y-4">
-            <button 
-              onClick={() => setBookingModal(null)}
-              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-800 font-bold text-base cursor-pointer"
-            >
-              ✕
-            </button>
-
-            <div className="border-b border-zinc-100 pb-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-800 font-mono">
-                Alejandra Francois (La Profe)
-              </span>
-              <h3 className="text-base font-bold font-serif text-slate-900 mt-0.5">
-                {bookingModal === 'sample' 
-                  ? (selectedLang === 'EN' ? 'Schedule 30-Min Diagnostic Sample Class ($29)' : 'Agendar Clase de Prueba Diagnóstica ($29)')
-                  : (selectedLang === 'EN' ? 'Enroll in Monthly Immersion Coaching' : 'Inscribirse en Coaching Mensual de Inmersión')}
-              </h3>
-            </div>
-
-            {bookingSuccess ? (
-              <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 text-xs font-medium space-y-2">
-                <div className="flex items-center gap-2 font-bold text-emerald-800 text-sm font-serif">
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                  {selectedLang === 'EN' ? 'Payment & Booking Confirmed!' : '¡Pago y Reserva Confirmados!'}
-                </div>
-                <p>{bookingSuccess}</p>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBookingModal(null);
-                    setBookingSuccess(null);
-                  }}
-                  className="mt-2 w-full py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg text-xs cursor-pointer"
-                >
-                  {selectedLang === 'EN' ? 'Close' : 'Cerrar'}
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleProceedToStripe} className="space-y-3.5">
-                {bookingModal === 'monthly' && (
                   <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                      {selectedLang === 'EN' ? 'Select Monthly Package' : 'Selecciona Plan Mensual'}
-                    </label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setMonthlyPackage('4_sessions')}
-                        className={`p-2.5 rounded-xl border text-xs font-bold text-center cursor-pointer transition-all ${
-                          monthlyPackage === '4_sessions'
-                            ? 'bg-amber-100 border-amber-500 text-amber-900 shadow-xs'
-                            : 'bg-zinc-50 border-zinc-200 text-zinc-700 hover:bg-zinc-100'
-                        }`}
-                      >
-                        <div>4 {selectedLang === 'EN' ? 'Sessions' : 'Sesiones'}/mo</div>
-                        <div className="text-[11px] font-extrabold font-serif text-slate-900 mt-0.5">$199 USD</div>
-                      </button>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-bold text-black tracking-tight font-sans">Alejandra Francois</h3>
+                      <span className="bg-amber-100 text-amber-900 text-[8px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full border border-amber-300">
+                        La Profe
+                      </span>
+                    </div>
+                    <p className="text-[10px] font-semibold text-neutral-600 font-serif mt-0.5">
+                      {selectedLang === 'EN' 
+                        ? 'Master English Immersion Coach & NYC Accent Specialist' 
+                        : 'Coach Maestra de Inmersión en Inglés y Especialista en Acento NYC'}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1.5 text-[9.5px] text-neutral-500 font-medium">
+                      <span className="flex items-center gap-1 text-amber-700 font-bold">
+                        <Star className="w-3 h-3 fill-amber-500 text-amber-500" /> 5.0 (140+ {selectedLang === 'EN' ? 'Graduates' : 'Graduados'})
+                      </span>
+                      <span>•</span>
+                      <span className="flex items-center gap-0.5 font-semibold text-neutral-600">
+                        <Globe className="w-3.5 h-3.5 text-blue-600" /> {selectedLang === 'EN' ? 'NYC Native' : 'Nativa de NYC'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
 
+                <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black font-serif">
+                  {selectedLang === 'EN' 
+                    ? 'Alejandra Francois (La Profe) is our Master English Immersion Coach. While VOYAGER handles daily AI conversations, Alejandra offers personalized 1-on-1 private lessons to unlock phonetic blocks, refine your accent, and accelerate your path to business and social fluency.'
+                    : 'Alejandra Francois (La Profe) es nuestra Coach Maestra de Inmersión. Mientras VOYAGER guía tu práctica diaria con Inteligencia Artificial, Alejandra te ofrece clases particulares 1-a-1 en vivo para superar trabas fonéticas, pulir tu acento y acelerar tu fluidez comercial y social.'}
+                </p>
+              </div>
+            )}
+
+            {activeSubTab === 'classes' && (
+              <div className="animate-fade-in space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
+                  <Video className="w-4 h-4 text-neutral-700" />
+                  {selectedLang === 'EN' ? '1-on-1 Live Classes' : 'Clases 1-a-1 en Vivo'}
+                </h4>
+                <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black font-serif">
+                  {selectedLang === 'EN' 
+                    ? 'Alejandra offers live video-call coaching sessions to evaluate speech pace, conversation flow, and confidence.'
+                    : 'Alejandra ofrece sesiones de coaching en videollamada para evaluar el ritmo de habla, la fluidez conversacional y la confianza.'}
+                </p>
+                <div className="bg-[#FAF7F2] p-3 rounded-xl border border-amber-200/50 space-y-2">
+                  <div className="flex items-start gap-2 text-[10px]">
+                    <Check className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <span className="text-neutral-700 font-medium">
+                      {selectedLang === 'EN' ? '30-minute diagnostic session or 1-hour monthly classes.' : 'Sesión de diagnóstico de 30 minutos o clases mensuales de 1 hora.'}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2 text-[10px]">
+                    <Check className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <span className="text-neutral-700 font-medium">
+                      {selectedLang === 'EN' ? 'Live practice on realistic business meetings and presentations.' : 'Práctica en vivo basada en reuniones de negocios y presentaciones reales.'}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2 text-[10px]">
+                    <Check className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <span className="text-neutral-700 font-medium">
+                      {selectedLang === 'EN' ? 'Personalized scheduling calendar integrated in the platform.' : 'Calendario de reservas personalizado integrado en la plataforma.'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeSubTab === 'phonetics' && (
+              <div className="animate-fade-in space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
+                  <Sparkles className="w-4 h-4 text-neutral-700" />
+                  {selectedLang === 'EN' ? 'Accent & Phonetic Correction' : 'Corrección Fonética y Acento'}
+                </h4>
+                <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black font-serif">
+                  {selectedLang === 'EN' 
+                    ? 'Targeted accent reduction to identify and correct Spanish-to-English phonetic shifts.'
+                    : 'Reducción de acento focalizada para identificar y corregir vicios de pronunciación comunes de hispanohablantes.'}
+                </p>
+                <div className="bg-[#FAF7F2] p-3 rounded-xl border border-amber-200/50 space-y-2">
+                  <div className="flex items-start gap-2 text-[10px]">
+                    <Check className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <span className="text-neutral-700 font-medium">
+                      {selectedLang === 'EN' ? 'Phonetic log targeting vowel reductions and letter linking.' : 'Registro de objetivos fonéticos como reducción de vocales y enlace de letras.'}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2 text-[10px]">
+                    <Check className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <span className="text-neutral-700 font-medium">
+                      {selectedLang === 'EN' ? 'Specific exercises to correct B vs V and final consonant sounds.' : 'Ejercicios específicos para corregir sonidos de B vs V y consonantes finales.'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeSubTab === 'support' && (
+              <div className="animate-fade-in space-y-3">
+                <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-700 flex items-center gap-1.5 font-serif">
+                  <MessageSquareText className="w-4 h-4 text-neutral-700" />
+                  {selectedLang === 'EN' ? 'Asynchronous Direct Chat Support' : 'Acompañamiento y Chat Asincrónico'}
+                </h4>
+                <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black font-serif">
+                  {selectedLang === 'EN' 
+                    ? 'Alejandra acts as your private coach in between live lessons, tracking your progress via chat logs.'
+                    : 'Alejandra actúa como tu mentora privada entre clases en vivo, siguiendo tu progreso a través del historial de chat.'}
+                </p>
+                <div className="bg-[#FAF7F2] p-3 rounded-xl border border-amber-200/50 space-y-2">
+                  <div className="flex items-start gap-2 text-[10px]">
+                    <Check className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <span className="text-neutral-700 font-medium">
+                      {selectedLang === 'EN' ? 'Direct voice message reviews of your daily spoken practice.' : 'Revisiones de voz directas sobre tu práctica hablada diaria.'}
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2 text-[10px]">
+                    <Check className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <span className="text-neutral-700 font-medium">
+                      {selectedLang === 'EN' ? 'Priority 24/7 communications line included in immersive coaching.' : 'Línea de comunicación prioritaria 24/7 en los planes de inmersión.'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeSubTab === 'hire' && (
+              <div className="animate-fade-in space-y-4">
+                {bookingSuccess ? (
+                  <div className="bg-emerald-50 border-2 border-emerald-500/30 rounded-xl p-4 text-center space-y-2.5">
+                    <Check className="w-8 h-8 text-emerald-600 mx-auto" />
+                    <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-normal text-emerald-950 font-serif">
+                      {bookingSuccess}
+                    </p>
+                    <button
+                      onClick={() => setBookingSuccess(null)}
+                      className="text-[10px] font-bold text-emerald-700 hover:text-emerald-800 transition-colors uppercase tracking-wider bg-transparent border-none cursor-pointer"
+                    >
+                      {selectedLang === 'EN' ? 'Book Another Session' : 'Reservar Otra Sesión'}
+                    </button>
+                  </div>
+                ) : bookingModal ? (
+                  <form onSubmit={handleProceedToStripe} className="bg-zinc-50/50 border border-zinc-200 rounded-xl p-4 space-y-3.5 text-xs text-black">
+                    <div className="flex items-center justify-between border-b border-zinc-200 pb-2">
+                      <span className="font-bold text-neutral-800 font-sans uppercase">
+                        {bookingModal === 'sample' 
+                          ? (selectedLang === 'EN' ? '1-on-1 Diagnostic Class' : 'Clase de Diagnóstico 1-a-1')
+                          : (selectedLang === 'EN' ? 'Monthly Coaching Package' : 'Paquete de Coaching Mensual')}
+                      </span>
+                      <span className="font-bold font-mono text-neutral-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md text-[10px]">
+                        {bookingModal === 'sample' ? '$29.00' : (monthlyPackage === '8_sessions' ? '$349.00' : '$199.00')}
+                      </span>
+                    </div>
+
+                    {bookingModal === 'monthly' && (
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                          {selectedLang === 'EN' ? 'Coaching Intensity' : 'Intensidad del Coaching'}
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setMonthlyPackage('4_sessions')}
+                            className={`p-2 rounded-lg border text-[10.5px] font-bold text-center cursor-pointer transition-all ${
+                              monthlyPackage === '4_sessions'
+                                ? 'bg-amber-100 border-amber-500 text-amber-900'
+                                : 'bg-white border-zinc-200 text-zinc-600 hover:bg-zinc-50'
+                            }`}
+                          >
+                            <div>4 {selectedLang === 'EN' ? 'Sessions' : 'Sesiones'}/mes</div>
+                            <div className="text-[10px] text-neutral-500 font-mono mt-0.5">$199 USD</div>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setMonthlyPackage('8_sessions')}
+                            className={`p-2 rounded-lg border text-[10.5px] font-bold text-center cursor-pointer transition-all ${
+                              monthlyPackage === '8_sessions'
+                                ? 'bg-amber-100 border-amber-500 text-amber-900'
+                                : 'bg-white border-zinc-200 text-zinc-600 hover:bg-zinc-50'
+                            }`}
+                          >
+                            <div>8 {selectedLang === 'EN' ? 'Sessions' : 'Sesiones'}/mes</div>
+                            <div className="text-[10px] text-neutral-500 font-mono mt-0.5">$349 USD</div>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                          {selectedLang === 'EN' ? 'Your Name' : 'Tu Nombre'}
+                        </label>
+                        <input 
+                          type="text" 
+                          required
+                          value={bookingName}
+                          onChange={(e) => setBookingName(e.target.value)}
+                          placeholder="e.g. Maria Silva"
+                          className="w-full p-2 bg-white border border-zinc-300 rounded-lg text-xs text-neutral-800 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                          {selectedLang === 'EN' ? 'Email' : 'Correo'}
+                        </label>
+                        <input 
+                          type="email" 
+                          required
+                          value={bookingEmail}
+                          onChange={(e) => setBookingEmail(e.target.value)}
+                          placeholder="maria@example.com"
+                          className="w-full p-2 bg-white border border-zinc-300 rounded-lg text-xs text-neutral-800 focus:outline-none focus:border-amber-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                          {selectedLang === 'EN' ? 'Preferred Date' : 'Fecha Preferida'}
+                        </label>
+                        <input 
+                          type="date" 
+                          required
+                          value={bookingDate}
+                          onChange={(e) => setBookingDate(e.target.value)}
+                          className="w-full p-2 bg-white border border-zinc-300 rounded-lg text-xs text-neutral-800 focus:outline-none focus:border-amber-500 cursor-pointer"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                          {selectedLang === 'EN' ? 'Time (EST)' : 'Hora (EST)'}
+                        </label>
+                        <select
+                          value={bookingTime}
+                          onChange={(e) => setBookingTime(e.target.value)}
+                          className="w-full p-2 bg-white border border-zinc-300 rounded-lg text-xs text-neutral-800 focus:outline-none focus:border-amber-500 cursor-pointer"
+                        >
+                          <option value="9:00 AM">9:00 AM EST</option>
+                          <option value="11:00 AM">11:00 AM EST</option>
+                          <option value="2:00 PM">2:00 PM EST</option>
+                          <option value="5:00 PM">5:00 PM EST</option>
+                          <option value="7:00 PM">7:00 PM EST</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="pt-2 flex gap-2">
                       <button
                         type="button"
-                        onClick={() => setMonthlyPackage('8_sessions')}
-                        className={`p-2.5 rounded-xl border text-xs font-bold text-center cursor-pointer transition-all ${
-                          monthlyPackage === '8_sessions'
-                            ? 'bg-amber-100 border-amber-500 text-amber-900 shadow-xs'
-                            : 'bg-zinc-50 border-zinc-200 text-zinc-700 hover:bg-zinc-100'
-                        }`}
+                        onClick={() => setBookingModal(null)}
+                        className="flex-1 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold rounded-lg border border-zinc-300 transition-all cursor-pointer"
                       >
-                        <div>8 {selectedLang === 'EN' ? 'Sessions' : 'Sesiones'}/mo</div>
-                        <div className="text-[11px] font-extrabold font-serif text-slate-900 mt-0.5">$349 USD</div>
+                        {selectedLang === 'EN' ? 'Cancel' : 'Cancelar'}
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg border border-emerald-700 transition-all cursor-pointer shadow-sm flex items-center justify-center gap-1 font-mono"
+                      >
+                        <CreditCard className="w-3.5 h-3.5" />
+                        {selectedLang === 'EN' ? 'BUY' : 'COMPRA'}
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {/* Diagnostic option */}
+                    <div className="bg-[#FAF7F2] p-4 rounded-2xl border-2 border-zinc-200 hover:border-amber-400 transition-all shadow-xs flex flex-col justify-between text-left">
+                      <div className="space-y-1.5">
+                        <span className="text-[8px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300 font-sans inline-block">
+                          {selectedLang === 'EN' ? 'Trial Session' : 'Clase de Prueba'}
+                        </span>
+                        <h4 className="text-xs font-bold text-neutral-800 uppercase tracking-wide">
+                          {selectedLang === 'EN' ? '30-Min Diagnostic' : 'Sesión Diagnóstica (30 Min)'}
+                        </h4>
+                        <div className="text-lg font-black font-mono text-neutral-900 leading-none">
+                          $29.00 <span className="text-[10px] font-sans text-neutral-500 font-medium">/ {selectedLang === 'EN' ? 'one-time' : 'pago único'}</span>
+                        </div>
+                        <p className="text-[10.5px] leading-tight text-neutral-500 font-serif">
+                          {selectedLang === 'EN' 
+                            ? 'Evaluate accent & fluency with Alejandra + accent targets log.'
+                            : 'Evalúa tu nivel, acento y fluidez en vivo con Alejandra + reporte personalizado.'}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setBookingModal('sample')}
+                        className="w-full mt-3 py-2 bg-transparent text-amber-700 border-2 border-amber-700 hover:bg-amber-700/5 text-xs font-extrabold rounded-lg tracking-wider transition-all uppercase cursor-pointer"
+                      >
+                        {selectedLang === 'EN' ? 'Book Diagnostic' : 'Reservar Sesión'}
+                      </button>
+                    </div>
+
+                    {/* Immersive packages option */}
+                    <div className="bg-[#FAF7F2] p-4 rounded-2xl border-2 border-zinc-200 hover:border-amber-400 transition-all shadow-xs flex flex-col justify-between text-left">
+                      <div className="space-y-1.5">
+                        <span className="text-[8px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300 font-sans inline-block">
+                          {selectedLang === 'EN' ? 'Coaching Plans' : 'Planes de Coaching'}
+                        </span>
+                        <h4 className="text-xs font-bold text-neutral-800 uppercase tracking-wide">
+                          {selectedLang === 'EN' ? 'Immersive Packages' : 'Coaching de Inmersión'}
+                        </h4>
+                        <div className="text-lg font-black font-mono text-neutral-900 leading-none">
+                          $199 / $349 <span className="text-[10px] font-sans text-neutral-500 font-medium">/ {selectedLang === 'EN' ? 'month' : 'mes'}</span>
+                        </div>
+                        <p className="text-[10.5px] leading-tight text-neutral-500 font-serif">
+                          {selectedLang === 'EN' 
+                            ? '4 or 8 private live sessions + direct private chat support + Plan PRO included.'
+                            : '4 u 8 clases mensuales 1-a-1 + coaching directo por chat diario + Plan PRO gratis.'}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setBookingModal('monthly')}
+                        className="w-full mt-3 py-2 bg-transparent text-amber-700 border-2 border-amber-700 hover:bg-amber-700/5 text-xs font-extrabold rounded-lg tracking-wider transition-all uppercase cursor-pointer"
+                      >
+                        {selectedLang === 'EN' ? 'Subscribe' : 'Suscribirse'}
                       </button>
                     </div>
                   </div>
                 )}
-
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                    {selectedLang === 'EN' ? 'Your Name' : 'Tu Nombre'}
-                  </label>
-                  <input 
-                    type="text" 
-                    required
-                    value={bookingName}
-                    onChange={(e) => setBookingName(e.target.value)}
-                    placeholder="e.g. Maria Silva"
-                    className="w-full p-2.5 bg-zinc-50 border border-zinc-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                    {selectedLang === 'EN' ? 'Email Address' : 'Correo Electrónico'}
-                  </label>
-                  <input 
-                    type="email" 
-                    required
-                    value={bookingEmail}
-                    onChange={(e) => setBookingEmail(e.target.value)}
-                    placeholder="maria@example.com"
-                    className="w-full p-2.5 bg-zinc-50 border border-zinc-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                      {selectedLang === 'EN' ? 'Preferred Date' : 'Fecha Preferida'}
-                    </label>
-                    <input 
-                      type="date" 
-                      required
-                      value={bookingDate}
-                      onChange={(e) => setBookingDate(e.target.value)}
-                      className="w-full p-2.5 bg-zinc-50 border border-zinc-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-amber-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-600 mb-1">
-                      {selectedLang === 'EN' ? 'Time (EST)' : 'Hora (EST)'}
-                    </label>
-                    <select
-                      value={bookingTime}
-                      onChange={(e) => setBookingTime(e.target.value)}
-                      className="w-full p-2.5 bg-zinc-50 border border-zinc-300 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-amber-500 cursor-pointer"
-                    >
-                      <option value="9:00 AM">9:00 AM EST</option>
-                      <option value="11:00 AM">11:00 AM EST</option>
-                      <option value="2:00 PM">2:00 PM EST</option>
-                      <option value="5:00 PM">5:00 PM EST</option>
-                      <option value="7:00 PM">7:00 PM EST</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="pt-2 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setBookingModal(null)}
-                    className="flex-1 py-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-xs font-bold rounded-xl border border-zinc-300 transition-all cursor-pointer"
-                  >
-                    {selectedLang === 'EN' ? 'Cancel' : 'Cancelar'}
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl border border-emerald-700 transition-all cursor-pointer shadow-sm flex items-center justify-center gap-1.5 font-mono"
-                  >
-                    <CreditCard className="w-3.5 h-3.5" />
-                    {selectedLang === 'EN' ? 'BUY' : 'COMPRA'}
-                  </button>
-                </div>
-              </form>
+              </div>
             )}
           </div>
+
         </div>
-      )}
+
+        {/* Separate Chat messages sibling list */}
+        {chatMessages.filter(msg => {
+          if (msg.sender === 'system') return false;
+          if (msg.sender === 'user' && msg.text.startsWith('[')) return false;
+          return true;
+        }).map((msg, index) => {
+          const isUser = msg.sender === 'user';
+          let displayTxt = msg.text || '';
+          
+          // Clean system tags from user profile / teachers questions
+          if (displayTxt.includes('INSTRUCCIÓN DE SISTEMA:')) {
+            const match = displayTxt.match(/Pregunta del usuario:\s*"(.*)"/i) || displayTxt.match(/Pregunta:\s*"(.*)"/i) || displayTxt.match(/Question:\s*"(.*)"/i);
+            if (match && match[1]) {
+              displayTxt = match[1];
+            } else {
+              displayTxt = displayTxt
+                .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta del usuario:\s*"/i, '')
+                .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta:\s*"/i, '')
+                .replace(/"\]$/, '');
+            }
+          }
+
+          return (
+            <div 
+              key={msg.id || index}
+              className={`w-full flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
+            >
+              <div className={`max-w-[88%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+                <div className={`
+                  px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
+                  ${isUser 
+                    ? 'border-blue-600/30 text-black rounded-tr-none' 
+                    : 'border-red-600/30 text-black rounded-tl-none font-serif'
+                  }
+                `}>
+                  {isUser ? (
+                    <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!isConnected) return;
+                          if (isPaused) {
+                            resume();
+                            if (window.speechSynthesis && window.speechSynthesis.paused) {
+                              window.speechSynthesis.resume();
+                            }
+                          } else {
+                            pause();
+                            if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                              window.speechSynthesis.pause();
+                            }
+                          }
+                        }}
+                        disabled={!isConnected}
+                        className={`flex items-center gap-1 group cursor-pointer transition-all duration-300 ${
+                          !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                        }`}
+                      >
+                        {!isPaused && (
+                          <span 
+                            style={{ fontFamily: "'Lato', sans-serif" }} 
+                            className="text-[9px] font-black tracking-wider transition-all duration-300 text-blue-600/70 group-hover:text-red-600"
+                          >
+                            {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
+                          </span>
+                        )}
+                        {isPaused ? (
+                          <Play fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
+                        ) : (
+                          <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
+                        )}
+                      </button>
+                      <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mb-2 select-none">
+                      <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
+                    </div>
+                  )}
+                  <div className={`chat-message-text whitespace-pre-line tracking-wider leading-snug ${isUser ? 'text-right font-normal' : 'text-left'}`}>
+                    {(() => {
+                      if (!isUser && displayTxt.includes(" / ")) {
+                        const parts = displayTxt.split(" / ");
+                        if (parts.length >= 2) {
+                          return (
+                            <>
+                              <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black font-semibold leading-snug">{parseAndRenderEmojis(parts[0])}</div>
+                              <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="chat-message-english text-black leading-snug mt-2">
+                                {parseAndRenderEmojis(parts.slice(1).join(" / "))}
+                              </div>
+                            </>
+                          );
+                        }
+                      }
+                      return <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black leading-snug">{parseAndRenderEmojis(displayTxt)}</div>;
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={chatEndRef} />
+      </div>
+
+      {/* Row 2: User's Input Box (Styled exactly like the Chat section input box with User icon) */}
+      <div className="flex-shrink-0 px-4 pb-4 select-none flex justify-end w-full">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const inputEl = e.currentTarget.elements.namedItem('teacherQuestion') as HTMLInputElement;
+            if (inputEl && inputEl.value.trim()) {
+              onAskVoyager(inputEl.value.trim());
+              inputEl.value = '';
+            }
+          }}
+          className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
+        >
+          <div className="flex justify-end items-center gap-1.5 mb-1 text-blue-600/70 select-none">
+            <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+          </div>
+          <input
+            type="text"
+            name="teacherQuestion"
+            required
+            placeholder={selectedLang === 'EN' ? "Ask Voyager about Alejandra (La Profe)..." : "Pregúntale a Voyager sobre Alejandra (La Profe)..."}
+            style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}
+            className="w-full focus:outline-none transition-all border-none bg-transparent text-black text-right placeholder:text-right placeholder:text-black/45 font-serif text-[12.5px] p-0"
+          />
+        </form>
+      </div>
 
       {/* STRIPE PAYMENT GATEWAY MODAL */}
       <StripePaymentModal 
@@ -466,5 +642,3 @@ export const TeacherInsightsPanel: React.FC<TeacherInsightsPanelProps> = ({
     </div>
   );
 };
-
-

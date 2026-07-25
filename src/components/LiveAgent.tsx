@@ -1781,21 +1781,27 @@ Pregunta del usuario: "${text}"]`;
                                 }}
                             />
                         ) : rightPanelTab === 'teachers' ? (
-                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">
-                                <TeacherInsightsPanel
-                                    selectedLang={selectedLang}
-                                    scores={scores}
-                                    learnedWords={learnedWords}
-                                    accentPatterns={accentPatterns}
-                                    onAskVoyager={(text) => {
-                                        setRightPanelTab('chat');
-                                        setHasInteracted(true);
+                            <TeacherInsightsPanel
+                                selectedLang={selectedLang}
+                                chatMessages={chatMessages}
+                                isPaused={isPaused}
+                                isConnected={isConnected}
+                                pause={pause}
+                                resume={resume}
+                                scores={scores}
+                                learnedWords={learnedWords}
+                                accentPatterns={accentPatterns}
+                                onAskVoyager={(text) => {
+                                    setHasInteracted(true);
+                                    if (!text.startsWith('[AUTO_SYSTEM:')) {
                                         addUserMessage(text);
-                                        const teachersPrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre la sección de La Profe (Alejandra Francois, acompañamiento de clases en vivo, grabaciones de acento o logs de pronunciación). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, directa y comprensible para que un usuario de habla hispana entienda perfectamente cómo funciona el acompañamiento docente. No uses inglés ni enseñes inglés aquí. Pregunta del usuario: "${text}"]`;
-                                        sendText(teachersPrompt);
-                                    }}
-                                />
-                            </div>
+                                    }
+                                    const teachersPrompt = text.startsWith('[AUTO_SYSTEM:')
+                                        ? text
+                                        : `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre la sección de La Profe (Alejandra Francois, acompañamiento de clases en vivo, grabaciones de acento o logs de pronunciación). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, directa y comprensible para que un usuario de habla hispana entienda perfectamente cómo funciona el acompañamiento docente. No uses inglés ni enseñes inglés aquí. Pregunta del usuario: "${text}"]`;
+                                    sendText(teachersPrompt);
+                                }}
+                            />
                         ) : rightPanelTab === 'progress' ? (
                             <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">
                                 <ProgressDashboard 
