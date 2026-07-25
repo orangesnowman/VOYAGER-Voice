@@ -91,6 +91,22 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [activeSubTab, setActiveSubTab] = useState<'welcome' | 'level' | 'lessons' | 'progress'>('welcome');
 
+  const triggerAutoExplanation = (tab: 'welcome' | 'level' | 'lessons' | 'progress') => {
+    let prompt = '';
+    if (tab === 'welcome') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección de 'BIENVENIDO' de su Perfil. Explícale brevemente en español qué información puede gestionar aquí (progreso general, metas, ruta diaria y historial de clases) y pregúntale de forma amigable si tiene alguna pregunta.]`;
+    } else if (tab === 'level') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección de 'TU NIVEL' de su Perfil. Explícale brevemente en español lo que significan sus puntuaciones de Gramática (${grammarScore}%) y Pronunciación (${pronunciationScore}%) y su nivel estimado (${user?.levelEstimate || 'Intermedio'}). Al final, pregúntale amigablemente si tiene alguna pregunta.]`;
+    } else if (tab === 'lessons') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección de 'LECCIONES' de su Perfil. Explícale en español que aquí puede ver su mapa de aprendizaje interactivo del día 1 en adelante y su estado completado. Pregúntale amigablemente si tiene alguna pregunta.]`;
+    } else if (tab === 'progress') {
+      prompt = `[AUTO_SYSTEM: El usuario ha ingresado a la subsección de 'PROGRESO' de su Perfil. Explícale brevemente en español lo que significan sus palabras aprendidas (${learnedWordsCount}) y sus patrones de acento. Al final, pregúntale de forma amigable si tiene alguna pregunta.]`;
+    }
+    if (prompt) {
+      onAskVoyager(prompt);
+    }
+  };
+
   // Load user from storage on mount
   useEffect(() => {
     // Check Firebase auth state
@@ -181,7 +197,12 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                 return (
                   <button 
                     key={tab}
-                    onClick={() => setActiveSubTab(tab)}
+                    onClick={() => {
+                      if (activeSubTab !== tab) {
+                        setActiveSubTab(tab);
+                        triggerAutoExplanation(tab);
+                      }
+                    }}
                     className="flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 focus:outline-none transition-all duration-300 animate-fade-in"
                   >
                     {activeSubTab === tab && (
