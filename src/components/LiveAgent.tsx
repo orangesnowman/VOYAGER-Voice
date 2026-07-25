@@ -1154,30 +1154,24 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                     <div className="flex-grow flex flex-col justify-center items-center overflow-y-auto p-4 md:p-6 tab-content-area h-full select-none">
                                         <div className="w-full max-w-2xl mx-auto flex flex-col justify-start p-2 sm:p-4 animate-fade-in">
                                             {/* Header */}
-                                            <div className="text-center mb-5 md:mb-6 flex flex-col items-center">
-                                                <h2 className="text-2xl md:text-3xl font-bold text-black leading-tight">
-                                                    {onboardingStep === 11
-                                                        ? (selectedLang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?')
-                                                        : (selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!')
-                                                    }
-                                                </h2>
-                                                <p className="text-[10.5pt] text-black mt-1.5 max-w-lg mx-auto" style={{ fontFamily: "'Lato', sans-serif" }}>
-                                                    {onboardingStep === 0 && (selectedLang === 'EN' 
-                                                        ? 'Let us customize your English immersion experience with a few quick questions.' 
-                                                        : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.')}
-                                                    {onboardingStep === 1 && (selectedLang === 'EN' 
-                                                        ? 'What is your primary learning goal?' 
-                                                        : '¿Cuál es tu objetivo de aprendizaje principal?')}
-                                                    {onboardingStep === 11 && (selectedLang === 'EN' 
-                                                        ? 'Choose your main goal. Voyager will customize work practices and situations for you.' 
-                                                        : 'Elige tu objetivo principal. Voyager personalizará las prácticas y situaciones de trabajo para ti.')}
-                                                    {onboardingStep === 2 && (selectedLang === 'EN' 
-                                                        ? 'What is your estimated English level?' 
-                                                        : '¿Cuál es tu nivel estimado de inglés?')}
-                                                    {onboardingStep === 3 && (selectedLang === 'EN' 
-                                                        ? 'Select your starting conversation mode:' 
-                                                        : 'Selecciona tu modo de conversación para iniciar:')}
-                                                </p>
+                                            <div className="w-full text-left mb-6 flex flex-col items-start">
+                                                 <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-black leading-tight">
+                                                     {onboardingStep === 0 && (selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!')}
+                                                     {onboardingStep === 1 && (selectedLang === 'EN' ? 'What is your primary learning goal?' : '¿Cuál es tu objetivo de aprendizaje principal?')}
+                                                     {onboardingStep === 11 && (selectedLang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?')}
+                                                     {onboardingStep === 2 && (selectedLang === 'EN' ? 'What is your estimated English level?' : '¿Cuál es tu nivel estimado de inglés?')}
+                                                     {onboardingStep === 3 && (selectedLang === 'EN' ? 'Select your starting conversation mode:' : 'Selecciona tu modo de conversación para iniciar:')}
+                                                 </h2>
+                                                 {(onboardingStep === 0 || onboardingStep === 11) && (
+                                                     <p className="text-[10.5pt] text-black/60 mt-1.5 max-w-lg" style={{ fontFamily: "'Lato', sans-serif" }}>
+                                                         {onboardingStep === 0 && (selectedLang === 'EN' 
+                                                             ? 'Let us customize your English immersion experience with a few quick questions.' 
+                                                             : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.')}
+                                                         {onboardingStep === 11 && (selectedLang === 'EN' 
+                                                             ? 'Choose your main goal. Voyager will customize work practices and situations for you.' 
+                                                             : 'Elige tu objetivo principal. Voyager personalizará las prácticas y situaciones de trabajo para ti.')}
+                                                     </p>
+                                                 )}
                                             </div>
 
                                             {/* Main grid: Mascot on Left, Steps on Right */}
