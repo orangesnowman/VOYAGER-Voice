@@ -1713,7 +1713,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                     setRightPanelTab('chat');
                                     setHasInteracted(true);
                                     addUserMessage(text);
-                                    const profilePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). Responde ÚNICAMENTE en español de forma clara, amigable y directa para que un usuario de habla hispana entienda perfectamente su avance y datos. No des explicaciones en inglés ni intentes enseñar inglés aquí. Pregunta del usuario: "${text}"]`;
+                                    const profilePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, amigable y directa para que un usuario de habla hispana entienda perfectamente su avance y datos. No des explicaciones en inglés ni intentes enseñar inglés aquí. Pregunta del usuario: "${text}"]`;
                                     sendText(profilePrompt);
                                 }}
                                 onNavigateTab={(tab) => setRightPanelTab(tab)}
@@ -1759,16 +1759,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                     setHasInteracted(true);
                                     addUserMessage(text);
                                     const storePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está en la pestaña de COMPRAS de USA Voyager.
-Tu rol actual es el de un VENDEDOR EXPERTO (expert salesperson) de USA Voyager.
-Tu objetivo principal es convencer al usuario de adquirir uno de nuestros planes de pago (PRO, Sesión Diagnóstica, Coaching de Inmersión o Coaching Intensivo) explicando sus beneficios de manera altamente persuasiva, profesional y vendedora.
-Sigue estrictamente las siguientes reglas:
+Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER (no cambies tu voz, tono, acento ni actúes como un personaje de ventas exagerado). Habla como el tutor VOYAGER de siempre, pero respondiendo en español.
+Tu objetivo es explicarle de forma clara y convincente los beneficios de nuestros planes de pago oficiales (PRO, Sesión Diagnóstica, Coaching de Inmersión o Coaching Intensivo) para animarlo a adquirirlos:
 1. Responde ÚNICAMENTE en español (no des explicaciones ni respuestas en inglés, ni intentes enseñar inglés aquí). Su propósito en este panel no es aprender, sino informarse sobre la compra.
 2. Habla ÚNICAMENTE de los productos y servicios oficiales descritos a continuación. No inventes precios, número de sesiones ni características fuera de estas:
    - Plan USA Voyager PRO: $9.99/mes. Desbloquea todas las lecciones del Día 2 en adelante de la ruta de aprendizaje, escenarios avanzados de conversación y feedback avanzado de acento/pronunciación.
    - Sesión Diagnóstica: $29.00 pago único. Videollamada de 30 minutos 1-a-1 en vivo con Alejandra Francois (La Profe) para evaluar nivel, acento y fluidez + reporte personalizado + soporte de chat directo por 7 días.
    - Coaching de Inmersión: $199.00/mes. 4 clases al mes 1-a-1 en vivo con La Profe + acompañamiento de audios por chat privado diario + plan PRO gratis incluido.
    - Coaching Intensivo: $349.00/mes. 8 clases al mes 1-a-1 en vivo con La Profe (2 clases semanales) + revisiones diarias prioritarias de audios + soporte directo 24/7 + plan PRO gratis incluido.
-3. Sé muy persuasivo y enfocado en cerrar la venta, animando activamente al usuario a dar el paso para suscribirse o comprar ya mismo.
+3. Sé convincente y ayuda al usuario a tomar la decisión de compra, manteniendo la misma voz y acento habitual de VOYAGER.
 Pregunta del usuario: "${text}"]`;
                                     sendText(storePrompt);
                                 }}
@@ -1784,7 +1783,7 @@ Pregunta del usuario: "${text}"]`;
                                         setRightPanelTab('chat');
                                         setHasInteracted(true);
                                         addUserMessage(text);
-                                        const teachersPrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre la sección de La Profe (Alejandra Francois, acompañamiento de clases en vivo, grabaciones de acento o logs de pronunciación). Responde ÚNICAMENTE en español de forma clara, directa y comprensible para que un usuario de habla hispana entienda perfectamente cómo funciona el acompañamiento docente. No uses inglés ni enseñes inglés aquí. Pregunta del usuario: "${text}"]`;
+                                        const teachersPrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre la sección de La Profe (Alejandra Francois, acompañamiento de clases en vivo, grabaciones de acento o logs de pronunciación). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, directa y comprensible para que un usuario de habla hispana entienda perfectamente cómo funciona el acompañamiento docente. No uses inglés ni enseñes inglés aquí. Pregunta del usuario: "${text}"]`;
                                         sendText(teachersPrompt);
                                     }}
                                 />
