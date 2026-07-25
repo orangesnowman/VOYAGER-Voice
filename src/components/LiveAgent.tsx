@@ -1193,7 +1193,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             <div className="flex items-center mb-3">
                                                                 <span 
                                                                     style={{ fontFamily: "'Lato', sans-serif" }} 
-                                                                    className="text-xs md:text-sm font-extrabold tracking-wider text-black"
+                                                                    className="text-xs md:text-sm font-extrabold tracking-wider text-[#1A365D]"
                                                                 >
                                                                     {`${currentStepIdx}/${totalOnboardingSteps}`}
                                                                 </span>
@@ -1203,11 +1203,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 {/* Wrapper for connecting line to prevent it from sticking out */}
                                                                 <div className="absolute top-1/2 left-[11px] right-[11px] h-[3px] -translate-y-1/2">
                                                                     {/* Background connecting line */}
-                                                                    <div className="w-full h-full bg-black/15 rounded-full" />
+                                                                    <div className="w-full h-full bg-[#1A365D]/15 rounded-full" />
                                                                     
                                                                     {/* Active progress connecting line */}
                                                                     <div 
-                                                                        className="absolute top-0 left-0 h-full bg-black rounded-full transition-all duration-300" 
+                                                                        className="absolute top-0 left-0 h-full bg-[#1A365D] rounded-full transition-all duration-300" 
                                                                         style={{ 
                                                                             width: `${((currentStepIdx - 1) / (totalOnboardingSteps - 1)) * 100}%` 
                                                                         }} 
@@ -1223,7 +1223,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                             <div 
                                                                                 key={i} 
                                                                                 className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                                                                    isActive ? 'bg-black scale-105' : 'bg-black/35'
+                                                                                    isActive ? 'bg-[#1A365D] scale-105' : 'bg-[#1A365D]/35'
                                                                                 }`}
                                                                             >
                                                                                 <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[10px] font-extrabold text-white">
