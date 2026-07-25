@@ -1289,13 +1289,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
-                                                                        {isSel ? (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
-                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/40 flex-shrink-0" />
-                                                                        )}
                                                                     </div>
                                                                 );
                                                             })}
@@ -1352,13 +1345,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
-                                                                        {isSel ? (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
-                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/40 flex-shrink-0" />
-                                                                        )}
                                                                     </div>
                                                                 );
                                                             })}
@@ -1409,13 +1395,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
-                                                                        {isSel ? (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
-                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/40 flex-shrink-0" />
-                                                                        )}
                                                                     </div>
                                                                 );
                                                             })}
@@ -1476,13 +1455,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 </p>
                                                                             </div>
                                                                         </div>
-                                                                        {isSel ? (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0 shadow-sm animate-fade-in">
-                                                                                <Check className="w-[18px] h-[18px] text-white stroke-[4.5]" />
-                                                                            </div>
-                                                                        ) : (
-                                                                            <div className="w-[30px] h-[30px] rounded-full bg-transparent border-[3px] border-black/40 flex-shrink-0" />
-                                                                        )}
                                                                     </div>
                                                                 );
                                                             })}
