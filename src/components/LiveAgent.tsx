@@ -1232,7 +1232,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                             <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1288,7 +1288,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                             <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-xs md:text-sm font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1338,7 +1338,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                             <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1394,7 +1394,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                                 <MessageSquare className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
                                                                             <div className="flex-1 min-w-0">
-                                                                                <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-sm font-extrabold tracking-wide block leading-tight ${isSel ? 'text-red-600' : 'text-neutral-800'}`}>
+                                                                                <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wide block leading-tight ${isSel ? 'text-red-600' : 'text-neutral-800'}`}>
                                                                                     {name.toUpperCase()}
                                                                                 </span>
                                                                                 <p className="text-[10px] text-neutral-500 font-serif mt-0.5 leading-snug">
