@@ -793,17 +793,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     return days;
   };
 
-  const totalOnboardingSteps = selectedGoal === 'PROFESSIONAL' ? 4 : 3;
+  const totalOnboardingSteps = selectedGoal === 'PROFESSIONAL' ? 3 : 2;
   let currentStepIdx = 1;
   if (selectedGoal === 'PROFESSIONAL') {
     if (onboardingStep === 1) currentStepIdx = 1;
     else if (onboardingStep === 11) currentStepIdx = 2;
     else if (onboardingStep === 2) currentStepIdx = 3;
-    else if (onboardingStep === 3) currentStepIdx = 4;
   } else {
     if (onboardingStep === 1) currentStepIdx = 1;
     else if (onboardingStep === 2) currentStepIdx = 2;
-    else if (onboardingStep === 3) currentStepIdx = 3;
   }
   const stepsLeft = totalOnboardingSteps - currentStepIdx;
 
@@ -1438,9 +1436,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     <ArrowLeft className="w-6 h-6 stroke-[3]" />
                                                                 </button>
                                                                 <button
-                                                                    onClick={() => setOnboardingStep(3)}
-                                                                    title={selectedLang === 'EN' ? 'Next' : 'Siguiente'}
-                                                                    className="w-12 h-12 rounded-full border-[3px] border-black hover:border-red-600 text-black hover:text-red-600 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
+                                                                    onClick={handleCompleteOnboarding}
+                                                                    title={selectedLang === 'EN' ? 'Connect' : 'Conecta'}
+                                                                    className="w-12 h-12 rounded-full border-[3px] border-red-600 text-red-600 hover:scale-105 flex items-center justify-center transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 bg-transparent"
                                                                 >
                                                                     <ArrowRight className="w-6 h-6 stroke-[3]" />
                                                                 </button>
