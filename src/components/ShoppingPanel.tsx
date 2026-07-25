@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Sparkles, Check, CreditCard, ShieldCheck, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User } from 'lucide-react';
+import { ShoppingCart, Sparkles, Check, ShieldCheck, Lock, Award, BookOpen, Clock, Star, Bot, MessageSquare, Pause, User } from 'lucide-react';
 import { StripePaymentModal } from './StripePaymentModal';
 
 interface ShoppingPanelProps {
@@ -189,18 +189,15 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           <button
             onClick={() => handlePurchaseClick(p.id)}
             disabled={isCurrentlyPro}
-            className={`w-full py-2.5 border-none rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-sm ${
+            className={`w-full py-2.5 border-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-xs ${
               isCurrentlyPro 
-                ? 'bg-neutral-100 text-neutral-400 cursor-default'
-                : p.isPro
-                  ? 'bg-amber-500 hover:bg-amber-600 text-white font-mono'
-                  : 'bg-red-600 hover:bg-red-700 text-white font-mono'
+                ? 'bg-neutral-100 border-neutral-300 text-neutral-400 cursor-default'
+                : 'border-red-600 text-red-600 bg-transparent hover:bg-red-50/20 hover:border-red-700 hover:text-red-700 font-mono'
             }`}
           >
-            <CreditCard className="w-4 h-4" />
             {isCurrentlyPro 
               ? (selectedLang === 'EN' ? 'Active Plan' : 'Plan Activo')
-              : (selectedLang === 'EN' ? p.buttonEn : p.buttonEs)}
+              : (selectedLang === 'EN' ? 'BUY' : 'COMPRA')}
           </button>
         </div>
       </div>
