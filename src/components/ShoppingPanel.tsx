@@ -207,7 +207,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
+    <div className="flex-1 flex flex-col gap-3.5 p-4 bg-neutral-300 overflow-y-auto max-h-[480px] md:max-h-[550px] animate-fade-in font-sans text-[#231d17]">
       
       {/* THE MAIN SHOP CONTAINER CARD WITH PINK BORDER */}
       <div className="bg-white border-[5px] border-red-600/30 rounded-[28px] p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
@@ -253,66 +253,13 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         {/* Tab Body Content */}
         <div className="pt-1">
           {activeSubTab === 'welcome' && (
-            <div className="animate-fade-in flex flex-col space-y-4 max-h-[280px] overflow-y-auto pr-1">
+            <div className="animate-fade-in flex flex-col space-y-4">
               {/* Voyager welcome text */}
               <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-[10.5pt] leading-relaxed text-black">
                 {selectedLang === 'EN' 
                   ? 'Welcome to the Voyager Shop! Here you can check our immersion packages, buy sessions, or upgrade your account to PRO. Click on the tabs above to explore each choice!'
                   : '¡Bienvenido a la Tienda de Voyager! Aquí puedes ver nuestros paquetes de inmersión, comprar clases o cambiar tu cuenta a PRO. ¡Haz clic en las pestañas superiores para ver el detalle de cada opción!'}
               </p>
-
-              {/* Chat dialogue history list inside Compras welcome card */}
-              {chatMessages.filter(msg => msg.sender === 'user' || msg.sender === 'model').length > 0 && (
-                <div className="pt-3.5 border-t border-neutral-100 space-y-4 flex flex-col w-full">
-                  {chatMessages
-                    .filter(msg => msg.sender === 'user' || msg.sender === 'model')
-                    .map((msg, index) => {
-                      let displayTxt = msg.text || '';
-                      if (displayTxt.includes('SYSTEM INSTRUCTION:')) {
-                        const match = displayTxt.match(/Question:\s*"(.*)"/i);
-                        if (match && match[1]) {
-                          displayTxt = match[1];
-                        } else {
-                          displayTxt = displayTxt.replace(/\[SYSTEM INSTRUCTION:.*Question:\s*"/i, '').replace(/"\]$/, '');
-                        }
-                      }
-                      
-                      const isUser = msg.sender === 'user';
-                      
-                      return (
-                        <div 
-                          key={msg.id || index} 
-                          className={`flex flex-col w-[88%] ${isUser ? 'self-end items-end' : 'self-start items-start'} animate-fade-in`}
-                        >
-                          <div className={`
-                            w-full px-4 py-2.5 rounded-2xl text-xs leading-relaxed transition-all bg-white border-[5px]
-                            ${isUser 
-                              ? 'border-blue-600/30 text-black rounded-tr-none' 
-                              : 'border-red-600/30 text-black rounded-tl-none font-serif'
-                            }
-                          `}>
-                            {isUser ? (
-                              <div className="flex items-center justify-end gap-2 mb-1 select-none text-[8px] font-black text-blue-600">
-                                <div className="flex items-center gap-1">
-                                  <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>
-                                  <Pause className="w-3 h-3 fill-blue-600 stroke-none" />
-                                </div>
-                                <User strokeWidth={2.5} className="w-3.5 h-3.5 text-blue-600/70" />
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-2 mb-1.5 select-none">
-                                <Bot className="w-4 h-4 text-red-600" />
-                              </div>
-                            )}
-                            <p className={isUser ? 'text-right text-black font-normal' : 'text-left text-black font-normal'}>
-                              {displayTxt}
-                            </p>
-                          </div>
-                        </div>
-                      );
-                    })}
-                </div>
-              )}
             </div>
           )}
 
@@ -342,6 +289,53 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         </div>
 
       </div>
+
+      {/* Separate Chat messages sibling list */}
+      {chatMessages.filter(msg => msg.sender === 'user' || msg.sender === 'model').map((msg, index) => {
+        let displayTxt = msg.text || '';
+        if (displayTxt.includes('SYSTEM INSTRUCTION:')) {
+          const match = displayTxt.match(/Question:\s*"(.*)"/i);
+          if (match && match[1]) {
+            displayTxt = match[1];
+          } else {
+            displayTxt = displayTxt.replace(/\[SYSTEM INSTRUCTION:.*Question:\s*"/i, '').replace(/"\]$/, '');
+          }
+        }
+        
+        const isUser = msg.sender === 'user';
+        
+        return (
+          <div 
+            key={msg.id || index} 
+            className={`flex flex-col w-[85%] sm:w-[60%] ${isUser ? 'self-end items-end' : 'self-start items-start'} animate-fade-in flex-shrink-0`}
+          >
+            <div className={`
+              w-full px-4 py-2.5 rounded-2xl text-xs leading-relaxed transition-all bg-white border-[5px]
+              ${isUser 
+                ? 'border-blue-600/30 text-black rounded-tr-none' 
+                : 'border-red-600/30 text-black rounded-tl-none font-serif'
+              }
+            `}>
+              {isUser ? (
+                <div className="flex items-center justify-end gap-2 mb-1 select-none text-[8px] font-black text-blue-600">
+                  <div className="flex items-center gap-1">
+                    <span>{selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}</span>
+                    <Pause className="w-3 h-3 fill-blue-600 stroke-none" />
+                  </div>
+                  <User strokeWidth={2.5} className="w-3.5 h-3.5 text-blue-600/70" />
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 mb-1.5 select-none">
+                  <Bot className="w-4 h-4 text-red-600" />
+                </div>
+              )}
+              <p className={isUser ? 'text-right text-black font-normal' : 'text-left text-black font-normal'}>
+                {displayTxt}
+              </p>
+            </div>
+          </div>
+        );
+      })}
 
       {/* Row 2: User's Input Box (Styled exactly like the Chat section input box with PAUSA and User icon) */}
       <div className="flex justify-end w-full mt-3 select-none flex-shrink-0">
