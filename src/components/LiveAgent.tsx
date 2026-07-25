@@ -1188,54 +1188,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                 {/* Right: Steps */}
                                                 <div className="flex flex-col w-full text-left">
-                                                    {onboardingStep > 0 && (
-                                                        <div className="w-full mb-6 select-none animate-fade-in">
-                                                            <div className="flex items-center mb-3">
-                                                                <span 
-                                                                    style={{ fontFamily: "'Lato', sans-serif" }} 
-                                                                    className="text-xs md:text-sm font-extrabold tracking-wider text-black"
-                                                                >
-                                                                    {`${currentStepIdx}/${totalOnboardingSteps}`}
-                                                                </span>
-                                                            </div>
-                                                            
-                                                            <div className="relative w-full px-2 mb-2">
-                                                                {/* Wrapper for connecting line to prevent it from sticking out */}
-                                                                <div className="absolute top-1/2 left-[11px] right-[11px] h-[3px] -translate-y-1/2">
-                                                                    {/* Background connecting line */}
-                                                                    <div className="w-full h-full bg-[#1A365D]/15 rounded-full" />
-                                                                    
-                                                                    {/* Active progress connecting line */}
-                                                                    <div 
-                                                                        className="absolute top-0 left-0 h-full bg-[#1A365D] rounded-full transition-all duration-300" 
-                                                                        style={{ 
-                                                                            width: `${((currentStepIdx - 1) / (totalOnboardingSteps - 1)) * 100}%` 
-                                                                        }} 
-                                                                    />
-                                                                </div>
-                                                                
-                                                                {/* Step circles */}
-                                                                <div className="relative flex justify-between items-center w-full z-10">
-                                                                    {Array.from({ length: totalOnboardingSteps }).map((_, i) => {
-                                                                        const stepNum = i + 1;
-                                                                        const isSelected = stepNum === currentStepIdx;
-                                                                        return (
-                                                                            <div 
-                                                                                key={i} 
-                                                                                className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                                                                    isSelected ? 'bg-black scale-105' : 'bg-[#1A365D]'
-                                                                                }`}
-                                                                            >
-                                                                                <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[10px] font-extrabold text-white">
-                                                                                    {stepNum}
-                                                                                </span>
-                                                                            </div>
-                                                                        );
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
+
 
                                                     {onboardingStep === 0 && (
                                                         <div className="space-y-4 text-center sm:text-left">
@@ -1468,6 +1421,55 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 >
                                                                     <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                                                                 </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep > 0 && (
+                                                        <div className="w-[75%] mt-6 select-none animate-fade-in">
+                                                            <div className="flex items-center mb-3">
+                                                                <span 
+                                                                    style={{ fontFamily: "'Lato', sans-serif" }} 
+                                                                    className="text-xs md:text-sm font-extrabold tracking-wider text-black"
+                                                                >
+                                                                    {`${currentStepIdx}/${totalOnboardingSteps}`}
+                                                                </span>
+                                                            </div>
+                                                            
+                                                            <div className="relative w-full px-2 mb-2">
+                                                                {/* Wrapper for connecting line to prevent it from sticking out */}
+                                                                <div className="absolute top-1/2 left-[11px] right-[11px] h-[5px] -translate-y-1/2">
+                                                                    {/* Background connecting line */}
+                                                                    <div className="w-full h-full bg-[#1A365D]/15 rounded-full" />
+                                                                    
+                                                                    {/* Active progress connecting line */}
+                                                                    <div 
+                                                                        className="absolute top-0 left-0 h-full bg-[#1A365D] rounded-full transition-all duration-300" 
+                                                                        style={{ 
+                                                                            width: `${((currentStepIdx - 1) / (totalOnboardingSteps - 1)) * 100}%` 
+                                                                        }} 
+                                                                    />
+                                                                </div>
+                                                                
+                                                                {/* Step circles */}
+                                                                <div className="relative flex justify-between items-center w-full z-10">
+                                                                    {Array.from({ length: totalOnboardingSteps }).map((_, i) => {
+                                                                        const stepNum = i + 1;
+                                                                        const isSelected = stepNum === currentStepIdx;
+                                                                        return (
+                                                                            <div 
+                                                                                key={i} 
+                                                                                className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                                                                    isSelected ? 'bg-black scale-105' : 'bg-[#1A365D]'
+                                                                                }`}
+                                                                            >
+                                                                                <span style={{ fontFamily: "'Lato', sans-serif" }} className="text-[10px] font-extrabold text-white">
+                                                                                    {stepNum}
+                                                                                </span>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     )}
