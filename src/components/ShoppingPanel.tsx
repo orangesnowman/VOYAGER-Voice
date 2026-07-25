@@ -156,7 +156,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
     const isCurrentlyPro = p.isPro && userPlan === 'PRO';
 
     return (
-      <div className={`p-4 border border-black/10 rounded-2xl flex flex-col justify-between transition-all ${p.bgColor}`}>
+      <div className="flex flex-col justify-between transition-all pt-2">
         <div className="text-left">
           <div className="flex items-center justify-between gap-2 mb-3">
             <ProductIcon className={`w-7 h-7 flex-shrink-0 ${p.color}`} />
