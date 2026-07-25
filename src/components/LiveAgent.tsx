@@ -1207,7 +1207,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             
                                                             <div className="relative w-full px-2 mb-2">
                                                                 {/* Background connecting line */}
-                                                                <div className="absolute top-1/2 left-2 right-2 h-[3px] bg-neutral-200 -translate-y-1/2 rounded-full" />
+                                                                <div className="absolute top-1/2 left-2 right-2 h-[3px] bg-black/65 -translate-y-1/2 rounded-full" />
                                                                 
                                                                 {/* Active progress connecting line */}
                                                                 <div 
@@ -1225,11 +1225,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         return (
                                                                             <div 
                                                                                 key={i} 
-                                                                                className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
-                                                                                    isActive ? 'bg-red-600 scale-105' : 'bg-neutral-300'
+                                                                                className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                                                                    isActive ? 'bg-red-600 scale-105' : 'bg-black'
                                                                                 }`}
                                                                             >
-                                                                                <span className="text-[9px] font-mono font-extrabold text-white">
+                                                                                <span className="text-[10px] font-mono font-extrabold text-white">
                                                                                     {stepNum}
                                                                                 </span>
                                                                             </div>
