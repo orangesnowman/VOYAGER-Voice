@@ -12,7 +12,7 @@ import { SettingsPanel } from './SettingsPanel';
 import { ShoppingPanel } from './ShoppingPanel';
 import voyagerRobot from '../assets/images/voyager_robot_1783082204380.png';
 import chatAvatarIcon from '../assets/images/voyager_pixel_avatar_1784465509169.jpg';
-import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart } from 'lucide-react';
+import { Compass, MapPin, Languages, Sparkles, ArrowLeft, ArrowRight, Headphones, MessageSquare, User, Settings, Apple, Home, Pause, Play, Info, Shield, FileText, Bot, Eye, EyeOff, ShoppingCart, Briefcase, BookOpen, Luggage, Rocket, Check } from 'lucide-react';
 
 import { ChatMessage, Lead, TravelDestination, PronunciationFeedbackEvent, ConversationEvent } from './LiveAgentTypes';
 import { TRAVEL_PRESETS } from './TravelPresets';
@@ -208,6 +208,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings' | 'shopping'>('home');
   const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
+  const [onboardingStep, setOnboardingStep] = useState<number>(0);
+  const [selectedGoal, setSelectedGoal] = useState<'PROFESSIONAL' | 'ESTUDIO' | 'VIAJANTE'>('PROFESSIONAL');
+  const [selectedLevel, setSelectedLevel] = useState<'PRINCIPIANTE' | 'INTERMEDIO' | 'AVANZADO'>('INTERMEDIO');
   const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
   const [showReviewScreen, setShowReviewScreen] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
@@ -623,6 +626,31 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         setIsSpanishOnlyMode(true);
         break;
     }
+  };
+
+  const handleCompleteOnboarding = () => {
+    const saved = localStorage.getItem('voyager_user_account');
+    let u = {
+      name: selectedLang === 'EN' ? 'Learner' : 'Estudiante',
+      email: 'learner@usavoyager.com',
+      provider: 'Guest' as const,
+      goal: selectedGoal === 'PROFESSIONAL' ? 'Business English & Networking' : (selectedGoal === 'ESTUDIO' ? 'Academic Study & Reading' : 'Travel & Daily Conversation'),
+      levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
+      completedDays: [1],
+      plan: 'FREE' as const
+    };
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        u = {
+          ...parsed,
+          goal: selectedGoal === 'PROFESSIONAL' ? 'Business English & Networking' : (selectedGoal === 'ESTUDIO' ? 'Academic Study & Reading' : 'Travel & Daily Conversation'),
+          levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
+        };
+      } catch (e) {}
+    }
+    localStorage.setItem('voyager_user_account', JSON.stringify(u));
+    handleContinuaClick();
   };
 
   // Continua Click handler
@@ -1102,21 +1130,30 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                         ) : rightPanelTab === 'chat' ? (
                             <div className="flex-grow flex flex-col overflow-hidden h-full">
                                 {!hasInteracted ? (
-                                    <div className="flex-grow flex flex-col justify-center items-center overflow-y-auto p-4 md:p-6 tab-content-area h-full">
+                                    <div className="flex-grow flex flex-col justify-center items-center overflow-y-auto p-4 md:p-6 tab-content-area h-full select-none">
                                         <div className="w-full max-w-2xl mx-auto flex flex-col justify-start p-2 sm:p-4 animate-fade-in">
                                             {/* Header */}
                                             <div className="text-center mb-5 md:mb-6 flex flex-col items-center">
                                                 <h2 className="text-2xl md:text-3xl font-bold text-black leading-tight">
                                                     {selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!'}
                                                 </h2>
-                                                <p className="text-[10pt] text-black font-serif mt-1.5 max-w-lg mx-auto" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
-                                                    {selectedLang === 'EN' 
-                                                        ? 'I have set the default mode to Spanish. You can click on the other modes to hear Voyager explain what each one does before starting your practice.' 
-                                                        : 'He configurado el modo Español como predeterminado. Puedes hacer clic en los otros modos para que Voyager te explique de qué trata cada uno antes de comenzar tu práctica.'}
+                                                <p className="text-[10.5pt] text-black font-serif mt-1.5 max-w-lg mx-auto" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
+                                                    {onboardingStep === 0 && (selectedLang === 'EN' 
+                                                        ? 'Let us customize your English immersion experience with a few quick questions.' 
+                                                        : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.')}
+                                                    {onboardingStep === 1 && (selectedLang === 'EN' 
+                                                        ? 'What is your primary learning goal?' 
+                                                        : '¿Cuál es tu objetivo de aprendizaje principal?')}
+                                                    {onboardingStep === 2 && (selectedLang === 'EN' 
+                                                        ? 'What is your estimated English level?' 
+                                                        : '¿Cuál es tu nivel estimado de inglés?')}
+                                                    {onboardingStep === 3 && (selectedLang === 'EN' 
+                                                        ? 'Select your starting conversation mode:' 
+                                                        : 'Selecciona tu modo de conversación para iniciar:')}
                                                 </p>
                                             </div>
 
-                                            {/* Main grid: Mascot on Left, Modes on Right */}
+                                            {/* Main grid: Mascot on Left, Steps on Right */}
                                             <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr] md:grid-cols-[210px_1fr] gap-4 md:gap-6 items-center w-full">
                                                 {/* Left: Mascot */}
                                                 <div className="flex items-center justify-center">
@@ -1124,64 +1161,186 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                         src={voyagerRobot} 
                                                         alt="Voyager USA Mascot" 
                                                         referrerPolicy="no-referrer"
-                                                        className="w-[160px] sm:w-[180px] md:w-[210px] object-contain drop-shadow-md" 
+                                                        className="w-[160px] sm:w-[180px] md:w-[210px] object-contain drop-shadow-md animate-float-zero-g" 
                                                     />
                                                 </div>
 
-                                                {/* Right: Modes list & CONECTA button */}
-                                                <div className="flex flex-col items-center sm:items-start w-full">
-                                                    <div className="w-full">
-                                                        {modeDetails.map((mode) => {
-                                                            const name = selectedLang === 'EN' ? mode.nameEn : mode.nameEs;
-                                                            const desc = selectedLang === 'EN' ? mode.descEn : mode.descEs;
-                                                            const effectiveMode = chosenStartMode || 'SPANISH';
-                                                            const isSelected = effectiveMode === mode.id;
-
-                                                            return (
+                                                {/* Right: Steps */}
+                                                <div className="flex flex-col w-full text-left">
+                                                    {onboardingStep === 0 && (
+                                                        <div className="space-y-4 text-center sm:text-left">
+                                                            <p style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-sm text-neutral-800 leading-relaxed font-serif">
+                                                                {selectedLang === 'EN'
+                                                                    ? "Before entering, USA Voyager will evaluate your profile and goals to align our AI tutor persona to your daily professional, academic, or travel needs."
+                                                                    : "Antes de ingresar, USA Voyager evaluará tu perfil y metas para alinear nuestro tutor de IA a tus necesidades profesionales, académicas o de viaje."}
+                                                            </p>
+                                                            <div className="pt-4 flex justify-center sm:justify-start">
                                                                 <button
-                                                                    key={mode.id}
-                                                                    onClick={() => handleModeSelection(mode.id as ConversationMode)}
-                                                                    className="w-full text-left py-0.5 px-1.5 flex items-start gap-2 transition-colors cursor-pointer rounded-lg group"
+                                                                    onClick={() => setOnboardingStep(1)}
+                                                                    className="py-2.5 px-7 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 flex items-center justify-center min-w-[140px] bg-transparent font-mono"
                                                                 >
-                                                                    <div className="mt-1 flex-shrink-0 w-[17px] h-[17px] flex items-center justify-center">
-                                                                        {isSelected ? (
-                                                                            <MessageSquare 
-                                                                                strokeWidth={2.5} 
-                                                                                className="w-[17px] h-[17px] text-red-600 scale-x-[-1]" 
-                                                                            />
+                                                                    {selectedLang === 'EN' ? 'START' : 'COMENZAR'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep === 1 && (
+                                                        <div className="space-y-3.5 w-full">
+                                                            {[
+                                                                { id: 'PROFESSIONAL', label: selectedLang === 'EN' ? 'PROFESSIONAL' : 'PROFESSIONAL', icon: Briefcase },
+                                                                { id: 'ESTUDIO', label: selectedLang === 'EN' ? 'STUDY' : 'ESTUDIO', icon: BookOpen },
+                                                                { id: 'VIAJANTE', label: selectedLang === 'EN' ? 'TRAVELER' : 'VIAJANTE', icon: Luggage }
+                                                            ].map((opt) => {
+                                                                const IconComp = opt.icon;
+                                                                const isSel = selectedGoal === opt.id;
+                                                                return (
+                                                                    <div 
+                                                                        key={opt.id}
+                                                                        onClick={() => setSelectedGoal(opt.id as any)}
+                                                                        className={`flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all cursor-pointer bg-white/70 backdrop-blur-xs select-none w-full ${
+                                                                            isSel ? 'border-red-600 shadow-xs bg-red-50/10' : 'border-black hover:border-neutral-700 bg-white/40'
+                                                                        }`}
+                                                                    >
+                                                                        <div className="flex items-center gap-3.5">
+                                                                            <IconComp className={`w-6 h-6 flex-shrink-0 ${isSel ? 'text-red-600' : 'text-black'}`} />
+                                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                                {opt.label}
+                                                                            </span>
+                                                                        </div>
+                                                                        {isSel ? (
+                                                                            <div className="w-[28px] h-[28px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0">
+                                                                                <Check className="w-4 h-4 text-white stroke-[4]" />
+                                                                            </div>
                                                                         ) : (
-                                                                            <div className="w-[17px] h-[17px]" />
+                                                                            <div className="w-[28px] h-[28px] rounded-full bg-transparent border-2 border-black flex-shrink-0" />
                                                                         )}
                                                                     </div>
-                                                                    <div className="flex-1 min-w-0">
-                                                                        <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-normal text-lg md:text-[1.18rem] block leading-tight transition-colors ${
-                                                                            isSelected 
-                                                                            ? 'text-red-600' 
-                                                                            : 'text-black/80 group-hover:text-black'
-                                                                        }`}>
-                                                                            {name}
-                                                                        </span>
-                                                                        <p className="text-[10pt] text-black font-serif mt-0.5 leading-snug" style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}>
-                                                                            {desc}
-                                                                        </p>
-                                                                    </div>
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
+                                                                );
+                                                            })}
 
-                                                    {/* CONECTA Button styled as a pill button */}
-                                                    <div className="mt-5 w-full flex justify-center sm:justify-start sm:pl-4">
-                                                        <button 
-                                                            id="home-mode-continua-btn"
-                                                            onClick={handleContinuaClick}
-                                                            className="group py-2 px-6 border-2 border-black/65 hover:border-red-600 text-black/65 hover:text-red-600 font-bold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 flex items-center justify-center min-w-[120px] bg-transparent hover:bg-red-50/20"
-                                                        >
-                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-inherit transition-colors duration-300">
-                                                                {selectedLang === 'EN' ? 'CONNECT' : 'CONECTA'}
-                                                            </span>
-                                                        </button>
-                                                    </div>
+                                                            <div className="pt-4 flex gap-3 w-full">
+                                                                <button
+                                                                    onClick={() => setOnboardingStep(0)}
+                                                                    className="flex-1 py-2 px-5 border-2 border-black/50 text-black/65 hover:border-black font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs active:scale-95 font-mono"
+                                                                >
+                                                                    {selectedLang === 'EN' ? 'BACK' : 'VOLVER'}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => setOnboardingStep(2)}
+                                                                    className="flex-1 py-2 px-5 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 font-mono"
+                                                                >
+                                                                    {selectedLang === 'EN' ? 'NEXT' : 'SIGUIENTE'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep === 2 && (
+                                                        <div className="space-y-3.5 w-full">
+                                                            {[
+                                                                { id: 'PRINCIPIANTE', label: selectedLang === 'EN' ? 'BEGINNER' : 'PRINCIPIANTE', icon: Sparkles },
+                                                                { id: 'INTERMEDIO', label: selectedLang === 'EN' ? 'INTERMEDIATE' : 'INTERMEDIO', icon: Compass },
+                                                                { id: 'AVANZADO', label: selectedLang === 'EN' ? 'ADVANCED' : 'AVANZADO', icon: Rocket }
+                                                            ].map((opt) => {
+                                                                const IconComp = opt.icon;
+                                                                const isSel = selectedLevel === opt.id;
+                                                                return (
+                                                                    <div 
+                                                                        key={opt.id}
+                                                                        onClick={() => setSelectedLevel(opt.id as any)}
+                                                                        className={`flex items-center justify-between p-3.5 rounded-2xl border-2 transition-all cursor-pointer bg-white/70 backdrop-blur-xs select-none w-full ${
+                                                                            isSel ? 'border-red-600 shadow-xs bg-red-50/10' : 'border-black hover:border-neutral-700 bg-white/40'
+                                                                        }`}
+                                                                    >
+                                                                        <div className="flex items-center gap-3.5">
+                                                                            <IconComp className={`w-6 h-6 flex-shrink-0 ${isSel ? 'text-red-600' : 'text-black'}`} />
+                                                                            <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-base font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                                {opt.label}
+                                                                            </span>
+                                                                        </div>
+                                                                        {isSel ? (
+                                                                            <div className="w-[28px] h-[28px] rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0">
+                                                                                <Check className="w-4 h-4 text-white stroke-[4]" />
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="w-[28px] h-[28px] rounded-full bg-transparent border-2 border-black flex-shrink-0" />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+
+                                                            <div className="pt-4 flex gap-3 w-full">
+                                                                <button
+                                                                    onClick={() => setOnboardingStep(1)}
+                                                                    className="flex-1 py-2 px-5 border-2 border-black/50 text-black/65 hover:border-black font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs active:scale-95 font-mono"
+                                                                >
+                                                                    {selectedLang === 'EN' ? 'BACK' : 'VOLVER'}
+                                                                </button>
+                                                                <button
+                                                                    onClick={() => setOnboardingStep(3)}
+                                                                    className="flex-1 py-2 px-5 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 font-mono"
+                                                                >
+                                                                    {selectedLang === 'EN' ? 'NEXT' : 'SIGUIENTE'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep === 3 && (
+                                                        <div className="space-y-2.5 w-full">
+                                                            {modeDetails.map((mode) => {
+                                                                const name = selectedLang === 'EN' ? mode.nameEn : mode.nameEs;
+                                                                const desc = selectedLang === 'EN' ? mode.descEn : mode.descEs;
+                                                                const effectiveMode = chosenStartMode || 'SPANISH';
+                                                                const isSel = effectiveMode === mode.id;
+
+                                                                return (
+                                                                    <div 
+                                                                        key={mode.id}
+                                                                        onClick={() => handleModeSelection(mode.id as ConversationMode)}
+                                                                        className={`flex items-center justify-between p-2.5 rounded-xl border-2 transition-all cursor-pointer bg-white/70 backdrop-blur-xs select-none w-full ${
+                                                                            isSel ? 'border-red-600 shadow-xs bg-red-50/10' : 'border-zinc-300 hover:border-neutral-500 bg-white/40'
+                                                                        }`}
+                                                                    >
+                                                                        <div className="flex items-start gap-2.5 flex-1 min-w-0 pr-2">
+                                                                            <MessageSquare className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isSel ? 'text-red-600' : 'text-neutral-500'}`} />
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <span style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className={`font-mono text-sm font-extrabold tracking-wide block leading-tight ${isSel ? 'text-red-600' : 'text-neutral-800'}`}>
+                                                                                    {name.toUpperCase()}
+                                                                                </span>
+                                                                                <p className="text-[10px] text-neutral-500 font-serif mt-0.5 leading-snug">
+                                                                                    {desc}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                        {isSel ? (
+                                                                            <div className="w-5.5 h-5.5 rounded-full bg-red-600 flex items-center justify-center border border-red-600 flex-shrink-0">
+                                                                                <Check className="w-3.5 h-3.5 text-white stroke-[4]" />
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div className="w-5.5 h-5.5 rounded-full bg-transparent border border-black flex-shrink-0" />
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })}
+
+                                                            <div className="pt-4 flex gap-3 w-full">
+                                                                <button
+                                                                    onClick={() => setOnboardingStep(2)}
+                                                                    className="flex-1 py-2 px-5 border-2 border-black/50 text-black/65 hover:border-black font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs active:scale-95 font-mono"
+                                                                >
+                                                                    {selectedLang === 'EN' ? 'BACK' : 'VOLVER'}
+                                                                </button>
+                                                                <button
+                                                                    onClick={handleCompleteOnboarding}
+                                                                    className="flex-1 py-2 px-5 border-2 border-black hover:border-red-600 text-black hover:text-red-600 font-extrabold text-[10px] md:text-xs tracking-widest uppercase rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md active:scale-95 font-mono"
+                                                                >
+                                                                    {selectedLang === 'EN' ? 'CONNECT' : 'CONECTA'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
