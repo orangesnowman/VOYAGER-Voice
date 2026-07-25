@@ -214,6 +214,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [selectedProfSubGoal, setSelectedProfSubGoal] = useState<'CONSEGUIR_EMPLEO' | 'COMUNICARME_TRABAJO' | 'CRECER_PROFESIONAL'>('COMUNICARME_TRABAJO');
   const [selectedEstudioSubGoal, setSelectedEstudioSubGoal] = useState<'AYUDA_ACADEMICA' | 'PASAR_EXAMEN' | 'CONOCIMIENTO_GENERAL'>('AYUDA_ACADEMICA');
   const [selectedViajanteSubGoal, setSelectedViajanteSubGoal] = useState<'TURISMO' | 'NEGOCIOS' | 'CULTURA'>('TURISMO');
+  const [userName, setUserName] = useState<string>('');
+  const [userAge, setUserAge] = useState<string>('');
+  const [userEmail, setUserEmail] = useState<string>('');
   const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
   const [showReviewScreen, setShowReviewScreen] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
@@ -652,8 +655,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
        return 'Travel & Daily Conversation';
      };
     let u = {
-      name: selectedLang === 'EN' ? 'Learner' : 'Estudiante',
-      email: 'learner@usavoyager.com',
+      name: userName.trim() || (selectedLang === 'EN' ? 'Learner' : 'Estudiante'),
+      email: userEmail.trim() || 'learner@usavoyager.com',
+      age: userAge.trim() ? parseInt(userAge.trim()) : undefined,
       provider: 'Guest' as const,
       goal: getGoalText(),
       levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
@@ -805,11 +809,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     return days;
   };
 
-  const totalOnboardingSteps = 3;
+  const totalOnboardingSteps = 4;
   let currentStepIdx = 1;
   if (onboardingStep === 1) currentStepIdx = 1;
   else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) currentStepIdx = 2;
   else if (onboardingStep === 2) currentStepIdx = 3;
+  else if (onboardingStep === 4) currentStepIdx = 4;
   const stepsLeft = totalOnboardingSteps - currentStepIdx;
 
   const handleOnboardingBack = () => {
@@ -825,6 +830,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       } else if (selectedGoal === 'VIAJANTE') {
         setOnboardingStep(13);
       }
+    } else if (onboardingStep === 4) {
+      setOnboardingStep(2);
     } else if (onboardingStep === 3) {
       setOnboardingStep(2);
     }
@@ -842,13 +849,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
       setOnboardingStep(2);
     } else if (onboardingStep === 2) {
+      setOnboardingStep(4);
+    } else if (onboardingStep === 4) {
       handleCompleteOnboarding();
     } else if (onboardingStep === 3) {
       handleCompleteOnboarding();
     }
   };
 
-  const isFinalStep = onboardingStep === 2 || onboardingStep === 3;
+  const isFinalStep = onboardingStep === 4 || onboardingStep === 3;
   const nextTitle = isFinalStep 
       ? (selectedLang === 'EN' ? 'Connect' : 'Conecta') 
       : (selectedLang === 'EN' ? 'Next' : 'Siguiente');
@@ -1227,6 +1236,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                              {onboardingStep === 12 && (selectedLang === 'EN' ? 'What is your educational goal?' : '¿Cuál es tu meta educativa?')}
                                                              {onboardingStep === 13 && (selectedLang === 'EN' ? 'Reason you want to learn?' : '¿Razón por la que quieres aprender?')}
                                                              {onboardingStep === 2 && (selectedLang === 'EN' ? 'What is your estimated English level?' : '¿Cuál es tu nivel estimado de inglés?')}
+                                                             {onboardingStep === 4 && (selectedLang === 'EN' ? 'Who do I have the pleasure of speaking with?' : '¿Con quién tengo el gusto?')}
                                                              {onboardingStep === 3 && (selectedLang === 'EN' ? 'Select your starting conversation mode:' : 'Selecciona tu modo de conversación para iniciar:')}
                                                          </h2>
                                                          {onboardingStep === 0 && (
@@ -1420,6 +1430,51 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     </div>
                                                                 );
                                                             })}
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep === 4 && (
+                                                        <div className="space-y-4 w-full" style={{ fontFamily: "'Lato', sans-serif" }}>
+                                                            <div className="flex flex-col gap-1.5">
+                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
+                                                                    {selectedLang === 'EN' ? 'NAME' : 'NOMBRE'}
+                                                                </label>
+                                                                <input 
+                                                                    type="text"
+                                                                    value={userName}
+                                                                    onChange={(e) => setUserName(e.target.value)}
+                                                                    placeholder={selectedLang === 'EN' ? 'Your name' : 'Tu nombre'}
+                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                                />
+                                                            </div>
+
+                                                            <div className="flex flex-col gap-1.5">
+                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
+                                                                    {selectedLang === 'EN' ? 'AGE' : 'EDAD'}
+                                                                </label>
+                                                                <input 
+                                                                    type="number"
+                                                                    value={userAge}
+                                                                    onChange={(e) => setUserAge(e.target.value)}
+                                                                    placeholder={selectedLang === 'EN' ? 'Your age' : 'Tu edad'}
+                                                                    min="1"
+                                                                    max="120"
+                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                                />
+                                                            </div>
+
+                                                            <div className="flex flex-col gap-1.5">
+                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
+                                                                    {selectedLang === 'EN' ? 'EMAIL' : 'CORREO ELECTRÓNICO'}
+                                                                </label>
+                                                                <input 
+                                                                    type="email"
+                                                                    value={userEmail}
+                                                                    onChange={(e) => setUserEmail(e.target.value)}
+                                                                    placeholder={selectedLang === 'EN' ? 'your.email@example.com' : 'tu.correo@ejemplo.com'}
+                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                                />
+                                                            </div>
                                                         </div>
                                                     )}
 
