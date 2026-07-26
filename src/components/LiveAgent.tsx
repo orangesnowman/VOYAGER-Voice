@@ -462,11 +462,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     window.speechSynthesis.speak(utterance);
   };
 
-  // Reminder timer to nudge the user after 4 seconds on welcome screen without clicking CONECTA
   const resetReminderTimer = () => {
     if (reminderTimerRef.current) {
       clearTimeout(reminderTimerRef.current);
     }
+    
+    if (!isConnected) return; // Don't run reminder if disconnected to avoid mechanical browser TTS
     
     reminderTimerRef.current = setTimeout(() => {
       if (!hasClickedConnect) {
@@ -474,11 +475,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           ? "Remember to click the CONNECT button to start."
           : "Recuerda hacer clic en el botón CONECTA para comenzar.";
         
-        if (isConnected) {
-          sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following reminder message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${reminderText}"]`);
-        } else {
-          speakText(reminderText);
-        }
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following reminder message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${reminderText}"]`);
       }
     }, 4000);
   };
