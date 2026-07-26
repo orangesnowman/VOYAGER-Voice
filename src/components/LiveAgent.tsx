@@ -972,28 +972,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           {!hasClickedConnect ? (
             /* Disconnected Landing Screen inside the Cover */
             <>
-              {/* Welcome text and start button */}
-              <div className="w-full text-left px-6 sm:px-8 pt-8 z-10 flex flex-col items-start select-none">
-                  <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight">
-                      {selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!'}
-                  </h2>
-                  <p className="text-[10.5pt] text-black/60 mt-1.5 max-w-lg" style={{ fontFamily: "'Lato', sans-serif" }}>
-                      {selectedLang === 'EN' 
-                          ? 'Let us customize your English immersion experience with a few quick questions.' 
-                          : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.'}
-                  </p>
-                  <div className="pt-4 flex justify-start">
-                      <button
-                          onClick={handleConnectClick}
-                          title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
-                          className="w-9 h-9 rounded-full border-[3px] border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                      >
-                          <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-                      </button>
-                  </div>
-              </div>
-
-              <div className="flex-1 flex items-center justify-center py-4 w-full relative z-10">
+              <div className="flex-1 flex items-center justify-center pt-8 pb-4 w-full relative z-10">
                 <img 
                   src={voyagerRobot} 
                   alt="Voyager USA Mascot" 
@@ -1002,6 +981,27 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                   title={selectedLang === 'EN' ? 'Click to Connect' : 'Haz clic para conectar'}
                   className="w-[240px] h-[240px] sm:w-[300px] sm:h-[300px] md:w-[380px] md:h-[380px] max-w-[95%] max-h-[45vh] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)] cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300" 
                 />
+              </div>
+
+              {/* Welcome text and start button */}
+              <div className="w-full text-center px-6 sm:px-8 pb-6 z-10 flex flex-col items-center select-none">
+                  <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight text-center">
+                      {selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!'}
+                  </h2>
+                  <p className="text-[10.5pt] text-black/60 mt-1.5 max-w-lg text-center mx-auto" style={{ fontFamily: "'Lato', sans-serif" }}>
+                      {selectedLang === 'EN' 
+                          ? 'Let us customize your English immersion experience with a few quick questions.' 
+                          : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.'}
+                  </p>
+                  <div className="pt-4 flex justify-center w-full">
+                      <button
+                          onClick={handleConnectClick}
+                          title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
+                          className="w-9 h-9 rounded-full border-[3px] border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                      >
+                          <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      </button>
+                  </div>
               </div>
 
               {/* Footer Text */}
