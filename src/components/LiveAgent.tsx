@@ -546,18 +546,19 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   }, [rightPanelTab, selectedLang, isConnected, isPaused]);
 
   // Connect Click handler
-  const handleConnectClick = () => {
-    setIsFadingMascot(true);
-    setTimeout(() => {
-      setHasClickedConnect(true);
-      setRightPanelTab('chat');
-      setChosenStartMode(null);
-      setExplanationCountdown(null);
-      setIsFadingMascot(false);
-      connect(undefined, true); // Voice Connection started immediately to speak mode explanations
-      resetReminderTimer();
-    }, 400);
-  };
+   const handleConnectClick = () => {
+     setIsFadingMascot(true);
+     setTimeout(() => {
+       setHasClickedConnect(true);
+       setOnboardingStep(1);
+       setRightPanelTab('chat');
+       setChosenStartMode(null);
+       setExplanationCountdown(null);
+       setIsFadingMascot(false);
+       connect(undefined, true); // Voice Connection started immediately to speak mode explanations
+       resetReminderTimer();
+     }, 400);
+   };
 
   // Mode click handler
   const handleModeSelection = (modeId: ConversationMode) => {
@@ -691,7 +692,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (isConnected) {
       // Trigger greeting prompt now that we have entered the chat section
       const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
-        selectedLang
+        selectedLang,
+        userName,
+        userAge
       });
       sendText(greetingPrompt);
     } else {
@@ -711,7 +714,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       applyChosenMode(modeToUse);
       // Trigger greeting prompt now that we have entered the chat section
       const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
-        selectedLang
+        selectedLang,
+        userName,
+        userAge
       });
       sendText(greetingPrompt);
     } else {
@@ -819,6 +824,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
   const handleOnboardingBack = () => {
     if (onboardingStep === 1) {
+      setHasClickedConnect(false);
       setOnboardingStep(0);
     } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
       setOnboardingStep(1);
@@ -966,14 +972,35 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           {!hasClickedConnect ? (
             /* Disconnected Landing Screen inside the Cover */
             <>
-              <div className="flex-1 flex items-center justify-center py-6 w-full relative z-10">
+              {/* Welcome text and start button */}
+              <div className="w-full text-left px-6 sm:px-8 pt-8 z-10 flex flex-col items-start select-none">
+                  <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight">
+                      {selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!'}
+                  </h2>
+                  <p className="text-[10.5pt] text-black/60 mt-1.5 max-w-lg" style={{ fontFamily: "'Lato', sans-serif" }}>
+                      {selectedLang === 'EN' 
+                          ? 'Let us customize your English immersion experience with a few quick questions.' 
+                          : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.'}
+                  </p>
+                  <div className="pt-4 flex justify-start">
+                      <button
+                          onClick={handleConnectClick}
+                          title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
+                          className="w-9 h-9 rounded-full border-[3px] border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                      >
+                          <ArrowRight className="w-5 h-5 stroke-[2.5]" />
+                      </button>
+                  </div>
+              </div>
+
+              <div className="flex-1 flex items-center justify-center py-4 w-full relative z-10">
                 <img 
                   src={voyagerRobot} 
                   alt="Voyager USA Mascot" 
                   referrerPolicy="no-referrer"
                   onClick={handleConnectClick}
                   title={selectedLang === 'EN' ? 'Click to Connect' : 'Haz clic para conectar'}
-                  className="w-[306px] h-[306px] sm:w-[382px] sm:h-[382px] md:w-[484px] md:h-[484px] max-w-[95%] max-h-[60vh] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)] cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300" 
+                  className="w-[240px] h-[240px] sm:w-[300px] sm:h-[300px] md:w-[380px] md:h-[380px] max-w-[95%] max-h-[45vh] object-contain animate-float-zero-g filter drop-shadow-[0_20px_25px_rgba(0,0,0,0.12)] cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300" 
                 />
               </div>
 
@@ -1244,7 +1271,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {/* Header */}
                                                     <div className="w-full text-left mb-6 flex flex-col items-start">
                                                          <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight">
-                                                             {onboardingStep === 0 && (selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!')}
                                                              {onboardingStep === 1 && (selectedLang === 'EN' ? 'What is your primary learning goal?' : '¿Cuál es tu objetivo de aprendizaje principal?')}
                                                              {onboardingStep === 11 && (selectedLang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?')}
                                                              {onboardingStep === 12 && (selectedLang === 'EN' ? 'What is your educational goal?' : '¿Cuál es tu meta educativa?')}
@@ -1253,29 +1279,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                              {onboardingStep === 4 && (selectedLang === 'EN' ? 'Who do I have the pleasure of speaking with?' : '¿Con quién tengo el gusto?')}
                                                              {onboardingStep === 3 && (selectedLang === 'EN' ? 'Select your starting conversation mode:' : 'Selecciona tu modo de conversación para iniciar:')}
                                                          </h2>
-                                                         {onboardingStep === 0 && (
-                                                             <p className="text-[10.5pt] text-black/60 mt-1.5 max-w-lg" style={{ fontFamily: "'Lato', sans-serif" }}>
-                                                                 {selectedLang === 'EN' 
-                                                                     ? 'Let us customize your English immersion experience with a few quick questions.' 
-                                                                     : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.'}
-                                                             </p>
-                                                         )}
                                                     </div>
-
-
-                                                    {onboardingStep === 0 && (
-                                                        <div className="space-y-4 text-center sm:text-left">
-                                                            <div className="pt-4 flex justify-center sm:justify-start">
-                                                                <button
-                                                                    onClick={() => setOnboardingStep(1)}
-                                                                    title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
-                                                                    className="w-9 h-9 rounded-full border-[3px] border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
-                                                                >
-                                                                    <ArrowRight className="w-5 h-5 stroke-[2.5]" />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    )}
 
                                                     {onboardingStep === 1 && (
                                                         <div className="space-y-3.5 w-full">

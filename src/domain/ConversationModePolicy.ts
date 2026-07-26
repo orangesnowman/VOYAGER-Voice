@@ -3,6 +3,8 @@ import { ConversationMode } from '../components/ConversationModes';
 export interface ModePromptOptions {
   initialPrompt?: string;
   selectedLang: 'EN' | 'ES';
+  userName?: string;
+  userAge?: string;
 }
 
 const COACHING_PHILOSOPHY_INSTRUCTIONS = `
@@ -35,22 +37,34 @@ export class ConversationModePolicy {
    * Translates the active mode and options into the appropriate system instruction payload.
    */
   static getSystemInstructionsForMode(mode: ConversationMode, options: ModePromptOptions): string {
-    const { initialPrompt, selectedLang } = options;
+    const { initialPrompt, selectedLang, userName, userAge } = options;
+    
+    const displayName = userName ? userName.trim() : "";
+    const displayAge = userAge ? userAge.trim() : "";
     
     let baseGreeting = "";
     
     if (selectedLang === 'ES') {
       switch (mode) {
         case 'BILINGUAL':
-          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Bilingüe para nosotros. ¿Cómo te llamas?"
+          baseGreeting = displayName
+            ? `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Saluda al usuario por su nombre. Di: "¡Hola, ${displayName}! Soy USA Voyager, tu compañero de conversación. He activado el Modo Bilingüe para nosotros. ¿De qué te gustaría hablar hoy?"
+Sé extremadamente breve, haz una sola pregunta y mantén el foco en iniciar la conversación de inmediato. No expliques el botón de pausa o el área de texto.`
+            : `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Bilingüe para nosotros. ¿De qué te gustaría hablar hoy?"
 Sé extremadamente breve, haz una sola pregunta y mantén el foco en iniciar la conversación de inmediato. No expliques el botón de pausa o el área de texto.`;
           break;
         case 'AMERICAN_ENGLISH':
-          baseGreeting = `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. What is your name?"
+          baseGreeting = displayName
+            ? `Please introduce yourself warmly and briefly in English as "USA Voyager". Greet the user by their name. Say: "Hello, ${displayName}! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. What would you like to talk about today?"
+Be extremely brief, ask only one question, and focus on starting immediately in English. Do not explain other features.`
+            : `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. What would you like to talk about today?"
 Be extremely brief, ask only one question, and focus on starting immediately in English. Do not explain other features.`;
           break;
         case 'SPANISH':
-          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿Cómo te llamas?"
+          baseGreeting = displayName
+            ? `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Saluda al usuario por su nombre. Di: "¡Hola, ${displayName}! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿De qué te gustaría hablar hoy?"
+Sé extremadamente breve, haz una sola pregunta y mantén el foco en iniciar la conversación de inmediato. No expliques el botón de pausa o el área de texto.`
+            : `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿De qué te gustaría hablar hoy?"
 Sé extremadamente breve, haz una sola pregunta y mantén el foco en iniciar la conversación de inmediato. No expliques el botón de pausa o el área de texto.`;
           break;
         case 'LIVE_TRANSLATOR':
@@ -58,24 +72,38 @@ Sé extremadamente breve, haz una sola pregunta y mantén el foco en iniciar la 
 Mantén el foco en iniciar la traducción inmediatamente. No expliques ningún otro modo o botón.`;
           break;
         case 'LISTEN_ONLY':
-          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager. He activado el Modo Solo Escucha. Te escucharé hablar en inglés y te daré consejos por texto. ¿Cómo te llamas?"
+          baseGreeting = displayName
+            ? `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Saluda al usuario por su nombre. Di: "¡Hola, ${displayName}! Soy USA Voyager. He activado el Modo Solo Escucha. Te escucharé hablar en inglés y te daré consejos por texto. ¿De qué te gustaría hablar hoy?"
+Sé extremadamente breve, haz una sola pregunta y mantén el foco en iniciar la conversación inmediatamente. No expliques otros controles.`
+            : `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager. He activado el Modo Solo Escucha. Te escucharé hablar en inglés y te daré consejos por texto. ¿De qué te gustaría hablar hoy?"
 Sé extremadamente breve, haz una sola pregunta y mantén el foco en iniciar la conversación inmediatamente. No expliques otros controles.`;
           break;
         default:
-          baseGreeting = `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. ¿Cómo te llamas?"`;
+          baseGreeting = displayName
+            ? `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Saluda al usuario por su nombre. Di: "¡Hola, ${displayName}! Soy USA Voyager, tu compañero de conversación. ¿De qué te gustaría hablar hoy?"`
+            : `Por favor, preséntate de forma muy breve y cálida en español como "USA Voyager". Di: "¡Hola! Soy USA Voyager, tu compañero de conversación. ¿De qué te gustaría hablar hoy?"`;
       }
     } else {
       switch (mode) {
         case 'BILINGUAL':
-          baseGreeting = `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated Bilingual Mode for us. What is your name?"
+          baseGreeting = displayName
+            ? `Please introduce yourself warmly and briefly in English as "USA Voyager". Greet the user by their name. Say: "Hello, ${displayName}! I am USA Voyager, your conversation partner. I have activated Bilingual Mode for us. What would you like to talk about today?"
+Be extremely brief, ask only one question, and start immediately.`
+            : `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated Bilingual Mode for us. What would you like to talk about today?"
 Be extremely brief, ask only one question, and start immediately.`;
           break;
         case 'AMERICAN_ENGLISH':
-          baseGreeting = `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. What is your name?"
+          baseGreeting = displayName
+            ? `Please introduce yourself warmly and briefly in English as "USA Voyager". Greet the user by their name. Say: "Hello, ${displayName}! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. What would you like to talk about today?"
+Be extremely brief, ask only one question, and start immediately.`
+            : `Please introduce yourself warmly and briefly in English as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. I have activated English Immersion mode for us to speak strictly in American English. What would you like to talk about today?"
 Be extremely brief, ask only one question, and start immediately.`;
           break;
         case 'SPANISH':
-          baseGreeting = `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Say: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿Cómo te llamas?"
+          baseGreeting = displayName
+            ? `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Greet the user by their name. Say: "¡Hola, ${displayName}! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿De qué te gustaría hablar hoy?"
+Be extremely brief, ask only one question, and start immediately.`
+            : `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Say: "¡Hola! Soy USA Voyager, tu compañero de conversación. He activado el Modo Solo Español para que hablemos cómodamente en español. ¿De qué te gustaría hablar hoy?"
 Be extremely brief, ask only one question, and start immediately.`;
           break;
         case 'LIVE_TRANSLATOR':
@@ -83,11 +111,16 @@ Be extremely brief, ask only one question, and start immediately.`;
 Focus on starting translation immediately.`;
           break;
         case 'LISTEN_ONLY':
-          baseGreeting = `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Say: "Hello! I am USA Voyager. I have activated Listen Only Mode. I will listen to your English and give text-only tips. What is your name?"
+          baseGreeting = displayName
+            ? `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Greet the user by their name. Say: "Hello, ${displayName}! I am USA Voyager. I have activated Listen Only Mode. I will listen to your English and give text-only tips. What would you like to talk about today?"
+Be extremely brief, ask only one question, and start immediately.`
+            : `Please introduce yourself warmly and briefly in Spanish as "USA Voyager". Say: "Hello! I am USA Voyager. I have activated Listen Only Mode. I will listen to your English and give text-only tips. What would you like to talk about today?"
 Be extremely brief, ask only one question, and start immediately.`;
           break;
         default:
-          baseGreeting = `Please introduce yourself warmly and briefly as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. What is your name?"`;
+          baseGreeting = displayName
+            ? `Please introduce yourself warmly and briefly as "USA Voyager". Say: "Hello, ${displayName}! I am USA Voyager, your conversation partner. What would you like to talk about today?"`
+            : `Please introduce yourself warmly and briefly as "USA Voyager". Say: "Hello! I am USA Voyager, your conversation partner. What would you like to talk about today?"`;
       }
     }
 
@@ -95,19 +128,27 @@ Be extremely brief, ask only one question, and start immediately.`;
       baseGreeting = initialPrompt;
     }
 
+    let learnerInfo = "";
+    if (displayName || displayAge) {
+      learnerInfo = `\n\n[LEARNER INFO:
+- Name: ${displayName || 'Learner'}
+- Age: ${displayAge || 'Unknown/Adult'}
+]`;
+    }
+
     switch (mode) {
       case 'BILINGUAL':
-        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + '\n\n[SYSTEM MESSAGE: You are now in BILINGUAL TRANSLATION MODE. KEEP IT EXTREMELY TIGHT AND COMPACT: speak and write a short, friendly response in Spanish, followed immediately by its English translation. Avoid long, overwhelming paragraphs. For EVERY SINGLE response, you must first speak and write your response in Spanish, and then immediately repeat the exact same response only in English. Separate the Spanish and English sentences with a slash \'/\'. Your entire response must consist of the Spanish version followed directly by the English translation, both in your voice output and in your text transcription.]';
+        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + learnerInfo + '\n\n[SYSTEM MESSAGE: You are now in BILINGUAL TRANSLATION MODE. KEEP IT EXTREMELY TIGHT AND COMPACT: speak and write a short, friendly response in Spanish, followed immediately by its English translation. Avoid long, overwhelming paragraphs. For EVERY SINGLE response, you must first speak and write your response in Spanish, and then immediately repeat the exact same response only in English. Separate the Spanish and English sentences with a slash \'/\'. Your entire response must consist of the Spanish version followed directly by the English translation, both in your voice output and in your text transcription.]';
       case 'LIVE_TRANSLATOR':
         return baseGreeting + '\n\n[SYSTEM MESSAGE: You are now in INSTANT TRANSLATION MODE. You must act strictly and purely as a speech translator. Do NOT hold a conversation, do NOT give tips, do NOT make small talk, and do NOT guide the user. Your ONLY job is to immediately translate whatever you hear: if you hear Spanish, translate it to English; if you hear English, translate it to Spanish. Output ONLY the translated words and absolutely nothing else, both in your voice and in your text transcription. Keep translations instantaneous, brief, and exact.]';
       case 'LISTEN_ONLY':
-        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + '\n\n[SYSTEM MESSAGE: You are now starting in Monitor/Listen-only mode. The user is practicing by talking to a real person. You must only listen and analyze their English interaction. Do NOT speak. You can only respond via text. In your text responses, offer helpful, subtle language corrections or tips about their conversation, and if you want to speak aloud, explicitly ask the user for permission to talk (e.g. \'¿Puedo hablar?\').]';
+        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + learnerInfo + '\n\n[SYSTEM MESSAGE: You are now starting in Monitor/Listen-only mode. The user is practicing by talking to a real person. You must only listen and analyze their English interaction. Do NOT speak. You can only respond via text. In your text responses, offer helpful, subtle language corrections or tips about their conversation, and if you want to speak aloud, explicitly ask the user for permission to talk (e.g. \'¿Puedo hablar?\').]';
       case 'SPANISH':
-        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + '\n\n[SYSTEM MESSAGE: You are now in SPANISH ONLY MODE. You must speak and write strictly and purely in Spanish from now on. Discuss daily life and scenarios in America in Spanish. Do NOT teach English, evaluate grammar, or translate any text. Speak only in Spanish.]';
+        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + learnerInfo + '\n\n[SYSTEM MESSAGE: You are now in SPANISH ONLY MODE. You must speak and write strictly and purely in Spanish from now on. Discuss daily life and scenarios in America in Spanish. Do NOT teach English, evaluate grammar, or translate any text. Speak only in Spanish.]';
       case 'AMERICAN_ENGLISH':
-        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + '\n\n[SYSTEM MESSAGE: You are now in ENGLISH ONLY MODE. You must speak and write strictly and purely in English. Do NOT provide any Spanish translations, hints, corrections, or bilingual tips. Speak naturally as an American English speaker. This is a pure immersion practice mode for advanced students. Speak only in English.]';
+        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + learnerInfo + '\n\n[SYSTEM MESSAGE: You are now in ENGLISH ONLY MODE. You must speak and write strictly and purely in English. Do NOT provide any Spanish translations, hints, corrections, or bilingual tips. Speak naturally as an American English speaker. This is a pure immersion practice mode for advanced students. Speak only in English.]';
       default:
-        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS;
+        return baseGreeting + COACHING_PHILOSOPHY_INSTRUCTIONS + learnerInfo;
     }
   }
 
