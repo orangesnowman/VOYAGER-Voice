@@ -229,11 +229,16 @@ export function useConversationSession(config: UseConversationSessionConfig) {
                 wsRef.current.send(JSON.stringify({ text: greetingPrompt }));
               }
             } else {
-              // The preselected Spanish greeting has been eliminated per user request.
-              const lobbyReminderInstruction = `[SYSTEM INSTRUCTION: The user is on the welcome lobby and has NOT clicked the 'CONECTA' button yet. Limit yourself strictly to the information written on the page. Do NOT make small talk, do NOT ask for their name or age. If they speak to you, simply tell them to start the setup or click the arrow to begin.]`;
+              // Welcome speech in English per user request when connect button is clicked
+              const welcomeSpeech = "Welcome to USA Voyager! We will personalize your English immersion experience with a few brief questions.";
+              
+              const welcomePrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
+              
+              const onboardingInstruction = `[SYSTEM INSTRUCTION: The user is currently answering the profile setup/onboarding questions in the UI. Do NOT ask for their name or age. Do NOT start a conversation yet. Simply be supportive if they speak, and wait for them to complete the questions.]`;
 
               if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-                wsRef.current.send(JSON.stringify({ text: lobbyReminderInstruction }));
+                wsRef.current.send(JSON.stringify({ text: welcomePrompt }));
+                wsRef.current.send(JSON.stringify({ text: onboardingInstruction }));
               }
             }
             return;
