@@ -982,10 +982,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
               {/* Welcome text and start button */}
               <div className="w-full text-center px-6 sm:px-8 pb-6 z-10 flex flex-col items-center select-none">
-                  <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight text-center">
+                  <h2 className="text-xl sm:text-[20pt] font-bold text-[#1A365D] leading-tight text-center font-sans">
                       {selectedLang === 'EN' ? 'Welcome to USA Voyager!' : '¡Bienvenido a USA Voyager!'}
                   </h2>
-                  <p className="text-[10.5pt] text-black/60 mt-1.5 max-w-lg text-center mx-auto" style={{ fontFamily: "'Lato', sans-serif" }}>
+                  <p className="text-[11.5pt] text-neutral-500 mt-2 max-w-xl text-center mx-auto font-sans leading-normal">
                       {selectedLang === 'EN' 
                           ? 'Let us customize your English immersion experience with a few quick questions.' 
                           : 'Personalizaremos tu experiencia de inmersión en inglés con unas breves preguntas.'}
@@ -994,7 +994,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                       <button
                           onClick={handleConnectClick}
                           title={selectedLang === 'EN' ? 'Start' : 'Comenzar'}
-                          className="w-9 h-9 rounded-full border-[3px] border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
+                          className="w-10 h-10 rounded-full border-[3px] border-black/40 hover:bg-red-600 hover:text-white hover:border-red-600 text-black/40 flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 bg-transparent"
                       >
                           <ArrowRight className="w-5 h-5 stroke-[2.5]" />
                       </button>
