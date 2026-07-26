@@ -229,17 +229,10 @@ export function useConversationSession(config: UseConversationSessionConfig) {
                 wsRef.current.send(JSON.stringify({ text: greetingPrompt }));
               }
             } else {
-              // Speak welcome intro message on landing on Welcome page, without asking for name/age yet
-              const welcomeSpeech = selectedLang === 'EN'
-                ? "Welcome to USA Voyager! I have set the default mode to Spanish. You can click on the other modes to hear Voyager explain what each one does before starting your practice."
-                : "¡Bienvenido a USA Voyager! He configurado el modo Español como predeterminado. Puedes hacer clic en los otros modos para que Voyager te explique de qué trata cada uno antes de comenzar tu práctica.";
-              
-              const welcomeIntroPrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any scores, tags, or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
-              
-              const lobbyReminderInstruction = `[SYSTEM INSTRUCTION: The user is on the welcome lobby and has NOT clicked the 'CONECTA' button yet. Limit yourself strictly to the information written on the page (the welcome message, the name of the modes, or the mode explanations). Do NOT make small talk, do NOT ask for their name or age, and do NOT talk about other features (like transcripts, maps, or scores). If they speak to you, simply tell them to click the 'CONECTA' button at the bottom of the page to start the conversation.]`;
+              // The preselected Spanish greeting has been eliminated per user request.
+              const lobbyReminderInstruction = `[SYSTEM INSTRUCTION: The user is on the welcome lobby and has NOT clicked the 'CONECTA' button yet. Limit yourself strictly to the information written on the page. Do NOT make small talk, do NOT ask for their name or age. If they speak to you, simply tell them to start the setup or click the arrow to begin.]`;
 
               if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-                wsRef.current.send(JSON.stringify({ text: welcomeIntroPrompt }));
                 wsRef.current.send(JSON.stringify({ text: lobbyReminderInstruction }));
               }
             }
