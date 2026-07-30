@@ -169,7 +169,7 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
   const [selectedGoal, setSelectedGoal] = useState('General Confidence');
   const [selectedLevel, setSelectedLevel] = useState('Intermediate');
   const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [activeSubTab, setActiveSubTab] = useState<'welcome' | 'level' | 'lessons' | 'progress'>('welcome');
+  const [activeSubTab, setActiveSubTab] = useState<'welcome' | 'level' | 'lessons' | 'progress'>('level');
 
   const triggerAutoExplanation = (tab: 'welcome' | 'level' | 'lessons' | 'progress') => {
     let prompt = '';
@@ -193,13 +193,25 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
     // Check Firebase auth state
     const unsubscribe = auth.onAuthStateChanged((fbUser) => {
       if (fbUser) {
+        const saved = localStorage.getItem('voyager_user_account');
+        let existing: any = {};
+        if (saved) {
+          try {
+            existing = JSON.parse(saved);
+          } catch (e) {}
+        }
+
         const newUser: UserProfile = {
-          name: fbUser.displayName || fbUser.email?.split('@')[0] || 'Learner',
-          email: fbUser.email || '',
+          ...existing,
+          name: fbUser.displayName || fbUser.email?.split('@')[0] || existing.name || 'Learner',
+          email: fbUser.email || existing.email || 'learner@usavoyager.com',
           provider: 'Google',
-          goal: 'Business English & Networking',
-          levelEstimate: 'Intermediate',
-          completedDays: [1]
+          goal: existing.goal || 'Business English & Networking',
+          levelEstimate: existing.levelEstimate || 'Intermediate',
+          completedDays: existing.completedDays || [1],
+          country: existing.country || '',
+          age: existing.age || undefined,
+          plan: existing.plan || 'FREE'
         };
         setUser(newUser);
         localStorage.setItem('voyager_user_account', JSON.stringify(newUser));
