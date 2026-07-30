@@ -1615,7 +1615,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 onClick={handleOnboardingNext}
                                                                 disabled={onboardingStep === 1 && selectedGoal === null}
                                                                 title={nextTitle}
-                                                                className={`${(onboardingStep !== 1 || selectedGoal !== null) ? 'text-red-600 hover:text-red-700 hover:scale-110' : 'text-black/20 cursor-not-allowed'} active:scale-95 transition-all duration-300 bg-transparent flex-shrink-0 flex items-center justify-center p-1.5`}
+                                                                className={`${(onboardingStep !== 1 || selectedGoal !== null) ? 'text-red-600 hover:text-red-700 hover:scale-110 animate-bounce-horizontal' : 'text-black/20 cursor-not-allowed'} active:scale-95 transition-all duration-300 bg-transparent flex-shrink-0 flex items-center justify-center p-1.5`}
                                                             >
                                                                 <ArrowRight className="w-6 h-6 stroke-[2.5]" />
                                                             </button>
