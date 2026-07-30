@@ -240,6 +240,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<'ELEMENTARY_SCHOOL' | 'MIDDLE_SCHOOL' | 'HIGH_SCHOOL' | 'COLLEGE_UNIVERSITY' | 'GRADUATE_SCHOOL' | null>(null);
   const [selectedAcademicGoal, setSelectedAcademicGoal] = useState<'PASS_EXAM' | 'ACADEMIC_SUCCESS' | 'STUDY_ABROAD' | 'IMPROVE_CONVERSATION' | 'GENERAL_KNOWLEDGE' | null>(null);
   const [selectedViajanteSubGoal, setSelectedViajanteSubGoal] = useState<'EXPLORAR' | 'AMISTAD' | 'CULTURA' | null>(null);
+  const [selectedDocenteProfile, setSelectedDocenteProfile] = useState<'PROFESOR_INGLES' | 'TUTOR_PRIVADO' | 'ACADEMIA' | 'PROFESOR_UNIVERSITARIO' | 'INSTRUCTOR_CORPORATIVO' | 'ORGANIZACION' | 'CREADOR_CONTENIDO' | null>(null);
   const [userName, setUserName] = useState<string>('');
   const [userAge, setUserAge] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
@@ -584,6 +585,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         return lang === 'EN' ? 'Why do you want to study English?' : '¿Por qué quieres estudiar inglés?';
       case 13:
         return lang === 'EN' ? 'Reason you want to learn?' : '¿Razón por la que quieres aprender?';
+      case 14:
+        return lang === 'EN' ? 'Which best describes your profile?' : '¿Cuál describe mejor tu perfil?';
       case 2:
         return lang === 'EN' ? 'What is your estimated English level?' : '¿Cuál es tu nivel estimado de inglés?';
       case 4:
@@ -718,6 +721,13 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
          return 'Travel: Cultura';
        }
        if (selectedGoal === 'DOCENTES') {
+         if (selectedDocenteProfile === 'PROFESOR_INGLES') return 'Teachers: Profesor(a) de Inglés';
+         if (selectedDocenteProfile === 'TUTOR_PRIVADO') return 'Teachers: Tutor(a) Privado(a)';
+         if (selectedDocenteProfile === 'ACADEMIA') return 'Teachers: Academia de Idiomas';
+         if (selectedDocenteProfile === 'PROFESOR_UNIVERSITARIO') return 'Teachers: Profesor(a) Universitario(a)';
+         if (selectedDocenteProfile === 'INSTRUCTOR_CORPORATIVO') return 'Teachers: Instructor Corporativo';
+         if (selectedDocenteProfile === 'ORGANIZACION') return 'Teachers: Organización Educativa';
+         if (selectedDocenteProfile === 'CREADOR_CONTENIDO') return 'Teachers: Creador(a) de Contenido';
          return 'Docentes';
        }
        return 'Travel & Daily Conversation';
@@ -897,23 +907,21 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
   const isViajante = selectedGoal === 'VIAJANTE';
   const isDocentes = selectedGoal === 'DOCENTES';
-  const totalOnboardingSteps = isDocentes ? 3 : (isViajante ? 4 : 5);
+  const totalOnboardingSteps = (isViajante || isDocentes) ? 4 : 5;
 
   let currentStepIdx = 1;
   if (onboardingStep === 1) {
     currentStepIdx = 1;
-  } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
+  } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13 || onboardingStep === 14) {
     currentStepIdx = 2;
   } else if (onboardingStep === 112 || onboardingStep === 122) {
     currentStepIdx = 3;
   } else if (onboardingStep === 2) {
     if (selectedGoal === 'ESTUDIO' || selectedGoal === 'PROFESSIONAL') currentStepIdx = 4;
-    else if (selectedGoal === 'VIAJANTE') currentStepIdx = 3;
-    else if (selectedGoal === 'DOCENTES') currentStepIdx = 2;
+    else if (selectedGoal === 'VIAJANTE' || selectedGoal === 'DOCENTES') currentStepIdx = 3;
   } else if (onboardingStep === 4) {
     if (selectedGoal === 'ESTUDIO' || selectedGoal === 'PROFESSIONAL') currentStepIdx = 5;
-    else if (selectedGoal === 'VIAJANTE') currentStepIdx = 4;
-    else if (selectedGoal === 'DOCENTES') currentStepIdx = 3;
+    else if (selectedGoal === 'VIAJANTE' || selectedGoal === 'DOCENTES') currentStepIdx = 4;
   }
 
   const stepsLeft = totalOnboardingSteps - currentStepIdx;
@@ -922,7 +930,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (onboardingStep === 1) {
       setHasClickedConnect(false);
       setOnboardingStep(0);
-    } else if (onboardingStep === 11 || onboardingStep === 13) {
+    } else if (onboardingStep === 11 || onboardingStep === 13 || onboardingStep === 14) {
       setOnboardingStep(1);
     } else if (onboardingStep === 12) {
       setOnboardingStep(1);
@@ -938,7 +946,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       } else if (selectedGoal === 'VIAJANTE') {
         setOnboardingStep(13);
       } else if (selectedGoal === 'DOCENTES') {
-        setOnboardingStep(1);
+        setOnboardingStep(14);
       }
     } else if (onboardingStep === 4) {
       setOnboardingStep(2);
@@ -955,7 +963,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       } else if (selectedGoal === 'ESTUDIO') {
         setOnboardingStep(12);
       } else if (selectedGoal === 'DOCENTES') {
-        setOnboardingStep(2);
+        setOnboardingStep(14);
       }
     } else if (onboardingStep === 12) {
       if (!selectedSchoolLevel) return;
@@ -963,10 +971,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     } else if (onboardingStep === 11) {
       if (!selectedProfSubGoal) return;
       setOnboardingStep(112);
-    } else if (onboardingStep === 112 || onboardingStep === 122 || onboardingStep === 13) {
+    } else if (onboardingStep === 112 || onboardingStep === 122 || onboardingStep === 13 || onboardingStep === 14) {
       if (onboardingStep === 112 && !selectedProfInterest) return;
       if (onboardingStep === 122 && !selectedAcademicGoal) return;
       if (onboardingStep === 13 && !selectedViajanteSubGoal) return;
+      if (onboardingStep === 14 && !selectedDocenteProfile) return;
       setOnboardingStep(2);
     } else if (onboardingStep === 2) {
       if (!selectedLevel) return;
@@ -985,11 +994,14 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (!selectedGoal) return;
     
     if (isDocentes) {
-      // 3-step flow: 1 (Goal), 2 (Level - 2), 3 (Form - 4)
+      // 4-step flow: 1 (Goal), 2 (Profile - 14), 3 (Level - 2), 4 (Form - 4)
       if (stepNum === 2) {
-        setOnboardingStep(2);
+        setOnboardingStep(14);
       } else if (stepNum === 3) {
-        if (!selectedLevel) return;
+        if (!selectedDocenteProfile) return;
+        setOnboardingStep(2);
+      } else if (stepNum === 4) {
+        if (!selectedDocenteProfile || !selectedLevel) return;
         setOnboardingStep(4);
       }
     } else if (isViajante) {
@@ -1589,6 +1601,49 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             })}
                                                         </div>
                                                     )}
+
+                                                     {onboardingStep === 14 && (
+                                                         <div className="space-y-3.5 w-full">
+                                                             {[
+                                                                 { id: 'PROFESOR_INGLES', label: selectedLang === 'EN' ? 'ENGLISH TEACHER' : 'PROFESOR(A) DE INGLÉS', icon: Headphones },
+                                                                 { id: 'TUTOR_PRIVADO', label: selectedLang === 'EN' ? 'PRIVATE TUTOR' : 'TUTOR(A) PRIVADO(A)', icon: User },
+                                                                 { id: 'ACADEMIA', label: selectedLang === 'EN' ? 'LANGUAGE ACADEMY' : 'ACADEMIA DE IDIOMAS', icon: Home },
+                                                                 { id: 'PROFESOR_UNIVERSITARIO', label: selectedLang === 'EN' ? 'UNIVERSITY PROFESSOR' : 'PROFESOR(A) UNIVERSITARIO(A)', icon: GraduationCap },
+                                                                 { id: 'INSTRUCTOR_CORPORATIVO', label: selectedLang === 'EN' ? 'CORPORATE INSTRUCTOR' : 'INSTRUCTOR CORPORATIVO', icon: Briefcase },
+                                                                 { id: 'ORGANIZACION', label: selectedLang === 'EN' ? 'EDUCATIONAL ORGANIZATION' : 'ORGANIZACIÓN EDUCATIVA', icon: Languages },
+                                                                 { id: 'CREADOR_CONTENIDO', label: selectedLang === 'EN' ? 'EDUCATIONAL CONTENT CREATOR' : 'CREADOR(A) DE CONTENIDO EDUCATIVO', icon: Eye }
+                                                             ].map((opt) => {
+                                                                 const isSel = selectedDocenteProfile === opt.id;
+                                                                 const IconComp = isSel ? ArrowRight : opt.icon;
+                                                                 return (
+                                                                     <div 
+                                                                         key={opt.id}
+                                                                         onClick={() => {
+                                                                             if (isSel) {
+                                                                                 handleOnboardingNext();
+                                                                             } else {
+                                                                                 setSelectedDocenteProfile(opt.id as any);
+                                                                             }
+                                                                         }}
+                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
+                                                                             isSel 
+                                                                                 ? 'border-red-600 bg-red-50/30' 
+                                                                                 : 'border-black/40 hover:border-neutral-800 bg-[#EAEAEA]/80'
+                                                                         }`}
+                                                                     >
+                                                                         <div className="flex items-center gap-3.5">
+                                                                             <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
+                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
+                                                                             </div>
+                                                                             <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                                 {opt.label}
+                                                                             </span>
+                                                                         </div>
+                                                                     </div>
+                                                                 );
+                                                             })}
+                                                         </div>
+                                                     )}
 
                                                     {onboardingStep === 12 && (
                                                         <div className="space-y-3.5 w-full">
