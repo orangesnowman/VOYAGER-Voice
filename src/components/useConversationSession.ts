@@ -229,18 +229,9 @@ export function useConversationSession(config: UseConversationSessionConfig) {
                 wsRef.current.send(JSON.stringify({ text: greetingPrompt }));
               }
             } else {
-              // Welcome speech in English per user request when connect button is clicked
-              const step1Title = selectedLang === 'EN' 
-                ? 'What is your primary learning goal?' 
-                : '¿Cuál es tu objetivo de aprendizaje principal?';
-              const welcomeSpeech = `Welcome to USA Voyager! We will personalize your English immersion experience with a few brief questions. ${step1Title}`;
-              
-              const welcomePrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
-              
               const onboardingInstruction = `[SYSTEM INSTRUCTION: The user is currently answering the profile setup/onboarding questions in the UI. Do NOT ask for their name or age. Do NOT start a conversation yet. Simply be supportive if they speak, and wait for them to complete the questions.]`;
 
               if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-                wsRef.current.send(JSON.stringify({ text: welcomePrompt }));
                 wsRef.current.send(JSON.stringify({ text: onboardingInstruction }));
               }
             }
