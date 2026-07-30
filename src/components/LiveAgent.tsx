@@ -576,7 +576,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       case 11:
         return lang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?';
       case 12:
-        return lang === 'EN' ? 'What is your educational goal?' : '¿Cuál es tu meta educativa?';
+        return lang === 'EN' ? 'What is your school level?' : '¿Cuál es tu nivel escolar?';
+      case 122:
+        return lang === 'EN' ? 'Why do you want to study English?' : '¿Por qué quieres estudiar inglés?';
       case 13:
         return lang === 'EN' ? 'Reason you want to learn?' : '¿Razón por la que quieres aprender?';
       case 2:
