@@ -55,6 +55,12 @@ export function useConversationSession(config: UseConversationSessionConfig) {
 
   const isPausedRef = useRef(isPaused);
   const isListenOnlyRef = useRef(isListenOnly);
+  const onUserTranscriptionRef = useRef(onUserTranscription);
+  const onTextResponseRef = useRef(onTextResponse);
+  const onOpenRef = useRef(onOpen);
+  const onMessageReceivedRef = useRef(onMessageReceived);
+  const onErrorRef = useRef(onError);
+  const onCloseRef = useRef(onClose);
 
   // Keep references updated to avoid closure stale-state issues
   useEffect(() => {
@@ -64,6 +70,15 @@ export function useConversationSession(config: UseConversationSessionConfig) {
   useEffect(() => {
     isListenOnlyRef.current = isListenOnly;
   }, [isListenOnly]);
+
+  useEffect(() => {
+    onUserTranscriptionRef.current = onUserTranscription;
+    onTextResponseRef.current = onTextResponse;
+    onOpenRef.current = onOpen;
+    onMessageReceivedRef.current = onMessageReceived;
+    onErrorRef.current = onError;
+    onCloseRef.current = onClose;
+  });
 
   const recordInteraction = useCallback(() => {
     vadRef.current.recordActivity();
@@ -179,7 +194,7 @@ export function useConversationSession(config: UseConversationSessionConfig) {
         setStatusText('Connected');
         console.log('WebSocket connection to server established');
         
-        onOpen();
+        onOpenRef.current();
 
         try {
           // Delegate voice capture initialization to AudioCapture
@@ -192,7 +207,7 @@ export function useConversationSession(config: UseConversationSessionConfig) {
           });
         } catch (captureErr) {
           console.error('Audio capture failed to start:', captureErr);
-          onError('Microphone access or initialization failed.');
+          onErrorRef.current('Microphone access or initialization failed.');
         }
       };
 
@@ -202,7 +217,7 @@ export function useConversationSession(config: UseConversationSessionConfig) {
           const msg = JSON.parse(event.data);
           
           // Relay all specific custom server payloads up
-          onMessageReceived(msg);
+          onMessageReceivedRef.current(msg);
 
           if (msg.status === 'connected') {
             console.log('Gemini session active on backend. Mapping mode instructions via ConversationModePolicy.');
@@ -252,11 +267,11 @@ REGLA CRÍTICA: NO digas nada más, NO saludes con "Hola", NO preguntes "¿Qué 
           }
 
           if (msg.userTranscription) {
-            onUserTranscription(msg.userTranscription);
+            onUserTranscriptionRef.current(msg.userTranscription);
           }
 
           if (msg.text) {
-            onTextResponse(msg.text, !!msg.showForm);
+            onTextResponseRef.current(msg.text, !!msg.showForm);
           }
 
           if (msg.audio && !isListenOnlyRef.current && !isPausedRef.current) {
@@ -292,11 +307,6 @@ REGLA CRÍTICA: NO digas nada más, NO saludes con "Hola", NO preguntes "¿Qué 
     isSpanishOnlyMode,
     isEnglishOnlyMode,
     ensureAudioContexts,
-    onUserTranscription,
-    onTextResponse,
-    onMessageReceived,
-    onOpen,
-    onError,
     disconnect
   ]);
 
