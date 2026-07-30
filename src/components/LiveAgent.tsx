@@ -233,7 +233,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
   const [onboardingStep, setOnboardingStep] = useState<number>(0);
-  const [selectedGoal, setSelectedGoal] = useState<'PROFESSIONAL' | 'ESTUDIO' | 'VIAJANTE' | null>(null);
+  const [selectedGoal, setSelectedGoal] = useState<'PROFESSIONAL' | 'ESTUDIO' | 'VIAJANTE' | 'DOCENTES' | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'NOT_SURE' | null>(null);
   const [selectedProfSubGoal, setSelectedProfSubGoal] = useState<'CONSEGUIR_EMPLEO' | 'COMUNICARME_TRABAJO' | 'CRECER_PROFESIONAL' | null>(null);
   const [selectedProfInterest, setSelectedProfInterest] = useState<'EMPRENDEDOR' | 'GERENCIA' | 'MERCADEO' | 'VENTAS' | null>(null);
@@ -717,6 +717,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
          if (selectedViajanteSubGoal === 'AMISTAD') return 'Travel: Amistad';
          return 'Travel: Cultura';
        }
+       if (selectedGoal === 'DOCENTES') {
+         return 'Docentes';
+       }
        return 'Travel & Daily Conversation';
      };
      const mapLevelEstimate = (lvl: typeof selectedLevel) => {
@@ -893,7 +896,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   };
 
   const isViajante = selectedGoal === 'VIAJANTE';
-  const totalOnboardingSteps = isViajante ? 4 : 5;
+  const isDocentes = selectedGoal === 'DOCENTES';
+  const totalOnboardingSteps = isDocentes ? 3 : (isViajante ? 4 : 5);
 
   let currentStepIdx = 1;
   if (onboardingStep === 1) {
@@ -903,9 +907,13 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   } else if (onboardingStep === 112 || onboardingStep === 122) {
     currentStepIdx = 3;
   } else if (onboardingStep === 2) {
-    currentStepIdx = isViajante ? 3 : 4;
+    if (selectedGoal === 'ESTUDIO' || selectedGoal === 'PROFESSIONAL') currentStepIdx = 4;
+    else if (selectedGoal === 'VIAJANTE') currentStepIdx = 3;
+    else if (selectedGoal === 'DOCENTES') currentStepIdx = 2;
   } else if (onboardingStep === 4) {
-    currentStepIdx = isViajante ? 4 : 5;
+    if (selectedGoal === 'ESTUDIO' || selectedGoal === 'PROFESSIONAL') currentStepIdx = 5;
+    else if (selectedGoal === 'VIAJANTE') currentStepIdx = 4;
+    else if (selectedGoal === 'DOCENTES') currentStepIdx = 3;
   }
 
   const stepsLeft = totalOnboardingSteps - currentStepIdx;
@@ -929,6 +937,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         setOnboardingStep(122);
       } else if (selectedGoal === 'VIAJANTE') {
         setOnboardingStep(13);
+      } else if (selectedGoal === 'DOCENTES') {
+        setOnboardingStep(1);
       }
     } else if (onboardingStep === 4) {
       setOnboardingStep(2);
@@ -944,6 +954,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         setOnboardingStep(13);
       } else if (selectedGoal === 'ESTUDIO') {
         setOnboardingStep(12);
+      } else if (selectedGoal === 'DOCENTES') {
+        setOnboardingStep(2);
       }
     } else if (onboardingStep === 12) {
       if (!selectedSchoolLevel) return;
@@ -972,7 +984,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     }
     if (!selectedGoal) return;
     
-    if (isViajante) {
+    if (isDocentes) {
+      // 3-step flow: 1 (Goal), 2 (Level - 2), 3 (Form - 4)
+      if (stepNum === 2) {
+        setOnboardingStep(2);
+      } else if (stepNum === 3) {
+        if (!selectedLevel) return;
+        setOnboardingStep(4);
+      }
+    } else if (isViajante) {
       // 4-step flow: 1 (Goal), 2 (Subgoal - 13), 3 (Level - 2), 4 (Form - 4)
       if (stepNum === 2) {
         setOnboardingStep(13);
@@ -1417,7 +1437,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             {[
                                                                 { id: 'PROFESSIONAL', label: selectedLang === 'EN' ? 'PROFESSIONAL' : 'PROFESSIONAL', icon: Briefcase },
                                                                 { id: 'ESTUDIO', label: selectedLang === 'EN' ? 'STUDY' : 'ESTUDIO', icon: BookOpen },
-                                                                { id: 'VIAJANTE', label: selectedLang === 'EN' ? 'TRAVELER' : 'VIAJANTE', icon: Plane }
+                                                                { id: 'VIAJANTE', label: selectedLang === 'EN' ? 'TRAVELER' : 'VIAJANTE', icon: Plane },
+                                                                { id: 'DOCENTES', label: selectedLang === 'EN' ? 'TEACHERS' : 'DOCENTES', icon: GraduationCap }
                                                             ].map((opt) => {
                                                                 const isSel = selectedGoal === opt.id;
                                                                 const IconComp = isSel ? ArrowRight : opt.icon;
