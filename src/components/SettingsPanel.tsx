@@ -11,7 +11,12 @@ import {
   RotateCcw,
   Sliders,
   Headphones,
-  SlidersHorizontal
+  SlidersHorizontal,
+  User,
+  Mail,
+  MapPin,
+  Activity,
+  Award
 } from 'lucide-react';
 
 interface SettingsPanelProps {
@@ -104,6 +109,92 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </div>
           </div>
         </div>
+
+        {/* MI PERFIL / MY PROFILE SECTION */}
+        {(() => {
+          const savedAccount = localStorage.getItem('voyager_user_account');
+          if (!savedAccount) return null;
+          let userAccount = null;
+          try {
+            userAccount = JSON.parse(savedAccount);
+          } catch (e) {
+            return null;
+          }
+          if (!userAccount) return null;
+
+          return (
+            <div className="bg-white rounded-xl p-5 border border-[#e8ded0] shadow-sm space-y-4 text-left">
+              <div className="flex items-center gap-2 text-[#865918]">
+                <User className="w-4 h-4" />
+                <h3 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xs font-sans font-bold uppercase tracking-wider text-[#231d17]">
+                  {isEn ? 'MY PROFILE' : 'MI PERFIL'}
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 divide-y md:divide-y-0 md:divide-x divide-neutral-200/80">
+                {/* Left Side: Personal Info */}
+                <div className="space-y-3 pb-3 md:pb-0">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-zinc-700 flex-shrink-0">
+                      <User className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div style={{ fontFamily: "'Lato', sans-serif" }} className="text-[14px] font-black uppercase text-[#231d17] tracking-wide">
+                        {userAccount.name}
+                      </div>
+                      <div className="text-[10px] text-zinc-500 uppercase font-medium">
+                        {isEn ? 'LEARNER' : 'ESTUDIANTE'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 pt-1">
+                    <div className="flex items-center gap-2 text-zinc-600">
+                      <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span className="text-xs font-medium truncate">{userAccount.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-zinc-600">
+                      <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span className="text-xs font-medium">
+                        {userAccount.age ? `${userAccount.age} ${isEn ? 'years old' : 'años'}, ` : ''}
+                        {userAccount.country}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Learning Track */}
+                <div className="space-y-3 pt-3 md:pt-0 md:pl-5">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2.5">
+                      <Activity className="w-4 h-4 text-[#865918] flex-shrink-0" />
+                      <div>
+                        <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                          {isEn ? 'LEARNING TRACK' : 'RUTA DE APRENDIZAJE'}
+                        </div>
+                        <div style={{ fontFamily: "'Lato', sans-serif" }} className="text-xs font-extrabold text-[#231d17] uppercase tracking-wide">
+                          {userAccount.goal}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <Award className="w-4 h-4 text-[#865918] flex-shrink-0" />
+                      <div>
+                        <div className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">
+                          {isEn ? 'ESTIMATED LEVEL' : 'NIVEL ESTIMADO'}
+                        </div>
+                        <div style={{ fontFamily: "'Lato', sans-serif" }} className="text-xs font-extrabold text-[#231d17] uppercase tracking-wide">
+                          {userAccount.levelEstimate}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* HEADER */}
         <div className="flex items-center justify-between pb-4 border-b border-black/10">
