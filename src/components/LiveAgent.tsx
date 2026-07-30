@@ -209,7 +209,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
   const [onboardingStep, setOnboardingStep] = useState<number>(0);
-  const [selectedGoal, setSelectedGoal] = useState<'PROFESSIONAL' | 'ESTUDIO' | 'VIAJANTE'>('PROFESSIONAL');
+  const [selectedGoal, setSelectedGoal] = useState<'PROFESSIONAL' | 'ESTUDIO' | 'VIAJANTE' | null>(null);
   const [selectedLevel, setSelectedLevel] = useState<'PRINCIPIANTE' | 'INTERMEDIO' | 'AVANZADO'>('INTERMEDIO');
   const [selectedProfSubGoal, setSelectedProfSubGoal] = useState<'CONSEGUIR_EMPLEO' | 'COMUNICARME_TRABAJO' | 'CRECER_PROFESIONAL'>('COMUNICARME_TRABAJO');
   const [selectedEstudioSubGoal, setSelectedEstudioSubGoal] = useState<'AYUDA_ACADEMICA' | 'PASAR_EXAMEN' | 'CONOCIMIENTO_GENERAL'>('AYUDA_ACADEMICA');
@@ -265,6 +265,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   volumeRef.current = volume;
   const reminderTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastVisitedTabRef = useRef<string>('');
+  const lastSpokenStepRef = useRef<number | null>(null);
 
   useEffect(() => {
     let animationFrameId: number;
@@ -541,6 +542,37 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     }
     lastVisitedTabRef.current = rightPanelTab;
   }, [rightPanelTab, selectedLang, isConnected, isPaused]);
+
+  const getOnboardingStepTitle = (step: number, lang: 'EN' | 'ES') => {
+    switch (step) {
+      case 1:
+        return lang === 'EN' ? 'What is your primary learning goal?' : '¿Cuál es tu objetivo de aprendizaje principal?';
+      case 11:
+        return lang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?';
+      case 12:
+        return lang === 'EN' ? 'What is your educational goal?' : '¿Cuál es tu meta educativa?';
+      case 13:
+        return lang === 'EN' ? 'Reason you want to learn?' : '¿Razón por la que quieres aprender?';
+      case 2:
+        return lang === 'EN' ? 'What is your estimated English level?' : '¿Cuál es tu nivel estimado de inglés?';
+      case 4:
+        return lang === 'EN' ? 'Who do I have the pleasure of speaking with?' : '¿Con quién tengo el gusto?';
+      case 3:
+        return lang === 'EN' ? 'Select your starting conversation mode:' : 'Selecciona tu modo de conversación para iniciar:';
+      default:
+        return '';
+    }
+  };
+
+  useEffect(() => {
+    if (onboardingStep > 1 && onboardingStep !== lastSpokenStepRef.current) {
+      const title = getOnboardingStepTitle(onboardingStep, selectedLang);
+      if (title && isConnected) {
+        sendText(`[SYSTEM INSTRUCTION: Please read the following page title aloud in your natural voice. Do not write any transcription or other text, just speak it: "${title}"]`);
+        lastSpokenStepRef.current = onboardingStep;
+      }
+    }
+  }, [onboardingStep, isConnected, selectedLang]);
 
   // Connect Click handler
    const handleConnectClick = () => {
@@ -1285,12 +1317,18 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 { id: 'ESTUDIO', label: selectedLang === 'EN' ? 'STUDY' : 'ESTUDIO', icon: BookOpen },
                                                                 { id: 'VIAJANTE', label: selectedLang === 'EN' ? 'TRAVELER' : 'VIAJANTE', icon: Plane }
                                                             ].map((opt) => {
-                                                                const IconComp = opt.icon;
                                                                 const isSel = selectedGoal === opt.id;
+                                                                const IconComp = isSel ? ArrowRight : opt.icon;
                                                                 return (
                                                                     <div 
                                                                         key={opt.id}
-                                                                        onClick={() => setSelectedGoal(opt.id as any)}
+                                                                        onClick={() => {
+                                                                            if (isSel) {
+                                                                                handleOnboardingNext();
+                                                                            } else {
+                                                                                setSelectedGoal(opt.id as any);
+                                                                            }
+                                                                        }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
                                                                                 ? 'border-red-600 bg-neutral-200/50' 

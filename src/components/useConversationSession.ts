@@ -230,7 +230,10 @@ export function useConversationSession(config: UseConversationSessionConfig) {
               }
             } else {
               // Welcome speech in English per user request when connect button is clicked
-              const welcomeSpeech = "Welcome to USA Voyager! We will personalize your English immersion experience with a few brief questions.";
+              const step1Title = selectedLang === 'EN' 
+                ? 'What is your primary learning goal?' 
+                : '¿Cuál es tu objetivo de aprendizaje principal?';
+              const welcomeSpeech = `Welcome to USA Voyager! We will personalize your English immersion experience with a few brief questions. ${step1Title}`;
               
               const welcomePrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
               
