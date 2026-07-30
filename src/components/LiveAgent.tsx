@@ -2643,19 +2643,21 @@ Pregunta del usuario: "${text}"]`;
                                 isConnected={isConnected}
                                 pause={pause}
                                 resume={resume}
+                                sendText={sendText}
                                 onAskVoyager={(text) => {
                                     setHasInteracted(true);
                                     addUserMessage(text);
                                     const storePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está en la pestaña de COMPRAS de USA Voyager.
-Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER (no cambies tu voz, tono, acento ni actúes como un personaje de ventas exagerado). Habla como el tutor VOYAGER de siempre, pero respondiendo en español.
-Tu objetivo es explicarle de forma clara y convincente los beneficios de nuestros planes de pago oficiales (PRO, Sesión Diagnóstica, Coaching de Inmersión o Coaching Intensivo) para animarlo a adquirirlos:
+Actúa como un representante de servicio al cliente (customer service representative) y un ejecutivo de ventas (sales person) para esta sección de compras de USA Voyager.
+Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER (no cambies tu voz, tono, acento ni actúes como un personaje de ventas exagerado). Habla como el tutor VOYAGER de siempre, pero respondiendo en español de forma muy atenta, persuasiva y profesional.
+Tu objetivo es explicarle de forma clara y convincente los beneficios de nuestros planes de pago oficiales (PRO, Sesión Diagnóstica, Coaching de Inmersión o Coaching Intensivo) para animarlo a adquirirlos y resolver cualquier duda de soporte que tenga sobre la tienda:
 1. Responde ÚNICAMENTE en español (no des explicaciones ni respuestas en inglés, ni intentes enseñar inglés aquí). Su propósito en este panel no es aprender, sino informarse sobre la compra.
-2. Habla ÚNICAMENTE de los productos y servicios oficiales descritos a continuación. No inventes precios, número de sesiones ni características fuera de estas:
+2. Habla de los productos y servicios oficiales de la tienda. Puedes guiarlo y recomendarle el plan adecuado según sus metas:
    - Plan USA Voyager PRO: $9.99/mes. Desbloquea todas las lecciones del Día 2 en adelante de la ruta de aprendizaje, escenarios avanzados de conversación y feedback avanzado de acento/pronunciación.
    - Sesión Diagnóstica: $29.00 pago único. Videollamada de 30 minutos 1-a-1 en vivo con Alejandra Francois (La Profe) para evaluar nivel, acento y fluidez + reporte personalizado + soporte de chat directo por 7 días.
    - Coaching de Inmersión: $199.00/mes. 4 clases al mes 1-a-1 en vivo con La Profe + acompañamiento de audios por chat privado diario + plan PRO gratis incluido.
    - Coaching Intensivo: $349.00/mes. 8 clases al mes 1-a-1 en vivo con La Profe (2 clases semanales) + revisiones diarias prioritarias de audios + soporte directo 24/7 + plan PRO gratis incluido.
-3. Sé convincente y ayuda al usuario a tomar la decisión de compra, manteniendo la misma voz y acento habitual de VOYAGER.
+3. Sé convincente, ayuda de forma servicial a tomar la decisión de compra, y guía al usuario de manera persuasiva con la voz y el acento habitual de VOYAGER.
 Pregunta del usuario: "${text}"]`;
                                     sendText(storePrompt);
                                 }}
