@@ -1497,15 +1497,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
-                                                                                ? 'border-green-600 bg-green-50/30' 
+                                                                                ? 'border-red-600 bg-red-50/30' 
                                                                                 : 'border-black/40 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
-                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-green-600 text-white' : 'bg-transparent text-black'}`}>
+                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-green-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1538,15 +1538,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
-                                                                                ? 'border-orange-500 bg-orange-50/30' 
+                                                                                ? 'border-red-600 bg-red-50/30' 
                                                                                 : 'border-black/40 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
-                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-orange-500 text-white' : 'bg-transparent text-black'}`}>
+                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-orange-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1578,15 +1578,15 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                         }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
-                                                                                ? 'border-purple-600 bg-purple-50/30' 
+                                                                                ? 'border-red-600 bg-red-50/30' 
                                                                                 : 'border-black/40 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
-                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-purple-600 text-white' : 'bg-transparent text-black'}`}>
+                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-purple-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
