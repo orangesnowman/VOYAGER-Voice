@@ -822,11 +822,24 @@ NO respondas a ruidos, habla o ruidos de fondo.]`;
     setExplanationCountdown(null);
     setChatMessages([]); // Clear system option explanations from chat history
 
+    const saved = localStorage.getItem('voyager_user_account');
+    let userGoal = undefined;
+    let userLevel = undefined;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        userGoal = parsed.goal;
+        userLevel = parsed.levelEstimate;
+      } catch (e) {}
+    }
+
     const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
       selectedLang,
       userName,
       userAge,
-      userCountry
+      userCountry,
+      userGoal,
+      userLevel
     });
     const onboardingWelcomePrompt = `[SYSTEM INSTRUCTION: Crucial Onboarding First Greeting. Speak aloud and write in the chat a warm welcome message in Spanish:
 1. Greet the user by their name: "${userName.trim() || 'Estudiante'}".
@@ -851,11 +864,24 @@ ${greetingPrompt}`;
     window.speechSynthesis.cancel();
     setChatMessages([]); // Clear system option explanations from chat history
 
+    const saved = localStorage.getItem('voyager_user_account');
+    let userGoal = undefined;
+    let userLevel = undefined;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        userGoal = parsed.goal;
+        userLevel = parsed.levelEstimate;
+      } catch (e) {}
+    }
+
     const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
       selectedLang,
       userName,
       userAge,
-      userCountry
+      userCountry,
+      userGoal,
+      userLevel
     });
     const onboardingWelcomePrompt = `[SYSTEM INSTRUCTION: Crucial Onboarding First Greeting. Speak aloud and write in the chat a warm welcome message in Spanish:
 1. Greet the user by their name: "${userName.trim() || 'Estudiante'}".

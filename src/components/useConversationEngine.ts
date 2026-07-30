@@ -70,6 +70,11 @@ export function useConversationEngine(activeTab: string = 'chat') {
     isEnglishOnlyMode,
     memory,
     hasInteracted,
+    userName: profile?.name,
+    userAge: profile?.age ? String(profile.age) : undefined,
+    userCountry: profile?.country,
+    userGoal: profile?.goal,
+    userLevel: profile?.levelEstimate,
     onUserTranscription: (text) => {
       updateUserVoiceTranscription(text);
       memory.extractLearnerContext(text);

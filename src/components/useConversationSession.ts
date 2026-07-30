@@ -19,6 +19,11 @@ interface UseConversationSessionConfig {
   onAutoPause?: () => void;
   memory?: ConversationMemory;
   hasInteracted: boolean;
+  userName?: string;
+  userAge?: string;
+  userCountry?: string;
+  userGoal?: string;
+  userLevel?: string;
 }
 
 export function useConversationSession(config: UseConversationSessionConfig) {
@@ -38,6 +43,11 @@ export function useConversationSession(config: UseConversationSessionConfig) {
     onAutoPause,
     memory,
     hasInteracted,
+    userName,
+    userAge,
+    userCountry,
+    userGoal,
+    userLevel,
   } = config;
 
   const [isConnected, setIsConnected] = useState(false);
@@ -233,7 +243,12 @@ export function useConversationSession(config: UseConversationSessionConfig) {
 
               let greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(currentMode, {
                 initialPrompt,
-                selectedLang
+                selectedLang,
+                userName,
+                userAge,
+                userCountry,
+                userGoal,
+                userLevel
               });
 
               if (memory) {

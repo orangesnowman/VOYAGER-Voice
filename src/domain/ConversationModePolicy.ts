@@ -6,6 +6,8 @@ export interface ModePromptOptions {
   userName?: string;
   userAge?: string;
   userCountry?: string;
+  userGoal?: string;
+  userLevel?: string;
 }
 
 const COACHING_PHILOSOPHY_INSTRUCTIONS = `
@@ -38,7 +40,7 @@ export class ConversationModePolicy {
    * Translates the active mode and options into the appropriate system instruction payload.
    */
   static getSystemInstructionsForMode(mode: ConversationMode, options: ModePromptOptions): string {
-    const { initialPrompt, selectedLang, userName, userAge, userCountry } = options;
+    const { initialPrompt, selectedLang, userName, userAge, userCountry, userGoal, userLevel } = options;
     
     const displayName = userName ? userName.trim() : "";
     const displayAge = userAge ? userAge.trim() : "";
@@ -131,12 +133,14 @@ Be extremely brief, ask only one question, and start immediately.`;
     }
 
     let learnerInfo = "";
-    if (displayName || displayAge || displayCountry) {
-      learnerInfo = `\n\n[LEARNER INFO:
+    if (displayName || displayAge || displayCountry || userGoal || userLevel) {
+      learnerInfo = `\n\n[LEARNER PROFILE BACKGROUND (CRITICAL CONTEXT):
 - Name: ${displayName || 'Learner'}
 - Age: ${displayAge || 'Unknown/Adult'}
 ${displayCountry ? `- Country: ${displayCountry}` : ''}
-]`;
+${userGoal ? `- Primary Learning Goal & Focus: ${userGoal}` : ''}
+${userLevel ? `- Estimated English Level: ${userLevel}` : ''}
+Always keep this background, goal, and English level in mind to dynamically adapt your conversation topic complexity, vocabulary, pace, and guidance when interacting with this individual.]`;
     }
 
     switch (mode) {
