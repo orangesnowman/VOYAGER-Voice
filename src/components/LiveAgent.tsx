@@ -189,6 +189,32 @@ interface LiveAgentProps {
   onClose?: () => void;
 }
 
+const playPinSound = () => {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+    osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.12); // G5
+    
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+  } catch (e) {
+    console.error("Failed to play pin sound:", e);
+  }
+};
+
 const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) => {
   const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings' | 'shopping'>('home');
 
@@ -528,49 +554,61 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
   // Speak explanation when arriving at the Teacher, Profile, or Settings section
   useEffect(() => {
+    // 1. Play pin sound and pause conversation if moving away from CHAT tab
+    if (lastVisitedTabRef.current === 'chat' && rightPanelTab !== 'chat') {
+      playPinSound();
+      pause();
+    }
+
+    // 2. Speak welcome explanation for the new tab section (resuming audio for the new context)
     if (rightPanelTab === 'teachers' && lastVisitedTabRef.current !== 'teachers') {
+      resume();
       const speech = selectedLang === 'EN'
         ? "Welcome to the Teacher section! You have the option to hire Alejandra Francois, La Profe. She is our native bilingual Master English Immersion Coach and NYC Accent Specialist who can help you learn Spanish and English through personalized live 1-on-1 private lessons, accent correction, and direct chat support."
         : "Bienvenido a la sección de La Profe. Tienes la opción de contratar a Alejandra Francois, La Profe. Ella es nuestra Coach Maestra de Inmersión y Especialista en Acento de Nueva York, bilingüe nativa. Te ayudará a aprender español e inglés a través de clases particulares en vivo 1-a-1, corrección de pronunciación y soporte por chat.";
 
-      if (isConnected && !isPaused) {
+      if (isConnected) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
       }
     } else if (rightPanelTab === 'roadmap' && lastVisitedTabRef.current !== 'roadmap') {
+      resume();
       const speech = selectedLang === 'EN'
         ? "Welcome to your Profile space! Here you can edit your fluency goals, view your Google account authentication details, monitor your grammar and pronunciation scores, track your daily learning curriculum roadmap, and check your master instructor session logs."
         : "Bienvenido a tu sección de Perfil. Aquí puedes configurar tus metas de fluidez, revisar tu cuenta de Google, monitorear tus puntajes de gramática y pronunciación, seguir tu currículo diario de aprendizaje y ver el registro de tus clases particulares.";
 
-      if (isConnected && !isPaused) {
+      if (isConnected) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
       }
     } else if (rightPanelTab === 'settings' && lastVisitedTabRef.current !== 'settings') {
+      resume();
       const speech = selectedLang === 'EN'
         ? "Welcome to the Settings panel! Here you can configure the interface language, select translation and subtitle modes, toggle text-only listen-only mode, adjust voice speech rates, set your daily practice goals, and customize pedagogical feedback levels."
         : "Bienvenido al panel de Configuración. Aquí puedes configurar el idioma de la interfaz, elegir los modos de traducción y subtítulos, activar el modo de solo escucha sin audio, ajustar la velocidad de reproducción de voz de Voyager, establecer tus metas de práctica diarias y personalizar el nivel de feedback pedagógico.";
 
-      if (isConnected && !isPaused) {
+      if (isConnected) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
       }
     } else if (rightPanelTab === 'chat' && lastVisitedTabRef.current !== 'chat') {
+      resume();
       const speech = selectedLang === 'EN'
         ? "Welcome back to our conversation! Let's continue practicing English."
         : "Bienvenido de vuelta a nuestra conversación. Sigamos practicando inglés.";
 
-      if (isConnected && !isPaused) {
+      if (isConnected) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
       }
     } else if (rightPanelTab === 'shopping' && lastVisitedTabRef.current !== 'shopping') {
+      resume();
       const speech = selectedLang === 'EN'
         ? "Welcome to the Shopping section! Here you can upgrade to a PRO account to unlock all lessons, book private 1-on-1 diagnostic sessions, or select monthly intensive coaching packages."
         : "Bienvenido a la sección de Compras. Aquí puedes actualizar tu cuenta a PRO para desbloquear todas las lecciones, reservar sesiones de diagnóstico individuales, o elegir paquetes de coaching intensivo mensual.";
 
-      if (isConnected && !isPaused) {
+      if (isConnected) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
       }
     }
     lastVisitedTabRef.current = rightPanelTab;
-  }, [rightPanelTab, selectedLang, isConnected, isPaused]);
+  }, [rightPanelTab, selectedLang, isConnected]);
 
   const getOnboardingStepTitle = (step: number, lang: 'EN' | 'ES') => {
     switch (step) {
