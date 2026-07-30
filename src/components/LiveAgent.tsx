@@ -2514,10 +2514,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                  onAskVoyager={(text) => {
                                      setHasInteracted(true);
                                      addUserMessage(text);
-                                     const profilePrompt = `[INSTRUCCIÓN DE SISTEMA CRÍTICA: El usuario está preguntando sobre su Perfil de usuario (Día actual, progreso, nivel de inglés estimado, palabras aprendidas o tipo de cuenta). 
-Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. 
-Responde ÚNICAMENTE en español de forma clara, directa e informativa para que un usuario de habla hispana entienda perfectamente su avance y datos. 
-REGLA INQUEBRANTABLE: NO intentes enseñar inglés, NO invites al usuario a practicar inglés, NO inicies juegos de conversación en inglés y NO ofrezcas lecciones. Tu único trabajo en este panel es explicar de manera informativa en español los datos y la información del Perfil del usuario, y preguntarle si tiene alguna duda sobre esta sección.
+                                     const profilePrompt = `[INSTRUCCIÓN DE SISTEMA CRÍTICA Y MANDATORIA: Estás respondiendo a una pregunta dentro de la pestaña de PERFIL del usuario.
+1. Deja atrás cualquier otro tipo de conversación o tema general. Está ESTRICTAMENTE PROHIBIDO hablar de cualquier cosa que no sea el perfil específico, las metas, los reportes de progreso y los proyectos/lecciones asignados de este usuario.
+2. Tu único trabajo es explicar e informar en español qué significan sus datos específicos (ej. sus puntuaciones de Fluidez, Gramática, Fonética, Confianza, palabras aprendidas) y el avance de sus metas personales.
+3. Responde ÚNICAMENTE en español de forma clara, directa y muy precisa para que el usuario de habla hispana comprenda perfectamente su reporte.
+4. REGLA INQUEBRANTABLE: NO intentes enseñar inglés, NO invites al usuario a practicar inglés, NO inicies juegos de conversación en inglés y NO ofrezcas lecciones.
 Pregunta del usuario: "${text}"]`;
                                      sendText(profilePrompt);
                                  }}
