@@ -217,6 +217,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [userName, setUserName] = useState<string>('');
   const [userAge, setUserAge] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
+  const [userCountry, setUserCountry] = useState<string>('');
   const [explanationCountdown, setExplanationCountdown] = useState<number | null>(null);
   const [showReviewScreen, setShowReviewScreen] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>('');
@@ -688,6 +689,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       name: userName.trim() || (selectedLang === 'EN' ? 'Learner' : 'Estudiante'),
       email: userEmail.trim() || 'learner@usavoyager.com',
       age: userAge.trim() ? parseInt(userAge.trim()) : undefined,
+      country: userCountry.trim() || (selectedLang === 'EN' ? 'Unknown' : 'Desconocido'),
       provider: 'Guest' as const,
       goal: getGoalText(),
       levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
@@ -699,6 +701,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         const parsed = JSON.parse(saved);
         u = {
           ...parsed,
+          name: userName.trim() || parsed.name,
+          email: userEmail.trim() || parsed.email,
+          age: userAge.trim() ? parseInt(userAge.trim()) : parsed.age,
+          country: userCountry.trim() || parsed.country,
           goal: getGoalText(),
           levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
         };
@@ -723,7 +729,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
         selectedLang,
         userName,
-        userAge
+        userAge,
+        userCountry
       });
       sendText(greetingPrompt);
     } else {
@@ -745,7 +752,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       const greetingPrompt = ConversationModePolicy.getSystemInstructionsForMode(modeToUse, {
         selectedLang,
         userName,
-        userAge
+        userAge,
+        userCountry
       });
       sendText(greetingPrompt);
     } else {
@@ -1511,6 +1519,19 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                     placeholder={selectedLang === 'EN' ? 'Your age' : 'Tu edad'}
                                                                     min="1"
                                                                     max="120"
+                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                                />
+                                                            </div>
+
+                                                            <div className="flex flex-col gap-1.5">
+                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
+                                                                    {selectedLang === 'EN' ? 'COUNTRY' : 'PAÍS'}
+                                                                </label>
+                                                                <input 
+                                                                    type="text"
+                                                                    value={userCountry}
+                                                                    onChange={(e) => setUserCountry(e.target.value)}
+                                                                    placeholder={selectedLang === 'EN' ? 'Your country' : 'Tu país'}
                                                                     className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
                                                                 />
                                                             </div>

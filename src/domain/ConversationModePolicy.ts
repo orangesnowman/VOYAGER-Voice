@@ -5,6 +5,7 @@ export interface ModePromptOptions {
   selectedLang: 'EN' | 'ES';
   userName?: string;
   userAge?: string;
+  userCountry?: string;
 }
 
 const COACHING_PHILOSOPHY_INSTRUCTIONS = `
@@ -37,10 +38,11 @@ export class ConversationModePolicy {
    * Translates the active mode and options into the appropriate system instruction payload.
    */
   static getSystemInstructionsForMode(mode: ConversationMode, options: ModePromptOptions): string {
-    const { initialPrompt, selectedLang, userName, userAge } = options;
+    const { initialPrompt, selectedLang, userName, userAge, userCountry } = options;
     
     const displayName = userName ? userName.trim() : "";
     const displayAge = userAge ? userAge.trim() : "";
+    const displayCountry = userCountry ? userCountry.trim() : "";
     
     let baseGreeting = "";
     
@@ -129,10 +131,11 @@ Be extremely brief, ask only one question, and start immediately.`;
     }
 
     let learnerInfo = "";
-    if (displayName || displayAge) {
+    if (displayName || displayAge || displayCountry) {
       learnerInfo = `\n\n[LEARNER INFO:
 - Name: ${displayName || 'Learner'}
 - Age: ${displayAge || 'Unknown/Adult'}
+${displayCountry ? `- Country: ${displayCountry}` : ''}
 ]`;
     }
 
