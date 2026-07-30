@@ -238,7 +238,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [selectedProfSubGoal, setSelectedProfSubGoal] = useState<'CONSEGUIR_EMPLEO' | 'COMUNICARME_TRABAJO' | 'CRECER_PROFESIONAL' | null>(null);
   const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<'ELEMENTARY_SCHOOL' | 'MIDDLE_SCHOOL' | 'HIGH_SCHOOL' | 'COLLEGE_UNIVERSITY' | 'GRADUATE_SCHOOL' | null>(null);
   const [selectedAcademicGoal, setSelectedAcademicGoal] = useState<'PASS_EXAM' | 'ACADEMIC_SUCCESS' | 'STUDY_ABROAD' | 'IMPROVE_CONVERSATION' | 'GENERAL_KNOWLEDGE' | null>(null);
-  const [selectedViajanteSubGoal, setSelectedViajanteSubGoal] = useState<'TURISMO' | 'NEGOCIOS' | 'CULTURA' | null>(null);
+  const [selectedViajanteSubGoal, setSelectedViajanteSubGoal] = useState<'EXPLORAR' | 'AMISTAD' | 'CULTURA' | null>(null);
   const [userName, setUserName] = useState<string>('');
   const [userAge, setUserAge] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
@@ -709,8 +709,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
          return `Academic: Conocimiento General${schoolText}`;
        }
        if (selectedGoal === 'VIAJANTE') {
-         if (selectedViajanteSubGoal === 'TURISMO') return 'Travel: Turismo';
-         if (selectedViajanteSubGoal === 'NEGOCIOS') return 'Travel: Negocios';
+         if (selectedViajanteSubGoal === 'EXPLORAR') return 'Travel: Explorar';
+         if (selectedViajanteSubGoal === 'AMISTAD') return 'Travel: Amistad';
          return 'Travel: Cultura';
        }
        return 'Travel & Daily Conversation';
@@ -1461,8 +1461,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 13 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'TURISMO', label: selectedLang === 'EN' ? 'TOURISM' : 'TURISMO', icon: Plane },
-                                                                { id: 'NEGOCIOS', label: selectedLang === 'EN' ? 'BUSINESS' : 'NEGOCIOS', icon: Briefcase },
+                                                                { id: 'EXPLORAR', label: selectedLang === 'EN' ? 'EXPLORE' : 'EXPLORAR', icon: Plane },
+                                                                { id: 'AMISTAD', label: selectedLang === 'EN' ? 'FRIENDSHIP' : 'AMISTAD', icon: User },
                                                                 { id: 'CULTURA', label: selectedLang === 'EN' ? 'CULTURE' : 'CULTURA', icon: Languages }
                                                             ].map((opt) => {
                                                                 const isSel = selectedViajanteSubGoal === opt.id;
