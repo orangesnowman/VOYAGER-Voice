@@ -531,52 +531,42 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (rightPanelTab === 'teachers' && lastVisitedTabRef.current !== 'teachers') {
       const speech = selectedLang === 'EN'
         ? "Welcome to the Teacher section! You have the option to hire Alejandra Francois, La Profe. She is our native bilingual Master English Immersion Coach and NYC Accent Specialist who can help you learn Spanish and English through personalized live 1-on-1 private lessons, accent correction, and direct chat support."
-        : "¡Bienvenido a la sección de La Profe! Tienes la opción de contratar a Alejandra Francois, La Profe. Ella es nuestra Coach Maestra de Inmersión y Especialista en Acento de Nueva York, bilingüe nativa. Te ayudará a aprender español e inglés a través de clases particulares en vivo 1-a-1, corrección de pronunciación y soporte por chat.";
+        : "Bienvenido a la sección de La Profe. Tienes la opción de contratar a Alejandra Francois, La Profe. Ella es nuestra Coach Maestra de Inmersión y Especialista en Acento de Nueva York, bilingüe nativa. Te ayudará a aprender español e inglés a través de clases particulares en vivo 1-a-1, corrección de pronunciación y soporte por chat.";
 
       if (isConnected && !isPaused) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
-      } else {
-        speakText(speech);
       }
     } else if (rightPanelTab === 'roadmap' && lastVisitedTabRef.current !== 'roadmap') {
       const speech = selectedLang === 'EN'
         ? "Welcome to your Profile space! Here you can edit your fluency goals, view your Google account authentication details, monitor your grammar and pronunciation scores, track your daily learning curriculum roadmap, and check your master instructor session logs."
-        : "¡Bienvenido a tu sección de Perfil! Aquí puedes configurar tus metas de fluidez, revisar tu cuenta de Google, monitorear tus puntajes de gramática y pronunciación, seguir tu currículo diario de aprendizaje y ver el registro de tus clases particulares.";
+        : "Bienvenido a tu sección de Perfil. Aquí puedes configurar tus metas de fluidez, revisar tu cuenta de Google, monitorear tus puntajes de gramática y pronunciación, seguir tu currículo diario de aprendizaje y ver el registro de tus clases particulares.";
 
       if (isConnected && !isPaused) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
-      } else {
-        speakText(speech);
       }
     } else if (rightPanelTab === 'settings' && lastVisitedTabRef.current !== 'settings') {
       const speech = selectedLang === 'EN'
         ? "Welcome to the Settings panel! Here you can configure the interface language, select translation and subtitle modes, toggle text-only listen-only mode, adjust voice speech rates, set your daily practice goals, and customize pedagogical feedback levels."
-        : "¡Bienvenido al panel de Configuración! Aquí puedes configurar el idioma de la interfaz, elegir los modos de traducción y subtítulos, activar el modo de solo escucha sin audio, ajustar la velocidad de reproducción de voz de Voyager, establecer tus metas de práctica diarias y personalizar el nivel de feedback pedagógico.";
+        : "Bienvenido al panel de Configuración. Aquí puedes configurar el idioma de la interfaz, elegir los modos de traducción y subtítulos, activar el modo de solo escucha sin audio, ajustar la velocidad de reproducción de voz de Voyager, establecer tus metas de práctica diarias y personalizar el nivel de feedback pedagógico.";
 
       if (isConnected && !isPaused) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
-      } else {
-        speakText(speech);
       }
     } else if (rightPanelTab === 'chat' && lastVisitedTabRef.current !== 'chat') {
       const speech = selectedLang === 'EN'
         ? "Welcome back to our conversation! Let's continue practicing English."
-        : "¡Bienvenido de vuelta a nuestra conversación! Sigamos practicando inglés.";
+        : "Bienvenido de vuelta a nuestra conversación. Sigamos practicando inglés.";
 
       if (isConnected && !isPaused) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
-      } else {
-        speakText(speech);
       }
     } else if (rightPanelTab === 'shopping' && lastVisitedTabRef.current !== 'shopping') {
       const speech = selectedLang === 'EN'
         ? "Welcome to the Shopping section! Here you can upgrade to a PRO account to unlock all lessons, book private 1-on-1 diagnostic sessions, or select monthly intensive coaching packages."
-        : "¡Bienvenido a la sección de Compras! Aquí puedes actualizar tu cuenta a PRO para desbloquear todas las lecciones, reservar sesiones de diagnóstico individuales, o elegir paquetes de coaching intensivo mensual.";
+        : "Bienvenido a la sección de Compras. Aquí puedes actualizar tu cuenta a PRO para desbloquear todas las lecciones, reservar sesiones de diagnóstico individuales, o elegir paquetes de coaching intensivo mensual.";
 
       if (isConnected && !isPaused) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
-      } else {
-        speakText(speech);
       }
     }
     lastVisitedTabRef.current = rightPanelTab;
@@ -684,8 +674,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (explanation) {
       if (isConnected) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following text in your natural voice. Do not write any scores, tags, or explanations, just say this phrase clearly: "${explanation}"]`);
-      } else {
-        speakText(explanation);
       }
     }
   };
