@@ -888,22 +888,22 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     return days;
   };
 
-  const isProfessional = selectedGoal === 'PROFESSIONAL';
-  const totalOnboardingSteps = isProfessional ? 4 : 5;
+  const isEstudio = selectedGoal === 'ESTUDIO';
+  const totalOnboardingSteps = isEstudio ? 5 : 4;
 
   let currentStepIdx = 1;
   if (onboardingStep === 1) {
     currentStepIdx = 1;
-  } else if (onboardingStep === 11) {
+  } else if (onboardingStep === 11 || onboardingStep === 13) {
     currentStepIdx = 2;
   } else if (onboardingStep === 12) {
     currentStepIdx = 2;
-  } else if (onboardingStep === 11 || onboardingStep === 122 || onboardingStep === 13) {
+  } else if (onboardingStep === 122) {
     currentStepIdx = 3;
   } else if (onboardingStep === 2) {
-    currentStepIdx = isProfessional ? 3 : 4;
+    currentStepIdx = isEstudio ? 4 : 3;
   } else if (onboardingStep === 4) {
-    currentStepIdx = isProfessional ? 4 : 5;
+    currentStepIdx = isEstudio ? 5 : 4;
   }
 
   const stepsLeft = totalOnboardingSteps - currentStepIdx;
@@ -912,11 +912,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (onboardingStep === 1) {
       setHasClickedConnect(false);
       setOnboardingStep(0);
-    } else if (onboardingStep === 11) {
+    } else if (onboardingStep === 11 || onboardingStep === 13) {
       setOnboardingStep(1);
     } else if (onboardingStep === 12) {
       setOnboardingStep(1);
-    } else if (onboardingStep === 122 || onboardingStep === 13) {
+    } else if (onboardingStep === 122) {
       setOnboardingStep(12);
     } else if (onboardingStep === 2) {
       if (selectedGoal === 'PROFESSIONAL') {
@@ -934,18 +934,16 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const handleOnboardingNext = () => {
     if (onboardingStep === 1) {
       if (!selectedGoal) return;
-      if (isProfessional) {
+      if (selectedGoal === 'PROFESSIONAL') {
         setOnboardingStep(11);
-      } else {
+      } else if (selectedGoal === 'VIAJANTE') {
+        setOnboardingStep(13);
+      } else if (selectedGoal === 'ESTUDIO') {
         setOnboardingStep(12);
       }
     } else if (onboardingStep === 12) {
       if (!selectedSchoolLevel) return;
-      if (selectedGoal === 'ESTUDIO') {
-        setOnboardingStep(122);
-      } else if (selectedGoal === 'VIAJANTE') {
-        setOnboardingStep(13);
-      }
+      setOnboardingStep(122);
     } else if (onboardingStep === 11 || onboardingStep === 122 || onboardingStep === 13) {
       if (onboardingStep === 11 && !selectedProfSubGoal) return;
       if (onboardingStep === 122 && !selectedAcademicGoal) return;
@@ -967,32 +965,32 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     }
     if (!selectedGoal) return;
     
-    if (isProfessional) {
-      // 4-step flow: 1 (Goal), 2 (Professional Subgoal - 11), 3 (Level - 2), 4 (Form - 4)
-      if (stepNum === 2) {
-        setOnboardingStep(11);
-      } else if (stepNum === 3) {
-        if (!selectedProfSubGoal) return;
-        setOnboardingStep(2);
-      } else if (stepNum === 4) {
-        if (!selectedProfSubGoal || !selectedLevel) return;
-        setOnboardingStep(4);
-      }
-    } else {
-      // 5-step flow: 1 (Goal), 2 (School Level - 12), 3 (Subgoal - 122/13), 4 (Level - 2), 5 (Form - 4)
+    if (isEstudio) {
+      // 5-step flow: 1 (Goal), 2 (School Level - 12), 3 (Academic Goal - 122), 4 (Level - 2), 5 (Form - 4)
       if (stepNum === 2) {
         setOnboardingStep(12);
       } else if (stepNum === 3) {
         if (!selectedSchoolLevel) return;
-        if (selectedGoal === 'ESTUDIO') setOnboardingStep(122);
-        else if (selectedGoal === 'VIAJANTE') setOnboardingStep(13);
+        setOnboardingStep(122);
       } else if (stepNum === 4) {
-        const subGoalAnswered = selectedGoal === 'ESTUDIO' ? selectedAcademicGoal : selectedViajanteSubGoal;
-        if (!selectedSchoolLevel || !subGoalAnswered) return;
+        if (!selectedSchoolLevel || !selectedAcademicGoal) return;
         setOnboardingStep(2);
       } else if (stepNum === 5) {
-        const subGoalAnswered = selectedGoal === 'ESTUDIO' ? selectedAcademicGoal : selectedViajanteSubGoal;
-        if (!selectedSchoolLevel || !subGoalAnswered || !selectedLevel) return;
+        if (!selectedSchoolLevel || !selectedAcademicGoal || !selectedLevel) return;
+        setOnboardingStep(4);
+      }
+    } else {
+      // 4-step flow: 1 (Goal), 2 (Subgoal - 11/13), 3 (Level - 2), 4 (Form - 4)
+      if (stepNum === 2) {
+        if (selectedGoal === 'PROFESSIONAL') setOnboardingStep(11);
+        else if (selectedGoal === 'VIAJANTE') setOnboardingStep(13);
+      } else if (stepNum === 3) {
+        const subGoalAnswered = selectedGoal === 'PROFESSIONAL' ? selectedProfSubGoal : selectedViajanteSubGoal;
+        if (!subGoalAnswered) return;
+        setOnboardingStep(2);
+      } else if (stepNum === 4) {
+        const subGoalAnswered = selectedGoal === 'PROFESSIONAL' ? selectedProfSubGoal : selectedViajanteSubGoal;
+        if (!subGoalAnswered || !selectedLevel) return;
         setOnboardingStep(4);
       }
     }
