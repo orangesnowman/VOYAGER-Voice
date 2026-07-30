@@ -160,6 +160,30 @@ const renderModeIcon = (iconName: string) => {
   }
 };
 
+const countries = [
+  { id: 'USA', nameEn: 'United States', nameEs: 'Estados Unidos' },
+  { id: 'AR', nameEn: 'Argentina', nameEs: 'Argentina' },
+  { id: 'BO', nameEn: 'Bolivia', nameEs: 'Bolivia' },
+  { id: 'CL', nameEn: 'Chile', nameEs: 'Chile' },
+  { id: 'CO', nameEn: 'Colombia', nameEs: 'Colombia' },
+  { id: 'CR', nameEn: 'Costa Rica', nameEs: 'Costa Rica' },
+  { id: 'CU', nameEn: 'Cuba', nameEs: 'Cuba' },
+  { id: 'DO', nameEn: 'Dominican Republic', nameEs: 'República Dominicana' },
+  { id: 'EC', nameEn: 'Ecuador', nameEs: 'Ecuador' },
+  { id: 'SV', nameEn: 'El Salvador', nameEs: 'El Salvador' },
+  { id: 'ES', nameEn: 'Spain', nameEs: 'España' },
+  { id: 'GT', nameEn: 'Guatemala', nameEs: 'Guatemala' },
+  { id: 'HN', nameEn: 'Honduras', nameEs: 'Honduras' },
+  { id: 'MX', nameEn: 'Mexico', nameEs: 'México' },
+  { id: 'NI', nameEn: 'Nicaragua', nameEs: 'Nicaragua' },
+  { id: 'PA', nameEn: 'Panama', nameEs: 'Panamá' },
+  { id: 'PY', nameEn: 'Paraguay', nameEs: 'Paraguay' },
+  { id: 'PE', nameEn: 'Peru', nameEs: 'Perú' },
+  { id: 'PR', nameEn: 'Puerto Rico', nameEs: 'Puerto Rico' },
+  { id: 'UY', nameEn: 'Uruguay', nameEs: 'Uruguay' },
+  { id: 'VE', nameEn: 'Venezuela', nameEs: 'Venezuela' }
+];
+
 interface LiveAgentProps {
   isWidgetMode?: boolean;
   onClose?: () => void;
@@ -1495,59 +1519,46 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                                     {onboardingStep === 4 && (
                                                         <div className="space-y-4 w-full" style={{ fontFamily: "'Lato', sans-serif" }}>
-                                                            <div className="flex flex-col gap-1.5">
-                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
-                                                                    {selectedLang === 'EN' ? 'NAME' : 'NOMBRE'}
-                                                                </label>
-                                                                <input 
-                                                                    type="text"
-                                                                    value={userName}
-                                                                    onChange={(e) => setUserName(e.target.value)}
-                                                                    placeholder={selectedLang === 'EN' ? 'Your name' : 'Tu nombre'}
-                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
-                                                                />
-                                                            </div>
+                                                            <input 
+                                                                type="text"
+                                                                value={userName}
+                                                                onChange={(e) => setUserName(e.target.value)}
+                                                                placeholder={selectedLang === 'EN' ? 'Your name' : 'Tu nombre'}
+                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                            />
 
-                                                            <div className="flex flex-col gap-1.5">
-                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
-                                                                    {selectedLang === 'EN' ? 'AGE' : 'EDAD'}
-                                                                </label>
-                                                                <input 
-                                                                    type="number"
-                                                                    value={userAge}
-                                                                    onChange={(e) => setUserAge(e.target.value)}
-                                                                    placeholder={selectedLang === 'EN' ? 'Your age' : 'Tu edad'}
-                                                                    min="1"
-                                                                    max="120"
-                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
-                                                                />
-                                                            </div>
+                                                            <input 
+                                                                type="number"
+                                                                value={userAge}
+                                                                onChange={(e) => setUserAge(e.target.value)}
+                                                                placeholder={selectedLang === 'EN' ? 'Your age' : 'Tu edad'}
+                                                                min="1"
+                                                                max="120"
+                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                            />
 
-                                                            <div className="flex flex-col gap-1.5">
-                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
-                                                                    {selectedLang === 'EN' ? 'COUNTRY' : 'PAÍS'}
-                                                                </label>
-                                                                <input 
-                                                                    type="text"
-                                                                    value={userCountry}
-                                                                    onChange={(e) => setUserCountry(e.target.value)}
-                                                                    placeholder={selectedLang === 'EN' ? 'Your country' : 'Tu país'}
-                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
-                                                                />
-                                                            </div>
+                                                            <select
+                                                                value={userCountry}
+                                                                onChange={(e) => setUserCountry(e.target.value)}
+                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all cursor-pointer"
+                                                            >
+                                                                <option value="" disabled hidden>
+                                                                    {selectedLang === 'EN' ? 'Select your country' : 'Selecciona tu país'}
+                                                                </option>
+                                                                {countries.map((c) => (
+                                                                    <option key={c.id} value={selectedLang === 'EN' ? c.nameEn : c.nameEs} className="bg-neutral-200 text-black">
+                                                                        {selectedLang === 'EN' ? c.nameEn : c.nameEs}
+                                                                    </option>
+                                                                ))}
+                                                            </select>
 
-                                                            <div className="flex flex-col gap-1.5">
-                                                                <label className="text-[11px] font-extrabold tracking-wider text-black/60 uppercase">
-                                                                    {selectedLang === 'EN' ? 'EMAIL' : 'CORREO ELECTRÓNICO'}
-                                                                </label>
-                                                                <input 
-                                                                    type="email"
-                                                                    value={userEmail}
-                                                                    onChange={(e) => setUserEmail(e.target.value)}
-                                                                    placeholder={selectedLang === 'EN' ? 'your.email@example.com' : 'tu.correo@ejemplo.com'}
-                                                                    className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
-                                                                />
-                                                            </div>
+                                                            <input 
+                                                                type="email"
+                                                                value={userEmail}
+                                                                onChange={(e) => setUserEmail(e.target.value)}
+                                                                placeholder={selectedLang === 'EN' ? 'your.email@example.com' : 'tu.correo@ejemplo.com'}
+                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                            />
                                                         </div>
                                                     )}
 
@@ -1632,14 +1643,21 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             </div>
 
                                                             {/* Right Arrow (Next) */}
-                                                            <button
-                                                                onClick={handleOnboardingNext}
-                                                                disabled={onboardingStep === 1 && selectedGoal === null}
-                                                                title={nextTitle}
-                                                                className={`${(onboardingStep !== 1 || selectedGoal !== null) ? 'text-red-600 hover:text-red-700 hover:scale-110 animate-bounce-horizontal' : 'text-black/20 cursor-not-allowed'} active:scale-95 transition-all duration-300 bg-transparent flex-shrink-0 flex items-center justify-center p-1.5`}
-                                                            >
-                                                                <ArrowRight className="w-6 h-6 stroke-[2.5]" />
-                                                            </button>
+                                                            {(() => {
+                                                                const isStep4 = onboardingStep === 4;
+                                                                const isStep4Valid = isStep4 ? (userName.trim() !== '' && userAge.trim() !== '' && userCountry.trim() !== '' && userEmail.trim() !== '') : true;
+                                                                const isNextActive = onboardingStep === 1 ? (selectedGoal !== null) : (isStep4 ? isStep4Valid : true);
+                                                                return (
+                                                                    <button
+                                                                        onClick={handleOnboardingNext}
+                                                                        disabled={!isNextActive}
+                                                                        title={nextTitle}
+                                                                        className={`${isNextActive ? 'text-red-600 hover:text-red-700 hover:scale-110 animate-bounce-horizontal' : 'text-black/20 cursor-not-allowed'} active:scale-95 transition-all duration-300 bg-transparent flex-shrink-0 flex items-center justify-center p-1.5`}
+                                                                    >
+                                                                        <ArrowRight className="w-6 h-6 stroke-[2.5]" />
+                                                                    </button>
+                                                                );
+                                                            })()}
                                                         </div>
                                                     )}
                                                 </div>
