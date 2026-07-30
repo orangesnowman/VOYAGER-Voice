@@ -554,8 +554,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
   // Speak explanation when arriving at the Teacher, Profile, or Settings section
   useEffect(() => {
-    // 1. Play pin sound and pause conversation if moving away from CHAT tab
-    if (lastVisitedTabRef.current === 'chat' && rightPanelTab !== 'chat') {
+    // 1. Play pin sound and pause conversation whenever we switch page sections (from any tab to any other tab)
+    if (lastVisitedTabRef.current && lastVisitedTabRef.current !== rightPanelTab) {
       playPinSound();
       pause();
     }
