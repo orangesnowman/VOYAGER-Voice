@@ -1693,7 +1693,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 type="text"
                                                                 value={userName}
                                                                 onChange={(e) => setUserName(e.target.value)}
-                                                                placeholder={selectedLang === 'EN' ? 'Your name' : 'Tu nombre'}
+                                                                placeholder={selectedLang === 'EN' ? 'YOUR NAME' : 'TU NOMBRE'}
                                                                 className={`w-full px-4 py-2.5 rounded-2xl border-[3px] bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30 ${
                                                                     userName.trim() !== '' ? 'border-red-600' : 'border-black/40'
                                                                 }`}
@@ -1703,7 +1703,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 type="number"
                                                                 value={userAge}
                                                                 onChange={(e) => setUserAge(e.target.value)}
-                                                                placeholder={selectedLang === 'EN' ? 'Your age' : 'Tu edad'}
+                                                                placeholder={selectedLang === 'EN' ? 'YOUR AGE' : 'TU EDAD'}
                                                                 min="1"
                                                                 max="120"
                                                                 className={`w-full px-4 py-2.5 rounded-2xl border-[3px] bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30 ${
@@ -1719,7 +1719,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 }`}
                                                             >
                                                                 <option value="" disabled hidden>
-                                                                    {selectedLang === 'EN' ? 'Select your country' : 'Selecciona tu país'}
+                                                                    {selectedLang === 'EN' ? 'SELECT YOUR COUNTRY' : 'SELECCIONA TU PAÍS'}
                                                                 </option>
                                                                 {countries.map((c) => (
                                                                     <option key={c.id} value={selectedLang === 'EN' ? c.nameEn : c.nameEs} className="bg-neutral-200 text-black">
@@ -1732,7 +1732,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 type="email"
                                                                 value={userEmail}
                                                                 onChange={(e) => setUserEmail(e.target.value)}
-                                                                placeholder={selectedLang === 'EN' ? 'your.email@example.com' : 'tu.correo@ejemplo.com'}
+                                                                placeholder={selectedLang === 'EN' ? 'YOUR EMAIL' : 'TU EMAIL'}
                                                                 className={`w-full px-4 py-2.5 rounded-2xl border-[3px] bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30 ${
                                                                     userEmail.trim() !== '' ? 'border-red-600' : 'border-black/40'
                                                                 }`}
