@@ -1650,10 +1650,10 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 2 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'BEGINNER', label: selectedLang === 'EN' ? 'Beginner (A1-A2)' : 'Principiante (A1-A2)', icon: Sprout },
-                                                                { id: 'INTERMEDIATE', label: selectedLang === 'EN' ? 'Intermediate (B1-B2)' : 'Intermedio (B1-B2)', icon: Flower },
-                                                                { id: 'ADVANCED', label: selectedLang === 'EN' ? 'Advanced (C1-C2)' : 'Avanzado (C1-C2)', icon: TreeDeciduous },
-                                                                { id: 'NOT_SURE', label: selectedLang === 'EN' ? "I'm not sure" : 'No estoy seguro', icon: Compass }
+                                                                { id: 'BEGINNER', label: selectedLang === 'EN' ? 'BEGINNER (A1-A2)' : 'PRINCIPIANTE (A1-A2)', icon: Sprout },
+                                                                { id: 'INTERMEDIATE', label: selectedLang === 'EN' ? 'INTERMEDIATE (B1-B2)' : 'INTERMEDIO (B1-B2)', icon: Flower },
+                                                                { id: 'ADVANCED', label: selectedLang === 'EN' ? 'ADVANCED (C1-C2)' : 'AVANZADO (C1-C2)', icon: TreeDeciduous },
+                                                                { id: 'NOT_SURE', label: selectedLang === 'EN' ? "I'M NOT SURE" : 'NO ESTOY SEGURO', icon: Compass }
                                                             ].map((opt) => {
                                                                 const isSel = selectedLevel === opt.id;
                                                                 const IconComp = isSel ? ArrowRight : opt.icon;
