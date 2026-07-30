@@ -1385,13 +1385,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {/* Header */}
                                                     <div className="w-full text-left mb-6 flex flex-col items-start">
                                                          <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight">
-                                                             {onboardingStep === 1 && (selectedLang === 'EN' ? 'What is your primary learning goal?' : '¿Cuál es tu objetivo de aprendizaje principal?')}
-                                                             {onboardingStep === 11 && (selectedLang === 'EN' ? 'What is your professional goal?' : '¿Cuál es tu meta profesional?')}
-                                                             {onboardingStep === 12 && (selectedLang === 'EN' ? 'What is your educational goal?' : '¿Cuál es tu meta educativa?')}
-                                                             {onboardingStep === 13 && (selectedLang === 'EN' ? 'Reason you want to learn?' : '¿Razón por la que quieres aprender?')}
-                                                             {onboardingStep === 2 && (selectedLang === 'EN' ? 'What is your estimated English level?' : '¿Cuál es tu nivel estimado de inglés?')}
-                                                             {onboardingStep === 4 && (selectedLang === 'EN' ? 'Who do I have the pleasure of speaking with?' : '¿Con quién tengo el gusto?')}
-                                                             {onboardingStep === 3 && (selectedLang === 'EN' ? 'Select your starting conversation mode:' : 'Selecciona tu modo de conversación para iniciar:')}
+                                                             {getOnboardingStepTitle(onboardingStep, selectedLang)}
                                                          </h2>
                                                     </div>
 
