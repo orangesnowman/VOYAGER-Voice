@@ -1480,10 +1480,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                         <div className="space-y-3.5 w-full">
                                                             {[
                                                                 { id: 'ELEMENTARY_SCHOOL', label: selectedLang === 'EN' ? 'Elementary School' : 'Escuela Primaria', icon: Sprout },
-                                                                { id: 'MIDDLE_SCHOOL', label: selectedLang === 'EN' ? 'Middle School' : 'Escuela Media', icon: BookOpen },
                                                                 { id: 'HIGH_SCHOOL', label: selectedLang === 'EN' ? 'High School' : 'Escuela Secundaria', icon: GraduationCap },
-                                                                { id: 'COLLEGE_UNIVERSITY', label: selectedLang === 'EN' ? 'College / University' : 'Universidad', icon: Award },
-                                                                { id: 'GRADUATE_SCHOOL', label: selectedLang === 'EN' ? 'Graduate School' : 'Escuela de Posgrado', icon: Award }
+                                                                { id: 'COLLEGE_UNIVERSITY', label: selectedLang === 'EN' ? 'College / University' : 'Universidad', icon: Award }
                                                             ].map((opt) => {
                                                                 const isSel = selectedSchoolLevel === opt.id;
                                                                 const IconComp = isSel ? ArrowRight : opt.icon;
