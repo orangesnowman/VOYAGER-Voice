@@ -1572,9 +1572,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 12 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'ELEMENTARY_SCHOOL', label: selectedLang === 'EN' ? 'Elementary School' : 'Escuela Primaria', icon: Sprout },
-                                                                { id: 'HIGH_SCHOOL', label: selectedLang === 'EN' ? 'High School' : 'Escuela Secundaria', icon: GraduationCap },
-                                                                { id: 'COLLEGE_UNIVERSITY', label: selectedLang === 'EN' ? 'College / University' : 'Universidad', icon: Award }
+                                                                { id: 'ELEMENTARY_SCHOOL', label: selectedLang === 'EN' ? 'ELEMENTARY SCHOOL' : 'ESCUELA PRIMARIA', icon: Sprout },
+                                                                { id: 'HIGH_SCHOOL', label: selectedLang === 'EN' ? 'HIGH SCHOOL' : 'ESCUELA SECUNDARIA', icon: GraduationCap },
+                                                                { id: 'COLLEGE_UNIVERSITY', label: selectedLang === 'EN' ? 'COLLEGE / UNIVERSITY' : 'UNIVERSIDAD', icon: Award }
                                                             ].map((opt) => {
                                                                 const isSel = selectedSchoolLevel === opt.id;
                                                                 const IconComp = isSel ? ArrowRight : opt.icon;
@@ -1611,9 +1611,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 122 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'ACADEMIC_SUCCESS', label: selectedLang === 'EN' ? 'Academic success' : 'Éxito académico', icon: Check },
-                                                                { id: 'STUDY_ABROAD', label: selectedLang === 'EN' ? 'Study abroad' : 'Estudiar en el extranjero', icon: Plane },
-                                                                { id: 'IMPROVE_CONVERSATION', label: selectedLang === 'EN' ? 'Improve conversation' : 'Mejorar conversación', icon: MessageSquare }
+                                                                { id: 'ACADEMIC_SUCCESS', label: selectedLang === 'EN' ? 'ACADEMIC SUCCESS' : 'ÉXITO ACADÉMICO', icon: Check },
+                                                                { id: 'STUDY_ABROAD', label: selectedLang === 'EN' ? 'STUDY ABROAD' : 'ESTUDIAR EN EL EXTRANJERO', icon: Plane },
+                                                                { id: 'IMPROVE_CONVERSATION', label: selectedLang === 'EN' ? 'IMPROVE CONVERSATION' : 'MEJORAR CONVERSACIÓN', icon: MessageSquare }
                                                             ].map((opt) => {
                                                                 const isSel = selectedAcademicGoal === opt.id;
                                                                 const IconComp = isSel ? ArrowRight : opt.icon;
