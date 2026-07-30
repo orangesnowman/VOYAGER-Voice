@@ -1524,7 +1524,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 value={userName}
                                                                 onChange={(e) => setUserName(e.target.value)}
                                                                 placeholder={selectedLang === 'EN' ? 'Your name' : 'Tu nombre'}
-                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                                className={`w-full px-4 py-2.5 rounded-2xl border-[3px] bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30 ${
+                                                                    userName.trim() !== '' ? 'border-red-600' : 'border-black/40'
+                                                                }`}
                                                             />
 
                                                             <input 
@@ -1534,13 +1536,17 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 placeholder={selectedLang === 'EN' ? 'Your age' : 'Tu edad'}
                                                                 min="1"
                                                                 max="120"
-                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                                className={`w-full px-4 py-2.5 rounded-2xl border-[3px] bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30 ${
+                                                                    userAge.trim() !== '' ? 'border-red-600' : 'border-black/40'
+                                                                }`}
                                                             />
 
                                                             <select
                                                                 value={userCountry}
                                                                 onChange={(e) => setUserCountry(e.target.value)}
-                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all cursor-pointer"
+                                                                className={`w-full px-4 py-2.5 rounded-2xl border-[3px] bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all cursor-pointer ${
+                                                                    userCountry !== '' ? 'border-red-600' : 'border-black/40'
+                                                                }`}
                                                             >
                                                                 <option value="" disabled hidden>
                                                                     {selectedLang === 'EN' ? 'Select your country' : 'Selecciona tu país'}
@@ -1557,7 +1563,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 value={userEmail}
                                                                 onChange={(e) => setUserEmail(e.target.value)}
                                                                 placeholder={selectedLang === 'EN' ? 'your.email@example.com' : 'tu.correo@ejemplo.com'}
-                                                                className="w-full px-4 py-2.5 rounded-2xl border-[3px] border-black/40 bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30"
+                                                                className={`w-full px-4 py-2.5 rounded-2xl border-[3px] bg-[#EAEAEA]/80 text-black font-semibold text-sm focus:border-red-600 focus:outline-none focus:bg-neutral-200/50 transition-all placeholder-black/30 ${
+                                                                    userEmail.trim() !== '' ? 'border-red-600' : 'border-black/40'
+                                                                }`}
                                                             />
                                                         </div>
                                                     )}
