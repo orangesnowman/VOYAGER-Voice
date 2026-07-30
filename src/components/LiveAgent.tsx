@@ -888,12 +888,22 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     return days;
   };
 
-  const totalOnboardingSteps = 4;
+  const isEstudio = selectedGoal === 'ESTUDIO';
+  const totalOnboardingSteps = isEstudio ? 5 : 4;
+
   let currentStepIdx = 1;
-  if (onboardingStep === 1) currentStepIdx = 1;
-  else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) currentStepIdx = 2;
-  else if (onboardingStep === 2) currentStepIdx = 3;
-  else if (onboardingStep === 4) currentStepIdx = 4;
+  if (onboardingStep === 1) {
+    currentStepIdx = 1;
+  } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
+    currentStepIdx = 2;
+  } else if (onboardingStep === 122) {
+    currentStepIdx = 3;
+  } else if (onboardingStep === 2) {
+    currentStepIdx = isEstudio ? 4 : 3;
+  } else if (onboardingStep === 4) {
+    currentStepIdx = isEstudio ? 5 : 4;
+  }
+
   const stepsLeft = totalOnboardingSteps - currentStepIdx;
 
   const handleOnboardingBack = () => {
@@ -902,7 +912,24 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       setOnboardingStep(0);
     } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
       setOnboardingStep(1);
+    } else if (onboardingStep === 122) {
+      setOnboardingStep(12);
     } else if (onboardingStep === 2) {
+      if (selectedGoal === 'PROFESSIONAL') {
+        setOnboardingStep(11);
+      } else if (selectedGoal === 'ESTUDIO') {
+        setOnboardingStep(122);
+      } else if (selectedGoal === 'VIAJANTE') {
+        setOnboardingStep(13);
+      }
+    } else if (onboardingStep === 4) {
+      setOnboardingStep(2);
+    }
+  };
+
+  const handleOnboardingNext = () => {
+    if (onboardingStep === 1) {
+      if (!selectedGoal) return;
       if (selectedGoal === 'PROFESSIONAL') {
         setOnboardingStep(11);
       } else if (selectedGoal === 'ESTUDIO') {
@@ -910,48 +937,57 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       } else if (selectedGoal === 'VIAJANTE') {
         setOnboardingStep(13);
       }
+    } else if (onboardingStep === 11 || onboardingStep === 13) {
+      if (onboardingStep === 11 && !selectedProfSubGoal) return;
+      if (onboardingStep === 13 && !selectedViajanteSubGoal) return;
+      setOnboardingStep(2);
+    } else if (onboardingStep === 12) {
+      if (!selectedSchoolLevel) return;
+      setOnboardingStep(122);
+    } else if (onboardingStep === 122) {
+      if (!selectedAcademicGoal) return;
+      setOnboardingStep(2);
+    } else if (onboardingStep === 2) {
+      if (!selectedLevel) return;
+      setOnboardingStep(4);
     } else if (onboardingStep === 4) {
-      setOnboardingStep(2);
-    } else if (onboardingStep === 3) {
-      setOnboardingStep(2);
+      if (userName.trim() === '' || userAge.trim() === '' || userCountry === '' || userEmail.trim() === '') return;
+      handleCompleteOnboarding();
     }
   };
 
-   const handleOnboardingNext = () => {
-     if (onboardingStep === 1) {
-       if (!selectedGoal) return;
-       if (selectedGoal === 'PROFESSIONAL') {
-         setOnboardingStep(11);
-       } else if (selectedGoal === 'ESTUDIO') {
-         setOnboardingStep(12);
-       } else if (selectedGoal === 'VIAJANTE') {
-         setOnboardingStep(13);
-       }
-     } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
-       setOnboardingStep(2);
-     } else if (onboardingStep === 2) {
-       setOnboardingStep(4);
-     } else if (onboardingStep === 4) {
-       handleCompleteOnboarding();
-     } else if (onboardingStep === 3) {
-       handleCompleteOnboarding();
-     }
-   };
- 
-   const handleJumpToStep = (stepNum: number) => {
-     if (stepNum === 1) {
-       setOnboardingStep(1);
-     } else if (stepNum === 2) {
-       if (!selectedGoal) return;
-       if (selectedGoal === 'PROFESSIONAL') setOnboardingStep(11);
-       else if (selectedGoal === 'ESTUDIO') setOnboardingStep(12);
-       else if (selectedGoal === 'VIAJANTE') setOnboardingStep(13);
-     } else if (stepNum === 3) {
-       if (!selectedGoal) return;
-       setOnboardingStep(2);
-     } else if (stepNum === 4) {
-       if (!selectedGoal) return;
-       setOnboardingStep(4);
+  const handleJumpToStep = (stepNum: number) => {
+    if (stepNum === 1) {
+      setOnboardingStep(1);
+      return;
+    }
+    if (!selectedGoal) return;
+    if (isEstudio) {
+      if (stepNum === 2) {
+        setOnboardingStep(12);
+      } else if (stepNum === 3) {
+        if (!selectedSchoolLevel) return;
+        setOnboardingStep(122);
+      } else if (stepNum === 4) {
+        if (!selectedSchoolLevel || !selectedAcademicGoal) return;
+        setOnboardingStep(2);
+      } else if (stepNum === 5) {
+        if (!selectedSchoolLevel || !selectedAcademicGoal || !selectedLevel) return;
+        setOnboardingStep(4);
+      }
+    } else {
+      if (stepNum === 2) {
+        if (selectedGoal === 'PROFESSIONAL') setOnboardingStep(11);
+        else if (selectedGoal === 'VIAJANTE') setOnboardingStep(13);
+      } else if (stepNum === 3) {
+        const subGoalAnswered = selectedGoal === 'PROFESSIONAL' ? selectedProfSubGoal : selectedViajanteSubGoal;
+        if (!subGoalAnswered) return;
+        setOnboardingStep(2);
+      } else if (stepNum === 4) {
+        const subGoalAnswered = selectedGoal === 'PROFESSIONAL' ? selectedProfSubGoal : selectedViajanteSubGoal;
+        if (!subGoalAnswered || !selectedLevel) return;
+        setOnboardingStep(4);
+      }
     }
   };
 
