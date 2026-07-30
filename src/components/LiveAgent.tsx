@@ -234,10 +234,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
   const [onboardingStep, setOnboardingStep] = useState<number>(0);
   const [selectedGoal, setSelectedGoal] = useState<'PROFESSIONAL' | 'ESTUDIO' | 'VIAJANTE' | null>(null);
-  const [selectedLevel, setSelectedLevel] = useState<'PRINCIPIANTE' | 'INTERMEDIO' | 'AVANZADO'>('INTERMEDIO');
-  const [selectedProfSubGoal, setSelectedProfSubGoal] = useState<'CONSEGUIR_EMPLEO' | 'COMUNICARME_TRABAJO' | 'CRECER_PROFESIONAL'>('COMUNICARME_TRABAJO');
-  const [selectedEstudioSubGoal, setSelectedEstudioSubGoal] = useState<'AYUDA_ACADEMICA' | 'PASAR_EXAMEN' | 'CONOCIMIENTO_GENERAL'>('AYUDA_ACADEMICA');
-  const [selectedViajanteSubGoal, setSelectedViajanteSubGoal] = useState<'TURISMO' | 'NEGOCIOS' | 'CULTURA'>('TURISMO');
+  const [selectedLevel, setSelectedLevel] = useState<'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'NOT_SURE' | null>(null);
+  const [selectedProfSubGoal, setSelectedProfSubGoal] = useState<'CONSEGUIR_EMPLEO' | 'COMUNICARME_TRABAJO' | 'CRECER_PROFESIONAL' | null>(null);
+  const [selectedSchoolLevel, setSelectedSchoolLevel] = useState<'ELEMENTARY_SCHOOL' | 'MIDDLE_SCHOOL' | 'HIGH_SCHOOL' | 'COLLEGE_UNIVERSITY' | 'GRADUATE_SCHOOL' | null>(null);
+  const [selectedAcademicGoal, setSelectedAcademicGoal] = useState<'PASS_EXAM' | 'ACADEMIC_SUCCESS' | 'STUDY_ABROAD' | 'IMPROVE_CONVERSATION' | 'GENERAL_KNOWLEDGE' | null>(null);
+  const [selectedViajanteSubGoal, setSelectedViajanteSubGoal] = useState<'TURISMO' | 'NEGOCIOS' | 'CULTURA' | null>(null);
   const [userName, setUserName] = useState<string>('');
   const [userAge, setUserAge] = useState<string>('');
   const [userEmail, setUserEmail] = useState<string>('');
@@ -698,9 +699,12 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
          return 'Professional: Crecer Profesionalmente';
        }
        if (selectedGoal === 'ESTUDIO') {
-         if (selectedEstudioSubGoal === 'AYUDA_ACADEMICA') return 'Academic: Ayuda Académica';
-         if (selectedEstudioSubGoal === 'PASAR_EXAMEN') return 'Academic: Pasar un Examen';
-         return 'Academic: Conocimiento General';
+         const schoolText = selectedSchoolLevel ? ` (${selectedSchoolLevel})` : '';
+         if (selectedAcademicGoal === 'PASS_EXAM') return `Academic: Pasar un Examen${schoolText}`;
+         if (selectedAcademicGoal === 'ACADEMIC_SUCCESS') return `Academic: Éxito Académico${schoolText}`;
+         if (selectedAcademicGoal === 'STUDY_ABROAD') return `Academic: Estudiar en el Extranjero${schoolText}`;
+         if (selectedAcademicGoal === 'IMPROVE_CONVERSATION') return `Academic: Mejorar Conversación${schoolText}`;
+         return `Academic: Conocimiento General${schoolText}`;
        }
        if (selectedGoal === 'VIAJANTE') {
          if (selectedViajanteSubGoal === 'TURISMO') return 'Travel: Turismo';
@@ -709,6 +713,13 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
        }
        return 'Travel & Daily Conversation';
      };
+     const mapLevelEstimate = (lvl: typeof selectedLevel) => {
+       if (lvl === 'BEGINNER') return 'Beginner';
+       if (lvl === 'INTERMEDIATE') return 'Intermediate';
+       if (lvl === 'ADVANCED') return 'Advanced';
+       if (lvl === 'NOT_SURE') return 'Not Sure';
+       return 'Intermediate';
+     };
     let u = {
       name: userName.trim() || (selectedLang === 'EN' ? 'Learner' : 'Estudiante'),
       email: userEmail.trim() || 'learner@usavoyager.com',
@@ -716,7 +727,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       country: userCountry.trim() || (selectedLang === 'EN' ? 'Unknown' : 'Desconocido'),
       provider: 'Guest' as const,
       goal: getGoalText(),
-      levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
+      levelEstimate: mapLevelEstimate(selectedLevel),
       completedDays: [1],
       plan: 'FREE' as const
     };
@@ -730,7 +741,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           age: userAge.trim() ? parseInt(userAge.trim()) : parsed.age,
           country: userCountry.trim() || parsed.country,
           goal: getGoalText(),
-          levelEstimate: selectedLevel === 'PRINCIPIANTE' ? 'Beginner' : (selectedLevel === 'INTERMEDIO' ? 'Intermediate' : 'Advanced'),
+          levelEstimate: mapLevelEstimate(selectedLevel),
         };
       } catch (e) {}
     }
@@ -1392,12 +1403,18 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 { id: 'COMUNICARME_TRABAJO', label: selectedLang === 'EN' ? 'COMUNICARME EN EL TRABAJO' : 'COMUNICARME EN EL TRABAJO', icon: MessageSquareText },
                                                                 { id: 'CRECER_PROFESIONAL', label: selectedLang === 'EN' ? 'CRECER PROFESIONALMENTE' : 'CRECER PROFESIONALMENTE', icon: Presentation }
                                                             ].map((opt) => {
-                                                                const IconComp = opt.icon;
                                                                 const isSel = selectedProfSubGoal === opt.id;
+                                                                const IconComp = isSel ? ArrowRight : opt.icon;
                                                                 return (
                                                                     <div 
                                                                         key={opt.id}
-                                                                        onClick={() => setSelectedProfSubGoal(opt.id as any)}
+                                                                        onClick={() => {
+                                                                            if (isSel) {
+                                                                                handleOnboardingNext();
+                                                                            } else {
+                                                                                setSelectedProfSubGoal(opt.id as any);
+                                                                            }
+                                                                        }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
                                                                                 ? 'border-red-600 bg-neutral-200/50' 
@@ -1425,12 +1442,18 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                                 { id: 'NEGOCIOS', label: selectedLang === 'EN' ? 'BUSINESS' : 'NEGOCIOS', icon: Briefcase },
                                                                 { id: 'CULTURA', label: selectedLang === 'EN' ? 'CULTURE' : 'CULTURA', icon: Languages }
                                                             ].map((opt) => {
-                                                                const IconComp = opt.icon;
                                                                 const isSel = selectedViajanteSubGoal === opt.id;
+                                                                const IconComp = isSel ? ArrowRight : opt.icon;
                                                                 return (
                                                                     <div 
                                                                         key={opt.id}
-                                                                        onClick={() => setSelectedViajanteSubGoal(opt.id as any)}
+                                                                        onClick={() => {
+                                                                            if (isSel) {
+                                                                                handleOnboardingNext();
+                                                                            } else {
+                                                                                setSelectedViajanteSubGoal(opt.id as any);
+                                                                            }
+                                                                        }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
                                                                                 ? 'border-red-600 bg-neutral-200/50' 
@@ -1454,27 +1477,76 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 12 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'AYUDA_ACADEMICA', label: selectedLang === 'EN' ? 'ACADEMIC HELP' : 'AYUDA ACADÉMICA', icon: GraduationCap },
-                                                                { id: 'PASAR_EXAMEN', label: selectedLang === 'EN' ? 'PASS AN EXAM' : 'PASAR UN EXAMEN', icon: Award },
-                                                                { id: 'CONOCIMIENTO_GENERAL', label: selectedLang === 'EN' ? 'GENERAL KNOWLEDGE' : 'CONOCIMIENTO GENERAL', icon: Compass }
+                                                                { id: 'ELEMENTARY_SCHOOL', label: selectedLang === 'EN' ? 'Elementary School' : 'Escuela Primaria', icon: Sprout },
+                                                                { id: 'MIDDLE_SCHOOL', label: selectedLang === 'EN' ? 'Middle School' : 'Escuela Media', icon: BookOpen },
+                                                                { id: 'HIGH_SCHOOL', label: selectedLang === 'EN' ? 'High School' : 'Escuela Secundaria', icon: GraduationCap },
+                                                                { id: 'COLLEGE_UNIVERSITY', label: selectedLang === 'EN' ? 'College / University' : 'Universidad', icon: Award },
+                                                                { id: 'GRADUATE_SCHOOL', label: selectedLang === 'EN' ? 'Graduate School' : 'Escuela de Posgrado', icon: Award }
                                                             ].map((opt) => {
-                                                                const IconComp = opt.icon;
-                                                                const isSel = selectedEstudioSubGoal === opt.id;
+                                                                const isSel = selectedSchoolLevel === opt.id;
+                                                                const IconComp = isSel ? ArrowRight : opt.icon;
                                                                 return (
                                                                     <div 
                                                                         key={opt.id}
-                                                                        onClick={() => setSelectedEstudioSubGoal(opt.id as any)}
+                                                                        onClick={() => {
+                                                                            if (isSel) {
+                                                                                handleOnboardingNext();
+                                                                            } else {
+                                                                                setSelectedSchoolLevel(opt.id as any);
+                                                                            }
+                                                                        }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
-                                                                                ? 'border-red-600 bg-neutral-200/50' 
+                                                                                ? 'border-green-600 bg-green-50/30' 
                                                                                 : 'border-black/40 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
-                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
+                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-green-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-green-600' : 'text-black'}`}>
+                                                                                {opt.label}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    )}
+
+                                                    {onboardingStep === 122 && (
+                                                        <div className="space-y-3.5 w-full">
+                                                            {[
+                                                                { id: 'PASS_EXAM', label: selectedLang === 'EN' ? 'Pass an exam' : 'Pasar un examen', icon: FileText },
+                                                                { id: 'ACADEMIC_SUCCESS', label: selectedLang === 'EN' ? 'Academic success' : 'Éxito académico', icon: Check },
+                                                                { id: 'STUDY_ABROAD', label: selectedLang === 'EN' ? 'Study abroad' : 'Estudiar en el extranjero', icon: Plane },
+                                                                { id: 'IMPROVE_CONVERSATION', label: selectedLang === 'EN' ? 'Improve conversation' : 'Mejorar conversación', icon: MessageSquare },
+                                                                { id: 'GENERAL_KNOWLEDGE', label: selectedLang === 'EN' ? 'General knowledge' : 'Conocimiento general', icon: Info }
+                                                            ].map((opt) => {
+                                                                const isSel = selectedAcademicGoal === opt.id;
+                                                                const IconComp = isSel ? ArrowRight : opt.icon;
+                                                                return (
+                                                                    <div 
+                                                                        key={opt.id}
+                                                                        onClick={() => {
+                                                                            if (isSel) {
+                                                                                handleOnboardingNext();
+                                                                            } else {
+                                                                                setSelectedAcademicGoal(opt.id as any);
+                                                                            }
+                                                                        }}
+                                                                        className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
+                                                                            isSel 
+                                                                                ? 'border-orange-500 bg-orange-50/30' 
+                                                                                : 'border-black/40 hover:border-neutral-800 bg-[#EAEAEA]/80'
+                                                                        }`}
+                                                                    >
+                                                                        <div className="flex items-center gap-3.5">
+                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-orange-500 text-white' : 'bg-transparent text-black'}`}>
+                                                                                <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
+                                                                            </div>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-orange-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
@@ -1487,27 +1559,34 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 2 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'PRINCIPIANTE', label: selectedLang === 'EN' ? 'BEGINNER' : 'PRINCIPIANTE', icon: Sprout },
-                                                                { id: 'INTERMEDIO', label: selectedLang === 'EN' ? 'INTERMEDIATE' : 'INTERMEDIO', icon: Flower },
-                                                                { id: 'AVANZADO', label: selectedLang === 'EN' ? 'ADVANCED' : 'AVANZADO', icon: TreeDeciduous }
+                                                                { id: 'BEGINNER', label: selectedLang === 'EN' ? 'Beginner (A1-A2)' : 'Principiante (A1-A2)', icon: Sprout },
+                                                                { id: 'INTERMEDIATE', label: selectedLang === 'EN' ? 'Intermediate (B1-B2)' : 'Intermedio (B1-B2)', icon: Flower },
+                                                                { id: 'ADVANCED', label: selectedLang === 'EN' ? 'Advanced (C1-C2)' : 'Avanzado (C1-C2)', icon: TreeDeciduous },
+                                                                { id: 'NOT_SURE', label: selectedLang === 'EN' ? "I'm not sure" : 'No estoy seguro', icon: Compass }
                                                             ].map((opt) => {
-                                                                const IconComp = opt.icon;
                                                                 const isSel = selectedLevel === opt.id;
+                                                                const IconComp = isSel ? ArrowRight : opt.icon;
                                                                 return (
                                                                     <div 
                                                                         key={opt.id}
-                                                                        onClick={() => setSelectedLevel(opt.id as any)}
+                                                                        onClick={() => {
+                                                                            if (isSel) {
+                                                                                handleOnboardingNext();
+                                                                            } else {
+                                                                                setSelectedLevel(opt.id as any);
+                                                                            }
+                                                                        }}
                                                                         className={`flex items-center justify-between px-4 py-2.5 rounded-2xl border-[3px] transition-all cursor-pointer select-none w-full shadow-xs ${
                                                                             isSel 
-                                                                                ? 'border-red-600 bg-neutral-200/50' 
+                                                                                ? 'border-purple-600 bg-purple-50/30' 
                                                                                 : 'border-black/40 hover:border-neutral-800 bg-[#EAEAEA]/80'
                                                                         }`}
                                                                     >
                                                                         <div className="flex items-center gap-3.5">
-                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-red-600 text-white' : 'bg-transparent text-black'}`}>
+                                                                            <div className={`w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300 ${isSel ? 'bg-purple-600 text-white' : 'bg-transparent text-black'}`}>
                                                                                 <IconComp className="w-[18px] h-[18px] flex-shrink-0" />
                                                                             </div>
-                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-red-600' : 'text-black'}`}>
+                                                                            <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[11px] font-extrabold tracking-wider ${isSel ? 'text-purple-600' : 'text-black'}`}>
                                                                                 {opt.label}
                                                                             </span>
                                                                         </div>
