@@ -558,6 +558,16 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       } else {
         speakText(speech);
       }
+    } else if (rightPanelTab === 'chat' && lastVisitedTabRef.current !== 'chat') {
+      const speech = selectedLang === 'EN'
+        ? "Welcome back to our conversation! Let's continue practicing English."
+        : "¡Bienvenido de vuelta a nuestra conversación! Sigamos practicando inglés.";
+
+      if (isConnected && !isPaused) {
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
+      } else {
+        speakText(speech);
+      }
     } else if (rightPanelTab === 'shopping' && lastVisitedTabRef.current !== 'shopping') {
       const speech = selectedLang === 'EN'
         ? "Welcome to the Shopping section! Here you can upgrade to a PRO account to unlock all lessons, book private 1-on-1 diagnostic sessions, or select monthly intensive coaching packages."
