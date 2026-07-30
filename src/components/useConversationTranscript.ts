@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { ChatMessage } from './LiveAgentTypes';
 
-export function useConversationTranscript() {
+export function useConversationTranscript(activeTab: string = 'chat') {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
 
   const parseImmersionTags = useCallback((text: string) => {
@@ -56,10 +56,11 @@ export function useConversationTranscript() {
         sender: 'system',
         text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
+        timeMs: Date.now(),
+        tab: activeTab
       }
     ]);
-  }, []);
+  }, [activeTab]);
 
   const addUserMessage = useCallback((text: string, customId?: string) => {
     const id = customId || `msg_text_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
@@ -70,10 +71,11 @@ export function useConversationTranscript() {
         sender: 'user',
         text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
+        timeMs: Date.now(),
+        tab: activeTab
       }
     ]);
-  }, []);
+  }, [activeTab]);
 
   const addSplashMessage = useCallback((text: string, customId?: string) => {
     const id = customId || `msg_splash_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
@@ -84,10 +86,11 @@ export function useConversationTranscript() {
         sender: 'splash',
         text,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        timeMs: Date.now()
+        timeMs: Date.now(),
+        tab: activeTab
       }
     ]);
-  }, []);
+  }, [activeTab]);
 
   const updateUserVoiceTranscription = useCallback((transcriptionText: string) => {
     setChatMessages(prev => {
@@ -106,11 +109,12 @@ export function useConversationTranscript() {
             sender: 'user',
             text: transcriptionText,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            timeMs: Date.now()
+            timeMs: Date.now(),
+            tab: activeTab
          }];
       }
     });
-  }, []);
+  }, [activeTab]);
 
   const updateAssistantResponse = useCallback((
     text: string,
@@ -148,11 +152,12 @@ export function useConversationTranscript() {
             text: cleanedText,
             showForm: hasFormTag,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            timeMs: Date.now()
+            timeMs: Date.now(),
+            tab: activeTab
          }];
       }
     });
-  }, [parseImmersionTags]);
+  }, [parseImmersionTags, activeTab]);
 
   return {
     chatMessages,

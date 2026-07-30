@@ -190,6 +190,8 @@ interface LiveAgentProps {
 }
 
 const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) => {
+  const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings' | 'shopping'>('home');
+
   const {
     isConnected,
     statusText,
@@ -227,9 +229,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     resume,
     hasInteracted,
     setHasInteracted,
-  } = useConversationEngine();
-
-  const [rightPanelTab, setRightPanelTab] = useState<'home' | 'chat' | 'roadmap' | 'teachers' | 'progress' | 'settings' | 'shopping'>('home');
+  } = useConversationEngine(rightPanelTab);
   const [hasClickedConnect, setHasClickedConnect] = useState<boolean>(false);
   const [chosenStartMode, setChosenStartMode] = useState<ConversationMode | null>('SPANISH');
   const [onboardingStep, setOnboardingStep] = useState<number>(0);
@@ -1987,7 +1987,7 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
 
                                 <div className="flex-1 px-3 pt-2 pb-4 tab-content-area overflow-y-auto min-h-0">
                                     <div className="min-h-full flex flex-col justify-start space-y-4">
-                                        {chatMessages.map((msg, index) => {
+                                        {chatMessages.filter(msg => !msg.tab || msg.tab === 'chat').map((msg, index) => {
                             if (msg.sender === 'system') {
                                 return null;
                             }

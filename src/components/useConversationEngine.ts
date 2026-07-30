@@ -7,7 +7,7 @@ import { useConversationModes } from './useConversationModes';
 import { ConversationMode } from './ConversationModes';
 import { ConversationModePolicy } from '../domain/ConversationModePolicy';
 
-export function useConversationEngine() {
+export function useConversationEngine(activeTab: string = 'chat') {
   const [selectedLang, setSelectedLang] = useState<'EN' | 'ES'>('ES');
 
   // Use the extracted conversation mode manager
@@ -58,7 +58,7 @@ export function useConversationEngine() {
     addSplashMessage,
     updateUserVoiceTranscription,
     updateAssistantResponse
-  } = useConversationTranscript();
+  } = useConversationTranscript(activeTab);
 
   // Initialize the session hook
   const session = useConversationSession({

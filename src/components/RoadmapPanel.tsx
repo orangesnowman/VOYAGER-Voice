@@ -696,107 +696,127 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
       </div>
 
         {/* Separate Chat messages sibling list */}
-        {chatMessages.filter(msg => {
-          if (msg.sender === 'system') return false;
-          if (msg.sender === 'user' && msg.text.startsWith('[')) return false;
-          return true;
-        }).map((msg, index) => {
-          const isUser = msg.sender === 'user';
-          let displayTxt = msg.text || '';
-          
-          // Clean system tags from user profile / roadmap questions
-          if (displayTxt.includes('INSTRUCCIÓN DE SISTEMA:')) {
-            const match = displayTxt.match(/Pregunta del usuario:\s*"(.*)"/i) || displayTxt.match(/Pregunta:\s*"(.*)"/i) || displayTxt.match(/Question:\s*"(.*)"/i);
-            if (match && match[1]) {
-              displayTxt = match[1];
-            } else {
-              displayTxt = displayTxt
-                .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta del usuario:\s*"/i, '')
-                .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta:\s*"/i, '')
-                .replace(/"\]$/, '');
+        {(() => {
+          const profileMessages = chatMessages.filter(msg => msg.tab === 'roadmap');
+          const messagesToRender = profileMessages.length > 0 ? profileMessages : [
+            {
+              id: 'profile_welcome',
+              sender: 'splash' as const,
+              text: selectedLang === 'EN'
+                ? "Welcome to your Profile space. Here you can edit your fluency goals, view your Google account authentication details, monitor your grammar and pronunciation scores, track your daily learning curriculum roadmap, and check your master instructor session logs."
+                : "Bienvenido a tu sección de Perfil. Aquí puedes configurar tus metas de fluidez, revisar tu cuenta de Google, monitorear tus puntajes de gramática y pronunciación, seguir tu currículo diario de aprendizaje y ver el registro de tus clases particulares.",
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              timeMs: Date.now(),
+              tab: 'roadmap'
             }
-          }
+          ];
+          return messagesToRender.filter(msg => {
+            if (msg.sender === 'system') return false;
+            if (msg.sender === 'user' && msg.text.startsWith('[')) return false;
+            return true;
+          }).map((msg, index) => {
+            const isUser = msg.sender === 'user';
+            let displayTxt = msg.text || '';
+            
+            // Clean system tags from user profile / roadmap questions
+            if (displayTxt.includes('INSTRUCCIÓN DE SISTEMA:')) {
+              const match = displayTxt.match(/Pregunta del usuario:\s*"(.*)"/i) || displayTxt.match(/Pregunta:\s*"(.*)"/i) || displayTxt.match(/Question:\s*"(.*)"/i);
+              if (match && match[1]) {
+                displayTxt = match[1];
+              } else {
+                displayTxt = displayTxt
+                  .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta del usuario:\s*"/i, '')
+                  .replace(/\[INSTRUCCIÓN DE SISTEMA:[^]*?Pregunta:\s*"/i, '')
+                  .replace(/"\]$/, '');
+              }
+            } else if (displayTxt.includes('INSTRUCCIÓN DE SISTEMA CRÍTICA Y MANDATORIA:')) {
+              const match = displayTxt.match(/Pregunta del usuario:\s*"(.*)"/i) || displayTxt.match(/Pregunta:\s*"(.*)"/i) || displayTxt.match(/Question:\s*"(.*)"/i);
+              if (match && match[1]) {
+                displayTxt = match[1];
+              }
+            }
 
-          return (
-            <div 
-              key={msg.id || index}
-              className={`w-full flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
-            >
-              <div className={`max-w-[88%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
-                <div className={`
-                  px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
-                  ${isUser 
-                    ? 'border-blue-600/30 text-black rounded-tr-none' 
-                    : 'border-red-600/30 text-black rounded-tl-none font-serif'
-                  }
-                `}>
-                  {isUser ? (
-                    <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (!isConnected) return;
-                          if (isPaused) {
-                            resume();
-                            if (window.speechSynthesis && window.speechSynthesis.paused) {
-                              window.speechSynthesis.resume();
+            return (
+              <div 
+                key={msg.id || index}
+                className={`w-full flex ${isUser ? 'justify-end' : 'justify-start'} animate-fade-in`}
+              >
+                <div className={`max-w-[88%] flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+                  <div className={`
+                    px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
+                    ${isUser 
+                      ? 'border-blue-600/30 text-black rounded-tr-none' 
+                      : 'border-red-600/30 text-black rounded-tl-none font-serif'
+                    }
+                  `}>
+                    {isUser ? (
+                      <div className="flex items-center justify-end gap-2.5 mb-1.5 select-none">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (!isConnected) return;
+                            if (isPaused) {
+                              resume();
+                              if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                window.speechSynthesis.resume();
+                              }
+                            } else {
+                              pause();
+                              if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                                window.speechSynthesis.pause();
+                              }
                             }
-                          } else {
-                            pause();
-                            if (window.speechSynthesis && window.speechSynthesis.speaking) {
-                              window.speechSynthesis.pause();
-                            }
+                          }}
+                          disabled={!isConnected}
+                          className={`flex items-center gap-1 group cursor-pointer transition-all duration-300 ${
+                            !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                          }`}
+                        >
+                          {!isPaused && (
+                            <span 
+                              style={{ fontFamily: "'Lato', sans-serif" }} 
+                              className="text-[9px] font-black tracking-wider transition-all duration-300 text-blue-600/70 group-hover:text-red-600"
+                            >
+                              {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
+                            </span>
+                          )}
+                          {isPaused ? (
+                            <Play fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
+                          ) : (
+                            <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
+                          )}
+                        </button>
+                        <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 mb-2 select-none">
+                        <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
+                      </div>
+                    )}
+                    <div className={`chat-message-text whitespace-pre-line tracking-wider leading-snug ${isUser ? 'text-right font-normal' : 'text-left'}`}>
+                      {(() => {
+                        if (!isUser && displayTxt.includes(" / ")) {
+                          const parts = displayTxt.split(" / ");
+                          if (parts.length >= 2) {
+                            return (
+                              <>
+                                <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black font-semibold leading-snug">{parseAndRenderEmojis(parts[0])}</div>
+                                <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="chat-message-english text-black leading-snug mt-2">
+                                  {parseAndRenderEmojis(parts.slice(1).join(" / "))}
+                                </div>
+                              </>
+                            );
                           }
-                        }}
-                        disabled={!isConnected}
-                        className={`flex items-center gap-1 group cursor-pointer transition-all duration-300 ${
-                          !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
-                        }`}
-                      >
-                        {!isPaused && (
-                          <span 
-                            style={{ fontFamily: "'Lato', sans-serif" }} 
-                            className="text-[9px] font-black tracking-wider transition-all duration-300 text-blue-600/70 group-hover:text-red-600"
-                          >
-                            {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
-                          </span>
-                        )}
-                        {isPaused ? (
-                          <Play fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
-                        ) : (
-                          <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
-                        )}
-                      </button>
-                      <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 mb-2 select-none">
-                      <Bot strokeWidth={2.5} className="w-5 h-5 text-red-600" />
-                    </div>
-                  )}
-                  <div className={`chat-message-text whitespace-pre-line tracking-wider leading-snug ${isUser ? 'text-right font-normal' : 'text-left'}`}>
-                    {(() => {
-                      if (!isUser && displayTxt.includes(" / ")) {
-                        const parts = displayTxt.split(" / ");
-                        if (parts.length >= 2) {
-                          return (
-                            <>
-                              <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black font-semibold leading-snug">{parseAndRenderEmojis(parts[0])}</div>
-                              <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="chat-message-english text-black leading-snug mt-2">
-                                {parseAndRenderEmojis(parts.slice(1).join(" / "))}
-                              </div>
-                            </>
-                          );
                         }
-                      }
-                      return <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black leading-snug">{parseAndRenderEmojis(displayTxt)}</div>;
-                    })()}
+                        return <div style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} className="text-black leading-snug">{parseAndRenderEmojis(displayTxt)}</div>;
+                      })()}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          });
+        })()}
         <div ref={chatEndRef} />
       </div>
 

@@ -7,6 +7,7 @@ export interface ChatMessage {
   timestamp: string;
   timeMs: number;
   showForm?: boolean;
+  tab?: string;
 }
 
 export interface Lead {
