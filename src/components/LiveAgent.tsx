@@ -1554,11 +1554,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                     {onboardingStep === 122 && (
                                                         <div className="space-y-3.5 w-full">
                                                             {[
-                                                                { id: 'PASS_EXAM', label: selectedLang === 'EN' ? 'Pass an exam' : 'Pasar un examen', icon: FileText },
                                                                 { id: 'ACADEMIC_SUCCESS', label: selectedLang === 'EN' ? 'Academic success' : 'Éxito académico', icon: Check },
                                                                 { id: 'STUDY_ABROAD', label: selectedLang === 'EN' ? 'Study abroad' : 'Estudiar en el extranjero', icon: Plane },
-                                                                { id: 'IMPROVE_CONVERSATION', label: selectedLang === 'EN' ? 'Improve conversation' : 'Mejorar conversación', icon: MessageSquare },
-                                                                { id: 'GENERAL_KNOWLEDGE', label: selectedLang === 'EN' ? 'General knowledge' : 'Conocimiento general', icon: Info }
+                                                                { id: 'IMPROVE_CONVERSATION', label: selectedLang === 'EN' ? 'Improve conversation' : 'Mejorar conversación', icon: MessageSquare }
                                                             ].map((opt) => {
                                                                 const isSel = selectedAcademicGoal === opt.id;
                                                                 const IconComp = isSel ? ArrowRight : opt.icon;
