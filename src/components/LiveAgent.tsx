@@ -872,37 +872,41 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     }
   };
 
-  const handleOnboardingNext = () => {
-    if (onboardingStep === 1) {
-      if (selectedGoal === 'PROFESSIONAL') {
-        setOnboardingStep(11);
-      } else if (selectedGoal === 'ESTUDIO') {
-        setOnboardingStep(12);
-      } else if (selectedGoal === 'VIAJANTE') {
-        setOnboardingStep(13);
-      }
-    } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
-      setOnboardingStep(2);
-    } else if (onboardingStep === 2) {
-      setOnboardingStep(4);
-    } else if (onboardingStep === 4) {
-      handleCompleteOnboarding();
-    } else if (onboardingStep === 3) {
-      handleCompleteOnboarding();
-    }
-  };
-
-  const handleJumpToStep = (stepNum: number) => {
-    if (stepNum === 1) {
-      setOnboardingStep(1);
-    } else if (stepNum === 2) {
-      if (selectedGoal === 'PROFESSIONAL') setOnboardingStep(11);
-      else if (selectedGoal === 'ESTUDIO') setOnboardingStep(12);
-      else if (selectedGoal === 'VIAJANTE') setOnboardingStep(13);
-    } else if (stepNum === 3) {
-      setOnboardingStep(2);
-    } else if (stepNum === 4) {
-      setOnboardingStep(4);
+   const handleOnboardingNext = () => {
+     if (onboardingStep === 1) {
+       if (!selectedGoal) return;
+       if (selectedGoal === 'PROFESSIONAL') {
+         setOnboardingStep(11);
+       } else if (selectedGoal === 'ESTUDIO') {
+         setOnboardingStep(12);
+       } else if (selectedGoal === 'VIAJANTE') {
+         setOnboardingStep(13);
+       }
+     } else if (onboardingStep === 11 || onboardingStep === 12 || onboardingStep === 13) {
+       setOnboardingStep(2);
+     } else if (onboardingStep === 2) {
+       setOnboardingStep(4);
+     } else if (onboardingStep === 4) {
+       handleCompleteOnboarding();
+     } else if (onboardingStep === 3) {
+       handleCompleteOnboarding();
+     }
+   };
+ 
+   const handleJumpToStep = (stepNum: number) => {
+     if (stepNum === 1) {
+       setOnboardingStep(1);
+     } else if (stepNum === 2) {
+       if (!selectedGoal) return;
+       if (selectedGoal === 'PROFESSIONAL') setOnboardingStep(11);
+       else if (selectedGoal === 'ESTUDIO') setOnboardingStep(12);
+       else if (selectedGoal === 'VIAJANTE') setOnboardingStep(13);
+     } else if (stepNum === 3) {
+       if (!selectedGoal) return;
+       setOnboardingStep(2);
+     } else if (stepNum === 4) {
+       if (!selectedGoal) return;
+       setOnboardingStep(4);
     }
   };
 
@@ -1609,8 +1613,9 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
                                                             {/* Right Arrow (Next) */}
                                                             <button
                                                                 onClick={handleOnboardingNext}
+                                                                disabled={onboardingStep === 1 && selectedGoal === null}
                                                                 title={nextTitle}
-                                                                className={`${isFinalStep ? 'text-red-600 hover:text-red-700' : 'text-black/40 hover:text-black'} hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer bg-transparent flex-shrink-0 flex items-center justify-center p-1.5`}
+                                                                className={`${(onboardingStep !== 1 || selectedGoal !== null) ? 'text-red-600 hover:text-red-700 hover:scale-110' : 'text-black/20 cursor-not-allowed'} active:scale-95 transition-all duration-300 bg-transparent flex-shrink-0 flex items-center justify-center p-1.5`}
                                                             >
                                                                 <ArrowRight className="w-6 h-6 stroke-[2.5]" />
                                                             </button>
