@@ -36,6 +36,8 @@ interface UserProfile {
   levelEstimate: string;
   completedDays: number[];
   plan?: 'FREE' | 'PRO';
+  country?: string;
+  age?: number;
   bookedLesson?: {
     teacherName: string;
     dateTime: string;
@@ -67,7 +69,85 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
     completedDays: [1],
     plan: 'FREE'
   };
+  const getTranslatedLevel = (lvl: string) => {
+    if (selectedLang === 'EN') return lvl;
+    if (lvl === 'Beginner') return 'Principiante';
+    if (lvl === 'Intermediate') return 'Intermedio';
+    if (lvl === 'Advanced') return 'Avanzado';
+    if (lvl === 'Not Sure') return 'No estoy seguro';
+    return lvl;
+  };
 
+  const getCountryWithFlag = (country: string) => {
+    if (!country) return '';
+    const clean = country.trim().toLowerCase();
+    if (clean.includes('costa rica')) return `${country} 🇨🇷`;
+    if (clean.includes('mexico') || clean.includes('méxico')) return `${country} 🇲🇽`;
+    if (clean.includes('colombia')) return `${country} 🇨🇴`;
+    if (clean.includes('spain') || clean.includes('españa')) return `${country} 🇪🇸`;
+    if (clean.includes('argentina')) return `${country} 🇦🇷`;
+    if (clean.includes('chile')) return `${country} 🇨🇱`;
+    if (clean.includes('peru') || clean.includes('perú')) return `${country} 🇵🇪`;
+    if (clean.includes('venezuela')) return `${country} 🇻🇪`;
+    if (clean.includes('ecuador')) return `${country} 🇪🇨`;
+    if (clean.includes('guatemala')) return `${country} 🇬🇹`;
+    if (clean.includes('cuba')) return `${country} 🇨🇺`;
+    if (clean.includes('bolivia')) return `${country} 🇧🇴`;
+    if (clean.includes('dominicana')) return `${country} 🇩🇴`;
+    if (clean.includes('honduras')) return `${country} 🇭🇳`;
+    if (clean.includes('paraguay')) return `${country} 🇵🇾`;
+    if (clean.includes('uruguay')) return `${country} 🇺🇾`;
+    if (clean.includes('nicaragua')) return `${country} 🇳🇮`;
+    if (clean.includes('panama') || clean.includes('panamá')) return `${country} 🇵🇦`;
+    if (clean.includes('salvador')) return `${country} 🇸🇻`;
+    if (clean.includes('puerto rico')) return `${country} 🇵🇷`;
+    if (clean.includes('united states') || clean.includes('estados unidos') || clean.includes('usa')) return `${country} 🇺🇸`;
+    return country;
+  };
+
+  const getProfileBadges = (u: UserProfile) => {
+    const isEn = selectedLang === 'EN';
+    const goalText = u.goal || '';
+    
+    let trackLabel = isEn ? 'STUDENT' : 'ESTUDIANTE';
+    let subGoalLabel = goalText;
+    
+    if (goalText.startsWith('Professional:')) {
+      trackLabel = isEn ? 'PROFESSIONAL' : 'PROFESIONAL';
+      subGoalLabel = goalText.replace('Professional:', '').trim();
+    } else if (goalText.startsWith('Academic:')) {
+      trackLabel = isEn ? 'STUDENT' : 'ESTUDIANTE';
+      subGoalLabel = goalText.replace('Academic:', '').trim();
+    } else if (goalText.startsWith('Travel:')) {
+      trackLabel = isEn ? 'TRAVELER' : 'VIAJANTE';
+      subGoalLabel = goalText.replace('Travel:', '').trim();
+    } else if (goalText.startsWith('Teachers:') || goalText.startsWith('Docentes')) {
+      trackLabel = isEn ? 'TEACHER' : 'DOCENTE';
+      subGoalLabel = goalText.replace('Teachers:', '').trim();
+    }
+    
+    trackLabel = trackLabel.toUpperCase();
+    subGoalLabel = subGoalLabel.toUpperCase();
+    
+    let levelLabel = u.levelEstimate || 'Intermediate';
+    if (levelLabel === 'Beginner') {
+      levelLabel = isEn ? 'BEGINNER (A1-A2)' : 'PRINCIPIANTE (A1-A2)';
+    } else if (levelLabel === 'Intermediate') {
+      levelLabel = isEn ? 'INTERMEDIATE (B1-B2)' : 'INTERMEDIO (B1-B2)';
+    } else if (levelLabel === 'Advanced') {
+      levelLabel = isEn ? 'ADVANCED (C1-C2)' : 'AVANZADO (C1-C2)';
+    } else if (levelLabel === 'Not Sure') {
+      levelLabel = isEn ? "I'M NOT SURE" : 'NO ESTOY SEGURO';
+    } else {
+      levelLabel = levelLabel.toUpperCase();
+    }
+    
+    return {
+      trackLabel,
+      subGoalLabel: `${isEn ? 'GOAL' : 'META'}: ${subGoalLabel}`,
+      levelLabel: `${isEn ? 'LEVEL' : 'NIVEL'}: ${levelLabel}`
+    };
+  };
   const [user, setUser] = useState<UserProfile>(() => {
     const saved = localStorage.getItem('voyager_user_account');
     if (saved) {
@@ -240,41 +320,59 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-neutral-900 font-serif leading-tight">{user.name}</h4>
-                    <p className="text-[10px] text-neutral-500 font-mono leading-none">{user.email} • {user.provider} Auth</p>
-                    <div className="flex items-center gap-1.5 mt-1.5 select-none">
-                      <span className={`text-[8px] md:text-[9px] font-black uppercase px-2 py-0.5 rounded-full border leading-none ${
-                        (user.plan || 'FREE') === 'PRO' 
-                          ? 'bg-amber-50 text-amber-600 border-amber-300/60' 
-                          : 'bg-neutral-50 text-neutral-500 border-neutral-300/60'
-                      }`}>
-                        {selectedLang === 'EN' ? `PLAN: ${user.plan || 'FREE'}` : `CUENTA: ${user.plan === 'PRO' ? 'PRO' : 'GRATIS'}`}
-                      </span>
-                      {(user.plan || 'FREE') === 'FREE' ? (
-                        <button 
-                          onClick={() => {
-                            const updated = { ...user, plan: 'PRO' as const };
-                            saveUser(updated);
-                          }}
-                          className="text-[8px] font-extrabold uppercase text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-2 py-0.5 cursor-pointer transition-colors"
-                        >
-                          {selectedLang === 'EN' ? 'Upgrade to PRO' : 'Cambiar a PRO'}
-                        </button>
-                      ) : (
-                        <button 
-                          onClick={() => {
-                            const updated = { ...user, plan: 'FREE' as const };
-                            saveUser(updated);
-                          }}
-                          className="text-[8px] font-extrabold uppercase text-neutral-500 hover:text-neutral-700 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/50 rounded-full px-2 py-0.5 cursor-pointer transition-colors"
-                        >
-                          {selectedLang === 'EN' ? 'Downgrade' : 'Volver a Gratis'}
-                        </button>
-                      )}
-                    </div>
+                    <p className="text-[10px] text-neutral-500 font-mono leading-none">
+                      {user.email} • {user.country ? getCountryWithFlag(user.country) : `${user.provider} Auth`}
+                    </p>
+                    {/* Capsules Row */}
+                    {(() => {
+                      const badges = getProfileBadges(user);
+                      return (
+                        <div className="flex flex-wrap items-center gap-2 mt-2 select-none">
+                          <span className="text-[9px] font-black uppercase px-2.5 py-0.5 rounded-lg bg-[#f5ece2] text-[#6e4c1e] border border-[#e8ded0] leading-none">
+                            {badges.trackLabel}
+                          </span>
+                          <span className="text-[9px] font-black uppercase px-2.5 py-0.5 rounded-lg bg-[#e3f6ea] text-[#187e41] border border-[#cbeed7] leading-none">
+                            {badges.subGoalLabel}
+                          </span>
+                          <span className="text-[9px] font-black uppercase px-2.5 py-0.5 rounded-lg bg-[#f0e9f7] text-[#6e3b9b] border border-[#e2d5ef] leading-none">
+                            {badges.levelLabel}
+                          </span>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={`text-[8px] md:text-[9px] font-black uppercase px-2 py-0.5 rounded-full border leading-none ${
+                    (user.plan || 'FREE') === 'PRO' 
+                      ? 'bg-amber-50 text-amber-600 border-amber-300/60' 
+                      : 'bg-neutral-50 text-neutral-500 border-neutral-300/60'
+                  }`}>
+                    {selectedLang === 'EN' ? `PLAN: ${user.plan || 'FREE'}` : `CUENTA: ${user.plan === 'PRO' ? 'PRO' : 'GRATIS'}`}
+                  </span>
+                  {(user.plan || 'FREE') === 'FREE' ? (
+                    <button 
+                      onClick={() => {
+                        const updated = { ...user, plan: 'PRO' as const };
+                        saveUser(updated);
+                      }}
+                      className="text-[8px] font-extrabold uppercase text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200/50 rounded-full px-2 py-0.5 cursor-pointer transition-colors"
+                    >
+                      {selectedLang === 'EN' ? 'Upgrade to PRO' : 'Cambiar a PRO'}
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={() => {
+                        const updated = { ...user, plan: 'FREE' as const };
+                        saveUser(updated);
+                      }}
+                      className="text-[8px] font-extrabold uppercase text-neutral-500 hover:text-neutral-700 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200/50 rounded-full px-2 py-0.5 cursor-pointer transition-colors"
+                    >
+                      {selectedLang === 'EN' ? 'Downgrade' : 'Volver a Gratis'}
+                    </button>
+                  )}
+                  
                   <button
                     onClick={() => setIsEditingProfile(!isEditingProfile)}
                     className="px-3 py-1 bg-neutral-100 hover:bg-neutral-200 border-none text-[10px] font-bold rounded-lg uppercase cursor-pointer"
@@ -337,13 +435,13 @@ export const RoadmapPanel: React.FC<RoadmapPanelProps> = ({
                     <div className="flex items-center gap-1.5">
                       <Target className="w-3.5 h-3.5 text-neutral-600 flex-shrink-0" />
                       <span className="text-xs text-neutral-600 font-medium">
-                        <strong>{selectedLang === 'EN' ? 'Goal:' : 'Meta:'}</strong> {user.goal || selectedGoal}
+                        <strong>{selectedLang === 'EN' ? 'General Goal:' : 'Meta general:'}</strong> {user.goal || selectedGoal}
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Award className="w-3.5 h-3.5 text-neutral-600 flex-shrink-0" />
                       <span className="text-xs text-neutral-600 font-medium">
-                        <strong>{selectedLang === 'EN' ? 'Level:' : 'Nivel:'}</strong> {user.levelEstimate || selectedLevel}
+                        <strong>{selectedLang === 'EN' ? 'Your Level:' : 'Tu nivel:'}</strong> {getTranslatedLevel(user.levelEstimate || selectedLevel)}
                       </span>
                     </div>
                   </div>
