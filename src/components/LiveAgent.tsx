@@ -605,7 +605,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     if (onboardingStep > 1 && onboardingStep !== lastSpokenStepRef.current) {
       const title = getOnboardingStepTitle(onboardingStep, selectedLang);
       if (title && isConnected) {
-        sendText(`[SYSTEM INSTRUCTION: Please read the following page title aloud in your natural voice. Do not write any transcription or other text, just speak it: "${title}"]`);
+        const onboardingStepPrompt = `[INSTRUCCIÓN DE SISTEMA MANDATORIA: Estás guiando al usuario en el cuestionario de perfil. 
+Habla en tu voz natural de Voyager y lee en voz alta ÚNICAMENTE la siguiente pregunta en español: "${title}".
+REGLA CRÍTICA: NO digas nada más, NO saludes con "Hola", NO preguntes "¿Qué te trae por aquí hoy?" ni intentes iniciar una charla casual. Solo di la pregunta claramente y guarda silencio absoluto esperando la respuesta del usuario en la interfaz. 
+NO respondas a ruidos, habla o ruidos de fondo.]`;
+        sendText(onboardingStepPrompt);
         lastSpokenStepRef.current = onboardingStep;
       }
     }

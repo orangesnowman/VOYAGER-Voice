@@ -229,9 +229,12 @@ export function useConversationSession(config: UseConversationSessionConfig) {
                 wsRef.current.send(JSON.stringify({ text: greetingPrompt }));
               }
             } else {
-              const welcomeSpeech = "Bienvenido! Yo soy Voyager, tutor de Ingles Americano. Necesito saber mas de ti para servirte mejor. Dime, cual es tu objetivo de aprendizaje principal?";
-              const welcomePrompt = `[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text or explanations, just say this exact message clearly: "${welcomeSpeech}"]`;
-              const onboardingInstruction = `[SYSTEM INSTRUCTION: The user is currently answering the profile setup/onboarding questions in the UI. Do NOT ask for their name or age. Do NOT start a conversation yet. Simply be supportive if they speak, and wait for them to complete the questions.]`;
+              const welcomeSpeech = "¡Bienvenido! Yo soy Voyager, tutor de Inglés Americano. Necesito saber más de ti para servirte mejor. Dime, ¿cuál es tu objetivo de aprendizaje principal?";
+              const welcomePrompt = `[INSTRUCCIÓN DE SISTEMA MANDATORIA: Estás guiando al usuario en el cuestionario de perfil inicial. 
+Habla en tu voz natural de Voyager y lee en voz alta ÚNICAMENTE el siguiente mensaje en español: "${welcomeSpeech}".
+REGLA CRÍTICA: NO digas nada más, NO saludes con "Hola", NO preguntes "¿Qué te trae por aquí hoy?" ni intentes iniciar una charla casual. Solo di este mensaje claramente y guarda silencio absoluto esperando la respuesta del usuario en la interfaz.]`;
+              
+              const onboardingInstruction = `[INSTRUCCIÓN DE SISTEMA DE SOPORTE DE ONBOARDING: El usuario está completando el formulario. Quédate en silencio y NO respondas a ruidos, habla o ruidos de fondo. Mantén el silencio absoluto hasta recibir una nueva instrucción.]`;
 
               if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
                 wsRef.current.send(JSON.stringify({ text: welcomePrompt }));
