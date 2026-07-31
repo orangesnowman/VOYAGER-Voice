@@ -198,7 +198,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#d4d4d4] max-h-[480px] md:max-h-[550px] overflow-hidden animate-fade-in font-sans text-[#231d17]">
+    <div className="flex-1 flex flex-col bg-[#d4d4d4] h-full overflow-hidden animate-fade-in font-sans text-[#231d17]">
       {/* Target custom circular count badge overrides */}
       <style>{`
         .ec-cart-widget [class*="counter"], 

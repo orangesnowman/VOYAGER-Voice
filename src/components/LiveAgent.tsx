@@ -2723,7 +2723,7 @@ Pregunta del usuario: "${text}"]`;
                         ) : null}
 
                         {/* Always mount ShoppingPanel to prevent script reloading & duplicate minicart widgets */}
-                        <div className={rightPanelTab === 'shopping' ? 'flex-1 flex flex-col min-h-0' : 'hidden'}>
+                        <div className={rightPanelTab === 'shopping' ? 'flex-grow flex flex-col overflow-hidden h-full min-h-0' : 'hidden'}>
                             <ShoppingPanel
                                 selectedLang={selectedLang}
                                 userPlan={(() => {
