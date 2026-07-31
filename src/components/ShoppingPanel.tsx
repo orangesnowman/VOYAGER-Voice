@@ -428,7 +428,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               inputEl.value = '';
             }
           }}
-          className="w-full max-w-[88%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2.5 flex flex-col"
+          className="w-full max-w-[88%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
         >
           <div className="flex justify-end items-center gap-1.5 mb-1 text-blue-600/70 select-none">
             <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
@@ -437,9 +437,9 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
             type="text"
             name="shopQuestion"
             required
-            placeholder={selectedLang === 'EN' ? "Ask Voyager about the shop..." : "Pregúntale a Voyager sobre la tienda..."}
+            placeholder={selectedLang === 'EN' ? "Type your message or scenario..." : "Escribe tu mensaje o escenario..."}
             style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }}
-            className="w-full focus:outline-none transition-all border-none bg-transparent text-black text-right placeholder:text-right placeholder:text-black/45 font-serif text-[12.5px] p-0"
+            className="w-full focus:outline-none transition-all border-none bg-transparent text-black text-right placeholder:text-right placeholder:text-black/45 font-serif text-[14px] p-0"
           />
         </form>
       </div>
