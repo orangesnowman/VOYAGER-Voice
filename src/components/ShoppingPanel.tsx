@@ -78,8 +78,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       const win = window as any;
       if (win.xProductBrowser) {
         win.xProductBrowser(
-          "categoriesPerRow=3",
-          "views=grid(20,3) list(60) table(60)",
+          "categoriesPerRow=2",
+          "views=grid(20,2) list(60) table(60)",
           "categoryView=grid",
           "searchView=list",
           "defaultCategoryId=204126005",
