@@ -301,8 +301,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               className="text-[11pt] text-left text-neutral-800 leading-relaxed font-serif pt-1 border-t border-neutral-100"
             >
               {selectedLang === 'EN' 
-                ? "Hello! I am USA Voyager, your expert sales advisor and store guide. In this section we are not in class: my job is to guide you in choosing the best products, workbooks, study materials, official merchandise, and coaching packages with La Profe to boost your mastery of American English and US culture. How can I help you today?"
-                : "¡Hola! Soy USA Voyager, tu asesor de ventas experto y guía de la tienda. En esta sección no estamos en clase: mi trabajo es orientarte para elegir los mejores productos, libros de trabajo, materiales de estudio, mercancía oficial y paquetes de coaching con La Profe para potenciar tu dominio del inglés americano y la cultura de EE. UU. ¿En qué te puedo asesorar hoy?"
+                ? "Hello! I am USA Voyager, your expert sales advisor and store guide. In this section we are not in class: my job is to guide you in choosing the best products, workbooks, study materials, official merchandise, and coaching packages with La Profe to boost your mastery of American English and US culture."
+                : "¡Hola! Soy USA Voyager, tu asesor de ventas experto y guía de la tienda. En esta sección no estamos en clase: mi trabajo es orientarte para elegir los mejores productos, libros de trabajo, materiales de estudio, mercancía oficial y paquetes de coaching con La Profe para potenciar tu dominio del inglés americano y la cultura de EE. UU."
               }
             </p>
           )}
