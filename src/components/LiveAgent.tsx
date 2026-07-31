@@ -893,10 +893,11 @@ NO respondas a ruidos, habla o ruidos de fondo.]`;
       userLevel
     });
     const onboardingWelcomePrompt = `[SYSTEM INSTRUCTION: Crucial Onboarding First Greeting. Speak aloud and write in the chat a warm welcome message in Spanish:
-1. Greet the user by their name: "${userName.trim() || 'Estudiante'}".
-2. Remind them that you have placed them in Spanish mode ("Modo Español").
-3. Explain that you did this so you can explain to them clearly how the app works.
-4. Keep the greeting fully in Spanish.
+1. Start strictly with: "¡Bienvenidos!" or "¡Bienvenidos a Voyager!".
+2. NEVER say "Bienvenidos, Estudiante!" or "Bienvenidos, Learner!" or "Bienvenido" or "Bienvenida".
+3. Remind them that you have placed them in Spanish mode ("Modo Español").
+4. Explain that you did this so you can explain to them clearly how the app works.
+5. Keep the greeting fully in Spanish.
 This message is very important to set up the user for their journey. Do not use English yet.]
 ${greetingPrompt}`;
     
@@ -935,10 +936,11 @@ ${greetingPrompt}`;
       userLevel
     });
     const onboardingWelcomePrompt = `[SYSTEM INSTRUCTION: Crucial Onboarding First Greeting. Speak aloud and write in the chat a warm welcome message in Spanish:
-1. Greet the user by their name: "${userName.trim() || 'Estudiante'}".
-2. Remind them that you have placed them in Spanish mode ("Modo Español").
-3. Explain that you did this so you can explain to them clearly how the app works.
-4. Keep the greeting fully in Spanish.
+1. Start strictly with: "¡Bienvenidos!" or "¡Bienvenidos a Voyager!".
+2. NEVER say "Bienvenidos, Estudiante!" or "Bienvenidos, Learner!" or "Bienvenido" or "Bienvenida".
+3. Remind them that you have placed them in Spanish mode ("Modo Español").
+4. Explain that you did this so you can explain to them clearly how the app works.
+5. Keep the greeting fully in Spanish.
 This message is very important to set up the user for their journey. Do not use English yet.]
 ${greetingPrompt}`;
     
