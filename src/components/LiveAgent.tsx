@@ -1336,8 +1336,8 @@ ${greetingPrompt}`;
 
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('chat')}>
                         <button 
-                            title={selectedLang === 'EN' ? 'Chat' : 'Chat'}
-                            aria-label={selectedLang === 'EN' ? 'Chat' : 'Chat'}
+                            title={selectedLang === 'EN' ? 'Chat' : 'Charla'}
+                            aria-label={selectedLang === 'EN' ? 'Chat' : 'Charla'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
                             <MessageSquare className={`w-6 h-6 transition-all duration-300 ${
@@ -1351,7 +1351,7 @@ ${greetingPrompt}`;
                                 ? 'text-red-600 font-extrabold' 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
                         }`}>
-                            {selectedLang === 'EN' ? 'CHAT' : 'CHAT'}
+                            {selectedLang === 'EN' ? 'CHAT' : 'CHARLA'}
                         </span>
                     </div>
 

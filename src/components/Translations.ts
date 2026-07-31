@@ -69,7 +69,7 @@ export const translations = {
     leadsBtn: "Lugares Guardados",
     collectLeadBtn: "Añadir Notas de Práctica",
     databaseCapturedLeads: "Historial y Notas de Práctica en EE.UU.",
-    backToChat: "Volver al Chat",
+    backToChat: "Volver a la Charla",
     noLeads: "Aún no hay notas de práctica guardadas.",
     fillFormTest: "Completa tus notas para guardar tus escenarios favoritos de EE.UU. y las palabras aprendidas.",
     viewSavedTranscript: "Ver Transcripción Guardada",
