@@ -600,8 +600,8 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     } else if (rightPanelTab === 'shopping' && lastVisitedTabRef.current !== 'shopping') {
       resume();
       const speech = selectedLang === 'EN'
-        ? "Welcome to the Shopping section! Here you can upgrade to a PRO account to unlock all lessons, book private 1-on-1 diagnostic sessions, or select monthly intensive coaching packages."
-        : "Bienvenido a la sección de Compras. Aquí puedes actualizar tu cuenta a PRO para desbloquear todas las lecciones, reservar sesiones de diagnóstico individuales, o elegir paquetes de coaching intensivo mensual.";
+        ? "Welcome to the Store! Here you can upgrade to a PRO account to unlock all lessons, book private 1-on-1 diagnostic sessions, or select monthly intensive coaching packages."
+        : "Bienvenido a La Tienda. Aquí puedes actualizar tu cuenta a PRO para desbloquear todas las lecciones, reservar sesiones de diagnóstico individuales, o elegir paquetes de coaching intensivo mensual.";
 
       if (isConnected) {
         sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
@@ -1399,8 +1399,8 @@ ${greetingPrompt}`;
 
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('shopping')}>
                         <button 
-                            title={selectedLang === 'EN' ? 'Shopping' : 'Compras'}
-                            aria-label={selectedLang === 'EN' ? 'Shopping' : 'Compras'}
+                            title={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
+                            aria-label={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
                             <ShoppingCart className={`w-6 h-6 transition-all duration-300 ${
@@ -1414,7 +1414,7 @@ ${greetingPrompt}`;
                                 ? 'text-red-600 font-extrabold' 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
                         }`}>
-                            {selectedLang === 'EN' ? 'SHOPPING' : 'COMPRAS'}
+                            {selectedLang === 'EN' ? 'STORE' : 'LA TIENDA'}
                         </span>
                     </div>
                 </div>
@@ -2657,8 +2657,8 @@ Pregunta del usuario: "${text}"]`;
                                 onAskVoyager={(text) => {
                                     setHasInteracted(true);
                                     addUserMessage(text);
-                                    const storePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está en la pestaña de COMPRAS de USA Voyager.
-Actúa como un representante de servicio al cliente (customer service representative) y un ejecutivo de ventas (sales person) para esta sección de compras de USA Voyager.
+                                    const storePrompt = `[INSTRUCCIÓN DE SISTEMA: El usuario está en la pestaña de LA TIENDA de USA Voyager.
+Actúa como un representante de servicio al cliente (customer service representative) y un ejecutivo de ventas (sales person) para esta sección de la tienda de USA Voyager.
 Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER (no cambies tu voz, tono, acento ni actúes como un personaje de ventas exagerado). Habla como el tutor VOYAGER de siempre, pero respondiendo en español de forma muy atenta, persuasiva y profesional.
 Tu objetivo es explicarle de forma clara y convincente los beneficios de nuestros planes de pago oficiales (PRO, Sesión Diagnóstica, Coaching de Inmersión o Coaching Intensivo) para animarlo a adquirirlos y resolver cualquier duda de soporte que tenga sobre la tienda:
 1. Responde ÚNICAMENTE en español (no des explicaciones ni respuestas en inglés, ni intentes enseñar inglés aquí). Su propósito en este panel no es aprender, sino informarse sobre la compra.
@@ -2668,8 +2668,8 @@ Tu objetivo es explicarle de forma clara y convincente los beneficios de nuestro
    - Coaching de Inmersión: $199.00/mes. 4 clases al mes 1-a-1 en vivo con La Profe + acompañamiento de audios por chat privado diario + plan PRO gratis incluido.
    - Coaching Intensivo: $349.00/mes. 8 clases al mes 1-a-1 en vivo con La Profe (2 clases semanales) + revisiones diarias prioritarias de audios + soporte directo 24/7 + plan PRO gratis incluido.
 3. Sé convincente, ayuda de forma servicial a tomar la decisión de compra, y guía al usuario de manera persuasiva con la voz y el acento habitual de VOYAGER.
-4. REGLA INQUEBRANTABLE: En esta sección de COMPRAS está ESTRICTAMENTE PROHIBIDO hablar de cualquier cosa que no sean las compras, la tienda y los productos oficiales que ofrecemos. Si el usuario intenta hacer preguntas de práctica de inglés, gramática, vocabulario u otros temas generales, recuérdale amablemente en español que aquí solo atiendes consultas de ventas y soporte de la tienda, y que debe ir a la sección de CHAT para practicar o estudiar.
-5. REGLA ADICIONAL CRÍTICA: En la sección de compras NO se enseña inglés bajo ninguna circunstancia. Queda terminantemente prohibido enseñar inglés, traducir frases al inglés, dar explicaciones gramaticales de inglés o invitar al usuario a hablar en inglés. Se habla de compras y productos que ofrecemos exclusivamente.
+4. REGLA INQUEBRANTABLE: En esta sección de LA TIENDA está ESTRICTAMENTE PROHIBIDO hablar de cualquier cosa que no sean las compras, la tienda y los productos oficiales que ofrecemos. Si el usuario intenta hacer preguntas de práctica de inglés, gramática, vocabulario u otros temas generales, recuérdale amablemente en español que aquí solo atiendes consultas de ventas y soporte de la tienda, y que debe ir a la sección de CHAT para practicar o estudiar.
+5. REGLA ADICIONAL CRÍTICA: En la sección de la tienda NO se enseña inglés bajo ninguna circunstancia. Queda terminantemente prohibido enseñar inglés, traducir frases al inglés, dar explicaciones gramaticales de inglés o invitar al usuario a hablar en inglés. Se habla de compras y productos que ofrecemos exclusivamente.
 Pregunta del usuario: "${text}"]`;
                                     sendText(storePrompt);
                                 }}
