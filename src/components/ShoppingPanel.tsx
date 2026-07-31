@@ -180,7 +180,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       {/* Target custom circular count badge overrides */}
       <style>{`
         .ec-cart-widget [class*="counter"], 
-        .ec-cart-widget span[class*="count"] {
+        .ec-cart-widget span[class*="count"],
+        .ecwid-minicart-count {
           background: #ffffff !important;
           color: #000000 !important;
           border-radius: 9999px !important;
@@ -192,6 +193,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           justify-content: center !important;
           font-weight: bold !important;
           border: 1.5px solid #000000 !important;
+          font-size: 10px !important;
+          padding: 0 4px !important;
         }
         .ec-cart-widget {
           background: transparent !important;
@@ -202,7 +205,16 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         .ec-store__category-name,
         .grid-product__sorting,
         .ec-store__sorting,
-        [class*="sort-by"] {
+        [class*="sort-by"],
+        .ec-cart-widget__title,
+        .ec-cart-widget__text,
+        .ec-cart-widget__price,
+        .ec-cart-widget__icon,
+        .ecwid-minicart-label,
+        .ecwid-minicart-caption,
+        .ecwid-minicart-icon,
+        .ecwid-minicart-link span:not(.ecwid-minicart-count),
+        .ec-cart-widget span:not([class*="count"]):not([class*="counter"]) {
           display: none !important;
           visibility: hidden !important;
         }
