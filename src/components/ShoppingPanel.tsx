@@ -198,7 +198,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-neutral-300 max-h-[480px] md:max-h-[550px] overflow-hidden animate-fade-in font-sans text-[#231d17]">
+    <div className="flex-1 flex flex-col bg-[#d4d4d4] max-h-[480px] md:max-h-[550px] overflow-hidden animate-fade-in font-sans text-[#231d17]">
       {/* Target custom circular count badge overrides */}
       <style>{`
         .ec-cart-widget [class*="counter"], 
@@ -418,7 +418,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       </div>
 
       {/* Row 2: User's Input Box */}
-      <div className="flex-shrink-0 px-4 pb-4 select-none flex justify-end w-full">
+      <div className="flex-shrink-0 px-3 pt-3 pb-6 md:pb-8 bg-[#d4d4d4] flex justify-end w-full">
         <form 
           onSubmit={(e) => {
             e.preventDefault();
@@ -428,7 +428,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               inputEl.value = '';
             }
           }}
-          className="w-full relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2 flex flex-col"
+          className="w-full max-w-[88%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm px-4 py-2.5 flex flex-col"
         >
           <div className="flex justify-end items-center gap-1.5 mb-1 text-blue-600/70 select-none">
             <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
