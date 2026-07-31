@@ -2667,7 +2667,61 @@ Pregunta del usuario: "${text}"]`;
                                  }}
                                  onNavigateTab={(tab) => setRightPanelTab(tab)}
                              />
-                        ) : rightPanelTab === 'shopping' ? (
+
+                        ) : rightPanelTab === 'teachers' ? (
+                            <TeacherInsightsPanel
+                                selectedLang={selectedLang}
+                                chatMessages={chatMessages}
+                                isPaused={isPaused}
+                                isConnected={isConnected}
+                                pause={pause}
+                                resume={resume}
+                                scores={scores}
+                                learnedWords={learnedWords}
+                                accentPatterns={accentPatterns}
+                                onAskVoyager={(text) => {
+                                    setHasInteracted(true);
+                                    if (!text.startsWith('[AUTO_SYSTEM:')) {
+                                        addUserMessage(text);
+                                    }
+                                    const teachersPrompt = text.startsWith('[AUTO_SYSTEM:')
+                                        ? text
+                                        : `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre la sección de La Profe (Alejandra Francois, acompañamiento de clases en vivo, grabaciones de acento o logs de pronunciación). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, directa y comprensible para que un usuario de habla hispana entienda perfectamente cómo funciona el acompañamiento docente. No uses inglés ni enseñes inglés aquí. Pregunta del usuario: "${text}"]`;
+                                    sendText(teachersPrompt);
+                                }}
+                            />
+                        ) : rightPanelTab === 'progress' ? (
+                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">
+                                <ProgressDashboard 
+                                    selectedLang={selectedLang}
+                                    scores={scores}
+                                    learnedWords={learnedWords}
+                                    accentPatterns={accentPatterns}
+                                    onAskVoyager={(text) => {
+                                        setRightPanelTab('chat');
+                                        handleSuggestionClick(text);
+                                    }}
+                                />
+                            </div>
+                        ) : rightPanelTab === 'settings' ? (
+                            <SettingsPanel
+                                selectedLang={selectedLang}
+                                setSelectedLang={setSelectedLang}
+                                isListenOnly={isListenOnly}
+                                setIsListenOnly={setIsListenOnly}
+                                isTranslateMode={isTranslateMode}
+                                setIsTranslateMode={setIsTranslateMode}
+                                isBilingualMode={isBilingualMode}
+                                setIsBilingualMode={setIsBilingualMode}
+                                isSpanishOnlyMode={isSpanishOnlyMode}
+                                setIsSpanishOnlyMode={setIsSpanishOnlyMode}
+                                isEnglishOnlyMode={isEnglishOnlyMode}
+                                setIsEnglishOnlyMode={setIsEnglishOnlyMode}
+                            />
+                        ) : null}
+
+                        {/* Always mount ShoppingPanel to prevent script reloading & duplicate minicart widgets */}
+                        <div className={rightPanelTab === 'shopping' ? 'flex-1 flex flex-col min-h-0' : 'hidden'}>
                             <ShoppingPanel
                                 selectedLang={selectedLang}
                                 userPlan={(() => {
@@ -2723,6 +2777,7 @@ Reglas esenciales:
 - Si el usuario pregunta algo ajeno a TIENDA, responde brevemente que ese tema corresponde a CHARLA, LA PROFE o PERFIL, e invítalo a cambiar a la sección adecuada.
 - No continúes conversaciones de CHARLA dentro de TIENDA. La conversación de TIENDA debe tener su propio historial y contexto.
 - Responde con energía amable y clara. Usa frases breves, naturales y útiles. Evita sonar corporativo, robótico, insistente o excesivamente vendedor.
+- NO des clases de inglés, NO corrijas gramática de inglés, NO enseñes inglés. Actúa estrictamente como asesor de ventas.]
 
 Nuestros planes y precios reales oficiales:
 - Plan USA Voyager PRO: $9.99/mes. Desbloquea todas las lecciones del Día 2 en adelante de la ruta de aprendizaje, escenarios avanzados de conversación y feedback avanzado de acento/pronunciación.
@@ -2734,57 +2789,7 @@ Pregunta del usuario: "${text}"]`;
                                     sendText(storePrompt);
                                 }}
                             />
-                        ) : rightPanelTab === 'teachers' ? (
-                            <TeacherInsightsPanel
-                                selectedLang={selectedLang}
-                                chatMessages={chatMessages}
-                                isPaused={isPaused}
-                                isConnected={isConnected}
-                                pause={pause}
-                                resume={resume}
-                                scores={scores}
-                                learnedWords={learnedWords}
-                                accentPatterns={accentPatterns}
-                                onAskVoyager={(text) => {
-                                    setHasInteracted(true);
-                                    if (!text.startsWith('[AUTO_SYSTEM:')) {
-                                        addUserMessage(text);
-                                    }
-                                    const teachersPrompt = text.startsWith('[AUTO_SYSTEM:')
-                                        ? text
-                                        : `[INSTRUCCIÓN DE SISTEMA: El usuario está preguntando sobre la sección de La Profe (Alejandra Francois, acompañamiento de clases en vivo, grabaciones de acento o logs de pronunciación). Mantén estrictamente tu tono de voz original, velocidad y personalidad de VOYAGER. Responde ÚNICAMENTE en español de forma clara, directa y comprensible para que un usuario de habla hispana entienda perfectamente cómo funciona el acompañamiento docente. No uses inglés ni enseñes inglés aquí. Pregunta del usuario: "${text}"]`;
-                                    sendText(teachersPrompt);
-                                }}
-                            />
-                        ) : rightPanelTab === 'progress' ? (
-                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">
-                                <ProgressDashboard 
-                                    selectedLang={selectedLang}
-                                    scores={scores}
-                                    learnedWords={learnedWords}
-                                    accentPatterns={accentPatterns}
-                                    onAskVoyager={(text) => {
-                                        setRightPanelTab('chat');
-                                        handleSuggestionClick(text);
-                                    }}
-                                />
-                            </div>
-                        ) : rightPanelTab === 'settings' ? (
-                            <SettingsPanel
-                                selectedLang={selectedLang}
-                                setSelectedLang={setSelectedLang}
-                                isListenOnly={isListenOnly}
-                                setIsListenOnly={setIsListenOnly}
-                                isTranslateMode={isTranslateMode}
-                                setIsTranslateMode={setIsTranslateMode}
-                                isBilingualMode={isBilingualMode}
-                                setIsBilingualMode={setIsBilingualMode}
-                                isSpanishOnlyMode={isSpanishOnlyMode}
-                                setIsSpanishOnlyMode={setIsSpanishOnlyMode}
-                                isEnglishOnlyMode={isEnglishOnlyMode}
-                                setIsEnglishOnlyMode={setIsEnglishOnlyMode}
-                            />
-                        ) : null}
+                        </div>
 
                     {!showReviewScreen && rightPanelTab === 'chat' && hasInteracted && (
                         <div className="px-3 pt-3 pb-6 md:pb-8 bg-[#d4d4d4] flex justify-end w-full">
