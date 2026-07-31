@@ -243,10 +243,10 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       `}</style>
 
       {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 min-h-0">
+      <div className="flex-1 overflow-y-auto px-3 pt-2 pb-4 flex flex-col gap-3 min-h-0">
         
         {/* THE MAIN WELCOME STATEMENT CARD */}
-        <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
+        <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm space-y-3.5 text-left flex flex-col flex-shrink-0">
           
           {/* Header & Navigation Row */}
           <div className="flex flex-col gap-3">
@@ -408,7 +408,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         })}
 
         {/* THE ECWID STOREFRONT CATALOG CARD (Always at the bottom under the last chat bubble) */}
-        <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-5 shadow-sm text-left flex flex-col flex-shrink-0 mt-3.5">
+        <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm text-left flex flex-col flex-shrink-0">
           <div className="min-h-[260px]">
             <div id="my-store-108143" className="w-full" />
           </div>
