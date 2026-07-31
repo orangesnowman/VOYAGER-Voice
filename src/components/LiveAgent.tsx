@@ -595,7 +595,17 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
         : "Bienvenido de vuelta a nuestra conversación. Sigamos practicando inglés.";
 
       if (isConnected) {
-        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
+        // Restore active conversation mode prompt
+        const activeMode = isEnglishOnlyMode ? 'AMERICAN_ENGLISH' : isSpanishOnlyMode ? 'SPANISH' : isBilingualMode ? 'BILINGUAL' : isTranslateMode ? 'LIVE_TRANSLATOR' : isListenOnly ? 'LISTEN_ONLY' : 'BILINGUAL';
+        const restorePrompt = ConversationModePolicy.getDynamicModeSwitchPrompt(activeMode);
+        if (restorePrompt) {
+          sendText(restorePrompt);
+        }
+        
+        // Speak transition welcome
+        setTimeout(() => {
+          sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${speech}"]`);
+        }, 1000);
       }
     } else if (rightPanelTab === 'shopping' && lastVisitedTabRef.current !== 'shopping') {
       resume();
@@ -622,12 +632,34 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       });
 
       if (isConnected) {
+        // Override system instructions for the VOYAGER TIENDA mission
+        const storeSystemInstructions = `[INSTRUCCIÓN DE SISTEMA URGENTE Y MANDATORIA: Desde este momento, entra en vigor la Misión de VOYAGER TIENDA.
+Eres VOYAGER TIENDA, el asesor conversacional de la tienda integrada de USA Voyager.
+Eres un vendedor consultivo, cálido, paciente, entusiasta y experto. Tu objetivo es ayudar al usuario a descubrir, entender y elegir productos, materiales de estudio, libros de trabajo, mercancía oficial, membresías y paquetes de coaching con La Profe. No es una clase de inglés ni un chat general.
+
+Reglas esenciales:
+- Pronuncia “U.S.A.” en inglés americano: “you ess ay”.
+- Habla solo en español o inglés. El español es el idioma predeterminado. Si aparece una palabra en inglés, pronúnciala con acento americano.
+- Mantén la conversación exclusivamente relacionada con la tienda: productos, beneficios, diferencias entre opciones, materiales de estudio, paquetes, La Profe, coaching, precios, carrito, cuenta y compra.
+- Haz una pregunta a la vez para entender qué necesita la persona: su meta, nivel, presupuesto, tiempo disponible, interés o situación de aprendizaje.
+- Explica valor práctico antes de recomendar: para quién sirve el producto, qué problema resuelve, cómo se usa y qué resultado puede aportar.
+- Recomienda con honestidad y sin presión. Si varias opciones encajan, compáralas brevemente y explica cuál parece la mejor según las necesidades del usuario.
+- Nunca inventes productos, precios, disponibilidad, descuentos, políticas, resultados o información de pedidos. Si no tienes la información, dilo con claridad y ofrece revisar la tienda o el carrito.
+- Si el usuario pregunta algo ajeno a TIENDA, responde brevemente que ese tema corresponde a CHARLA, LA PROFE o PERFIL, e invítalo a cambiar a la sección adecuada.
+- No continúes conversaciones de CHARLA dentro de TIENDA. La conversación de TIENDA debe tener su propio historial y contexto.
+- Responde con energía amable y clara. Usa frases breves, naturales y útiles. Evita sonar corporativo, robótico, insistente o excesivamente vendedor.
+- NO des clases de inglés, NO corrijas gramática de inglés, NO enseñes inglés. Actúa estrictamente como asesor de ventas.]`;
+
+        sendText(storeSystemInstructions);
+
         // Speak the question
-        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${questionSpeech}".]`);
+        setTimeout(() => {
+          sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${questionSpeech}".]`);
+        }, 1000);
       }
     }
     lastVisitedTabRef.current = rightPanelTab;
-  }, [rightPanelTab, selectedLang, isConnected]);
+  }, [rightPanelTab, selectedLang, isConnected, isEnglishOnlyMode, isSpanishOnlyMode, isBilingualMode, isTranslateMode, isListenOnly]);
 
   const getOnboardingStepTitle = (step: number, lang: 'EN' | 'ES') => {
     switch (step) {
