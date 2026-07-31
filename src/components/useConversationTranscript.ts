@@ -122,6 +122,14 @@ export function useConversationTranscript(activeTab: string = 'chat') {
     onParsedTags: (parsed: any) => void
   ) => {
     setChatMessages(prev => {
+      // If we are in the shopping tab, ignore any model responses until the user has sent a message
+      if (activeTab === 'shopping') {
+        const hasUserMessagedInStore = prev.some(m => m.sender === 'user' && m.tab === 'shopping');
+        if (!hasUserMessagedInStore) {
+          return prev;
+        }
+      }
+
       const last = prev[prev.length - 1];
       const formPattern = /\[SHOW[-_ ]FORM\]|\(SHOW[-_ ]FORM\)/gi;
       if (last && last.sender === 'splash' && !last.id.startsWith('welcome_') && (Date.now() - last.timeMs < 10000)) {
