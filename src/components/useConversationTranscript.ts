@@ -146,6 +146,14 @@ export function useConversationTranscript(activeTab: string = 'chat') {
 
          const hasFormTag = formPattern.test(parsed.cleaned) || showForm;
          const cleanedText = parsed.cleaned.replace(formPattern, "");
+
+         // Ignore duplicate welcome question text to avoid messy communication
+         const isWelcomeDup = cleanedText.trim().replace(/[¿?¡!]/g, '').toLowerCase() === "en que te puedo ayudar hoy" || 
+                              cleanedText.trim().replace(/[?]/g, '').toLowerCase() === "how can i help you today";
+         if (isWelcomeDup && prev.some(m => m.id === 'welcome_store')) {
+           return prev;
+         }
+
          return [...prev, {
             id: `msg_${Date.now()}_${Math.random()}`,
             sender: 'splash',

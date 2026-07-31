@@ -607,11 +607,11 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
       // Add Voyager welcome bubble to chat transcript so the user sees it in the chat
       setChatMessages(prev => {
         // Only add if not already present to avoid duplicate welcome bubbles
-        if (prev.some(m => m.id === 'store_welcome')) return prev;
+        if (prev.some(m => m.id === 'welcome_store')) return prev;
         return [
           ...prev,
           {
-            id: 'store_welcome',
+            id: 'welcome_store',
             sender: 'splash',
             text: questionSpeech,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
