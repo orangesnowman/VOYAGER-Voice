@@ -245,7 +245,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 min-h-0">
         
-        {/* THE MAIN SHOP CONTAINER CARD WITH PINK BORDER ACCENT */}
+        {/* THE MAIN WELCOME STATEMENT CARD */}
         <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
           
           {/* Header & Navigation Row */}
@@ -306,11 +306,6 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               }
             </p>
           )}
-
-          {/* Embedded Ecwid Store div */}
-          <div className="pt-1 min-h-[260px]">
-            <div id="my-store-108143" className="w-full" />
-          </div>
 
         </div>
 
@@ -412,6 +407,14 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
             </div>
           );
         })}
+
+        {/* THE ECWID STOREFRONT CATALOG CARD (Always at the bottom under the last chat bubble) */}
+        <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-5 shadow-sm text-left flex flex-col flex-shrink-0 mt-3.5">
+          <div className="min-h-[260px]">
+            <div id="my-store-108143" className="w-full" />
+          </div>
+        </div>
+
         <div ref={chatEndRef} />
       </div>
 
