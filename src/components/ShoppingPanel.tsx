@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, User, Pause, Play } from 'lucide-react';
+import { Bot, User, Pause, Play, Store, IdCard, ShoppingCart } from 'lucide-react';
 import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 interface ShoppingPanelProps {
@@ -30,8 +30,30 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   const [headerTitle, setHeaderTitle] = useState(
     selectedLang === 'EN' ? 'VOYAGER - student' : 'VOYAGER - estudiante'
   );
+  const [activeTab, setActiveTab] = useState<'shop' | 'account' | 'cart'>('shop');
 
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Synchronize active navigation tab with window hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.includes('/cart')) {
+        setActiveTab('cart');
+      } else if (hash.includes('/account') || hash.includes('/settings')) {
+        setActiveTab('account');
+      } else {
+        setActiveTab('shop');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    handleHashChange(); // Run once on mount
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
 
   // Auto scroll to latest chat messages
   useEffect(() => {
@@ -182,8 +204,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         .ec-cart-widget [class*="counter"], 
         .ec-cart-widget span[class*="count"],
         .ecwid-minicart-count {
-          background: #ffffff !important;
-          color: #000000 !important;
+          background: #0066cc !important;
+          color: #ffffff !important;
           border-radius: 9999px !important;
           min-width: 18px !important;
           height: 18px !important;
@@ -192,7 +214,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           align-items: center !important;
           justify-content: center !important;
           font-weight: bold !important;
-          border: 1.5px solid #000000 !important;
+          border: none !important;
           font-size: 10px !important;
           padding: 0 4px !important;
         }
@@ -226,40 +248,64 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         {/* THE MAIN SHOP CONTAINER CARD WITH PINK BORDER ACCENT */}
         <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-5 shadow-sm space-y-4 text-left flex flex-col flex-shrink-0">
           
-          {/* Header & Navigation Row - Divider lines (border-b) completely removed for seamless look */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2.5 select-none">
-              <Bot className="w-6 h-6 text-red-600 flex-shrink-0" />
-              <h4 
+          {/* Header & Navigation Row */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3 select-none">
+              <Bot className="w-9 h-9 text-red-600 flex-shrink-0" />
+              <h2 
                 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                className="text-sm font-black uppercase tracking-wider text-neutral-800"
+                className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#1a202c]"
               >
-                {headerTitle}
-              </h4>
+                {selectedLang === 'EN' ? 'VOYAGER- student' : 'VOYAGER- estudiante'}
+              </h2>
             </div>
 
-            <div className="flex items-center gap-4 text-[10.5px] font-extrabold uppercase tracking-wider font-mono">
+            <div className="flex items-center gap-5 text-[10.5px] font-extrabold uppercase tracking-wider select-none mt-1">
               <button 
                 onClick={() => handleNavClick('shop')} 
-                className="text-neutral-400 hover:text-red-600 transition-colors uppercase cursor-pointer bg-transparent border-none p-0"
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                  activeTab === 'shop' ? 'text-black font-black' : 'text-neutral-400 hover:text-red-600'
+                }`}
               >
-                {selectedLang === 'EN' ? 'SHOP' : 'TIENDA'}
+                <Store className={`w-4 h-4 ${activeTab === 'shop' ? 'text-red-600' : 'text-neutral-400'}`} />
+                <span>{selectedLang === 'EN' ? 'STORE' : 'TIENDA'}</span>
               </button>
+
               <button 
                 onClick={() => handleNavClick('account')} 
-                className="text-neutral-400 hover:text-red-600 transition-colors uppercase cursor-pointer bg-transparent border-none p-0"
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                  activeTab === 'account' ? 'text-black font-black' : 'text-neutral-400 hover:text-red-600'
+                }`}
               >
-                {selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}
+                <IdCard className={`w-4.5 h-4.5 ${activeTab === 'account' ? 'text-red-600' : 'text-neutral-400'}`} />
+                <span>{selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}</span>
               </button>
+
               <button 
                 onClick={() => handleNavClick('cart')} 
-                className="flex items-center gap-1 text-neutral-400 hover:text-red-600 transition-colors uppercase cursor-pointer bg-transparent border-none p-0"
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                  activeTab === 'cart' ? 'text-black font-black' : 'text-neutral-400 hover:text-red-600'
+                }`}
               >
+                <div className="ec-cart-widget inline-block align-middle scale-90" />
+                <ShoppingCart className={`w-4 h-4 ${activeTab === 'cart' ? 'text-red-600' : 'text-neutral-400'}`} />
                 <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
-                <div className="ec-cart-widget scale-90 inline-block align-middle" />
               </button>
             </div>
           </div>
+
+          {/* Welcome Text Paragraph recreated exactly from the reference image */}
+          {activeTab === 'shop' && (
+            <p 
+              style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
+              className="text-[11pt] text-left text-neutral-800 leading-relaxed font-serif pt-1 border-t border-neutral-100"
+            >
+              {selectedLang === 'EN' 
+                ? "Hello! I am USA Voyager, your expert sales advisor and store guide. In this section we are not in class: my job is to guide you in choosing the best products, workbooks, study materials, official merchandise, and coaching packages with La Profe to boost your mastery of American English and US culture. How can I help you today?"
+                : "¡Hola! Soy USA Voyager, tu asesor de ventas experto y guía de la tienda. En esta sección no estamos en clase: mi trabajo es orientarte para elegir los mejores productos, libros de trabajo, materiales de estudio, mercancía oficial y paquetes de coaching con La Profe para potenciar tu dominio del inglés americano y la cultura de EE. UU. ¿En qué te puedo asesorar hoy?"
+              }
+            </p>
+          )}
 
           {/* Embedded Ecwid Store div */}
           <div className="pt-1 min-h-[260px]">
