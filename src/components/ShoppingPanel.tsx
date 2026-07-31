@@ -60,6 +60,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           "views=grid(20,3) list(60) table(60)",
           "categoryView=grid",
           "searchView=list",
+          "defaultCategoryId=204126005",
           "id=my-store-108143"
         );
       }
