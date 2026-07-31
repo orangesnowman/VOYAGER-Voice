@@ -1521,10 +1521,20 @@ ${greetingPrompt}`;
                                                 {/* Right: Steps */}
                                                 <div className="flex flex-col w-full text-left">
                                                     {/* Header */}
-                                                    <div className="w-full text-left mb-6 flex flex-col items-start">
-                                                         <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight">
+                                                    <div className="w-full mb-6 flex items-center justify-between gap-4">
+                                                         <h2 style={{ fontFamily: "'Lato', sans-serif" }} className="text-xl md:text-2xl font-bold text-[#1A365D] leading-tight flex-1">
                                                              {getOnboardingStepTitle(onboardingStep, selectedLang)}
                                                          </h2>
+                                                         <button
+                                                             onClick={() => {
+                                                                 // Skip onboarding, take them straight to the chat section
+                                                                 handleContinuaClick();
+                                                             }}
+                                                             style={{ fontFamily: "'Lato', sans-serif" }}
+                                                             className="px-4 py-1.5 rounded-full border border-black/30 text-black/50 hover:text-black hover:border-black/60 hover:bg-neutral-100 transition-all font-bold text-[10px] tracking-wider uppercase cursor-pointer select-none"
+                                                         >
+                                                             {selectedLang === 'EN' ? 'SKIP' : 'SALTAR'}
+                                                         </button>
                                                     </div>
 
                                                     {onboardingStep === 1 && (
