@@ -600,10 +600,6 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
     } else if (rightPanelTab === 'shopping' && lastVisitedTabRef.current !== 'shopping') {
       resume();
       
-      const introSpeech = selectedLang === 'EN'
-        ? "Hello! I am U.S.A. Voyager, your store advisor. I am here to help you find the best option for your goals."
-        : "¡Hola! Soy U.S.A. Voyager, tu asesor de la tienda. Estoy aquí para ayudarte a encontrar la mejor opción para tus metas.";
-        
       const questionSpeech = selectedLang === 'EN'
         ? "How can I help you today?"
         : "¿En qué te puedo ayudar hoy?";
@@ -617,21 +613,17 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
           {
             id: 'store_welcome',
             sender: 'splash',
-            text: `${introSpeech} ${questionSpeech}`,
+            text: questionSpeech,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            timeMs: Date.now()
+            timeMs: Date.now(),
+            tab: 'shopping'
           }
         ];
       });
 
       if (isConnected) {
-        // Speak the introduction first
-        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${introSpeech}". Pronounce "U.S.A." in English: "you ess ay".]`);
-        
-        // Immediately after, speak the question
-        setTimeout(() => {
-          sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${questionSpeech}".]`);
-        }, 5500); // 5.5 seconds delay allows the introduction to finish speaking naturally
+        // Speak the question
+        sendText(`[SYSTEM INSTRUCTION: Please speak aloud the following welcome message in your natural voice. Do not write any text in the transcript or chat, just speak this message: "${questionSpeech}".]`);
       }
     }
     lastVisitedTabRef.current = rightPanelTab;

@@ -309,11 +309,10 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
 
         </div>
 
-        {/* Separate Chat messages sibling list */}
         {chatMessages.filter(msg => {
           if (msg.sender === 'system') return false;
           if (msg.sender === 'user' && msg.text.startsWith('[')) return false;
-          return true;
+          return msg.tab === 'shopping';
         }).map((msg, index) => {
           let displayTxt = msg.text || '';
           if (displayTxt.includes('SYSTEM INSTRUCTION:')) {
