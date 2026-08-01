@@ -240,6 +240,12 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           display: none !important;
           visibility: hidden !important;
         }
+        .ec-size .grid-product__image-wrap,
+        .ec-size .grid-product__picture,
+        .ec-size .grid-product__image {
+          transform: scale(0.8) !important;
+          transform-origin: center center !important;
+        }
       `}</style>
 
       {/* Scrollable content area */}
