@@ -246,7 +246,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       <div className="flex-1 overflow-y-auto px-3 pt-2 pb-4 flex flex-col gap-3 min-h-0">
         
         {/* THE MAIN WELCOME STATEMENT CARD */}
-        <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm space-y-3.5 text-left flex flex-col flex-shrink-0">
+        <div className="space-y-3.5 text-left flex flex-col flex-shrink-0 p-0">
           
           {/* Header & Navigation Row */}
           <div className="flex flex-col gap-3">
@@ -254,7 +254,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               <Bot className="w-9 h-9 text-red-600 flex-shrink-0" />
               <h2 
                 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                className="text-2xl md:text-3xl font-extrabold tracking-tight text-[#1a202c]"
+                className="text-2xl md:text-3xl font-normal tracking-tight text-[#1a202c]"
               >
                 {selectedLang === 'EN' ? 'VOYAGER- student' : 'VOYAGER- estudiante'}
               </h2>
@@ -298,7 +298,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           {activeTab === 'shop' && (
             <p 
               style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-              className="text-[11pt] text-left text-neutral-800 leading-relaxed font-serif pt-1 border-t border-neutral-100"
+              className="text-[11pt] text-left text-neutral-800 leading-relaxed font-serif pt-1 border-t border-neutral-400/30"
             >
               {selectedLang === 'EN' 
                 ? "Hello! I am USA Voyager, your expert sales advisor and store guide. In this section we are not in class: my job is to guide you in choosing the best products, workbooks, study materials, official merchandise, and coaching packages with La Profe to boost your mastery of American English and US culture."
