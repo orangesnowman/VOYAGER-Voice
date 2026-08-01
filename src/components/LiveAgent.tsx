@@ -1510,7 +1510,7 @@ ${greetingPrompt}`;
 
                     </div>
                 ) : (
-                    <div className="flex-grow flex flex-col overflow-hidden p-3 md:p-4 min-h-0">
+                    <div className="flex-grow flex flex-col overflow-hidden p-5 md:p-8 min-h-0">
                         {/* Old sub-header bar has been removed */}
                         {rightPanelTab === 'home' ? (
                             <div className="flex-grow flex flex-col justify-between items-center text-center p-6 h-full animate-fade-in tab-content-area">
