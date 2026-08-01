@@ -1347,7 +1347,7 @@ ${greetingPrompt}`;
             <div className="w-full h-full flex flex-col overflow-hidden">
             {/* Header / Tabs */}
             {hasInteracted && (
-              <div className="w-full bg-transparent py-2 sm:py-2.5 px-3 sm:px-6 flex flex-col items-center justify-center gap-1.5 relative flex-shrink-0 border-none">
+              <div className="w-full bg-white py-2 sm:py-2.5 px-3 sm:px-6 flex flex-col items-center justify-center gap-1.5 relative flex-shrink-0 border-b border-black/5">
                 {/* Row 1: Main Menu & Controls */}
                 <div className="w-full flex items-center justify-center relative">
                     {/* Settings Button */}
