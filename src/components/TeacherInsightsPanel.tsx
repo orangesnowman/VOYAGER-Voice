@@ -114,7 +114,7 @@ export const TeacherInsightsPanel: React.FC<TeacherInsightsPanelProps> = ({
   }, [chatMessages]);
 
   return (
-    <div className="flex-1 flex flex-col bg-neutral-300 max-h-[480px] md:max-h-[550px] overflow-hidden animate-fade-in font-sans text-[#231d17]">
+    <div className="flex-1 flex flex-col bg-[#FAF5EC] h-full overflow-hidden animate-fade-in font-sans text-[#231d17]">
       
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3.5 min-h-0">

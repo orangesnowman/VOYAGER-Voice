@@ -1273,7 +1273,7 @@ ${greetingPrompt}`;
         </div>
 
         {/* Column 2 (Right Panel): The Cover Page (Cream layout) */}
-        <div className="md:col-span-1 bg-neutral-300 border border-black/10 rounded-[20px] sm:rounded-[24px] md:rounded-[32px] flex flex-col justify-between items-center text-center shadow-[0_15px_35px_rgba(0,0,0,0.15)] relative overflow-hidden w-full h-full min-h-[420px] sm:min-h-[480px] md:min-h-0">
+        <div className="md:col-span-1 bg-[#FAF5EC] border border-black/10 rounded-[20px] sm:rounded-[24px] md:rounded-[32px] flex flex-col justify-between items-center text-center shadow-[0_15px_35px_rgba(0,0,0,0.15)] relative overflow-hidden w-full h-full min-h-[420px] sm:min-h-[480px] md:min-h-0">
           {!hasClickedConnect ? (
             /* Disconnected Landing Screen inside the Cover */
             <>
@@ -2693,7 +2693,7 @@ Pregunta del usuario: "${text}"]`;
                                 }}
                             />
                         ) : rightPanelTab === 'progress' ? (
-                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-neutral-300">
+                            <div className="flex-1 p-4 overflow-y-auto tab-content-area bg-[#FAF5EC]">
                                 <ProgressDashboard 
                                     selectedLang={selectedLang}
                                     scores={scores}
@@ -2794,7 +2794,7 @@ Pregunta del usuario: "${text}"]`;
                         </div>
 
                     {!showReviewScreen && rightPanelTab === 'chat' && hasInteracted && (
-                        <div className="px-3 pt-3 pb-6 md:pb-8 bg-[#d4d4d4] flex justify-end w-full">
+                        <div className="px-3 pt-3 pb-6 md:pb-8 bg-[#FAF5EC] flex justify-end w-full">
                             <form 
                                 onSubmit={handleSendMessage} 
                                 className="w-full max-w-[88%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"

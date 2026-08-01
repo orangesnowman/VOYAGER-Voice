@@ -198,7 +198,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-[#d4d4d4] h-full overflow-hidden animate-fade-in font-sans text-[#231d17]">
+    <div className="flex-1 flex flex-col bg-[#FAF5EC] h-full overflow-hidden animate-fade-in font-sans text-[#231d17]">
       {/* Target custom circular count badge overrides */}
       <style>{`
         .ec-cart-widget [class*="counter"], 
@@ -418,7 +418,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       </div>
 
       {/* Row 2: User's Input Box */}
-      <div className="flex-shrink-0 px-3 pt-3 pb-6 md:pb-8 bg-[#d4d4d4] flex justify-end w-full">
+      <div className="flex-shrink-0 px-3 pt-3 pb-6 md:pb-8 bg-[#FAF5EC] flex justify-end w-full">
         <form 
           onSubmit={(e) => {
             e.preventDefault();

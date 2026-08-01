@@ -85,7 +85,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
     : 'bilingual';
 
   return (
-    <div className="flex-1 p-4 md:p-6 overflow-y-auto tab-content-area bg-neutral-300 text-black">
+    <div className="flex-1 p-4 md:p-6 overflow-y-auto tab-content-area bg-[#FAF5EC] text-black">
       <div className="max-w-3xl mx-auto space-y-6">
         
         {/* SETTINGS SECTION EXPLANATION BANNER */}
