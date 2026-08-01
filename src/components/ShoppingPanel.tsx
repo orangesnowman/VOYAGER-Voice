@@ -408,7 +408,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         })}
 
         {/* THE ECWID STOREFRONT CATALOG CARD (Always at the bottom under the last chat bubble) */}
-        <div className="bg-white border-[5px] border-red-600/30 rounded-2xl rounded-tl-none p-4 shadow-sm text-left flex flex-col flex-shrink-0">
+        <div className="bg-transparent text-left flex flex-col flex-shrink-0 p-0">
           <div className="min-h-[260px]">
             <div id="my-store-108143" className="w-full" />
           </div>
