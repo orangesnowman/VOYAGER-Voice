@@ -331,7 +331,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               key={msg.id || index} 
               className={`flex items-start ${isUser ? 'justify-end' : 'justify-start'} gap-2.5 animate-fade-in flex-shrink-0 w-full`}
             >
-              <div className={`max-w-[88%] flex flex-col space-y-1 ${isUser ? 'items-end' : 'items-start'}`}>
+              <div className={`max-w-[78%] flex flex-col space-y-1 ${isUser ? 'items-end' : 'items-start'}`}>
                 <div className={`
                   px-4 py-2.5 rounded-2xl text-sm leading-snug transition-all bg-white border-[5px]
                   ${isUser 
