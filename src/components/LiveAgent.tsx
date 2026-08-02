@@ -1353,7 +1353,10 @@ ${greetingPrompt}`;
                     {/* Settings Button */}
                     <div className="absolute -right-4 sm:-right-3 top-0.5">
                         <button 
-                            onClick={() => setRightPanelTab('settings')}
+                            onClick={() => {
+                                setRightPanelTab('settings');
+                                window.location.hash = '';
+                            }}
                             title={selectedLang === 'EN' ? 'Settings' : 'Configura'}
                             aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group hover:scale-110 active:scale-95"
@@ -1366,7 +1369,10 @@ ${greetingPrompt}`;
                         </button>
                     </div>
                     <div className="grid grid-cols-5 gap-2.5 sm:gap-6.5 justify-items-center w-full md:w-auto max-w-[480px] sm:max-w-[600px]">
-                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => {
+                        setRightPanelTab('home');
+                        window.location.hash = '';
+                    }}>
                         <button 
                             title={selectedLang === 'EN' ? 'Home' : 'Inicio'}
                             aria-label={selectedLang === 'EN' ? 'Home' : 'Inicio'}
@@ -1387,7 +1393,10 @@ ${greetingPrompt}`;
                         </span>
                     </div>
  
-                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('chat')}>
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => {
+                        setRightPanelTab('chat');
+                        window.location.hash = '';
+                    }}>
                         <button 
                             title={selectedLang === 'EN' ? 'Chat' : 'Charla'}
                             aria-label={selectedLang === 'EN' ? 'Chat' : 'Charla'}
@@ -1408,7 +1417,10 @@ ${greetingPrompt}`;
                         </span>
                     </div>
  
-                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('teachers')}>
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => {
+                        setRightPanelTab('teachers');
+                        window.location.hash = '';
+                    }}>
                         <button 
                             title={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
                             aria-label={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
@@ -1429,7 +1441,10 @@ ${greetingPrompt}`;
                         </span>
                     </div>
  
-                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('roadmap')}>
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => {
+                        setRightPanelTab('roadmap');
+                        window.location.hash = '';
+                    }}>
                         <button 
                             title={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
                             aria-label={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
@@ -1450,7 +1465,10 @@ ${greetingPrompt}`;
                         </span>
                     </div>
  
-                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('shopping')}>
+                    <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => {
+                        setRightPanelTab('shopping');
+                        window.location.hash = '#/shop';
+                    }}>
                         <button 
                             title={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
                             aria-label={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
