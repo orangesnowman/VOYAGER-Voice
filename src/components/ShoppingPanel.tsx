@@ -316,7 +316,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           {activeTab === 'shop' && (
             <p 
               style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-              className="text-[11pt] text-left text-neutral-800 leading-relaxed font-serif pt-1"
+              className="text-[11pt] text-left text-neutral-800 leading-relaxed font-serif pt-1 pb-4"
             >
               {selectedLang === 'EN' 
                 ? "Hello! I am USA Voyager, your expert sales advisor and store guide. In this section we are not in class: my job is to guide you in choosing the best products, workbooks, study materials, official merchandise, and coaching packages with La Profe to boost your mastery of American English and US culture."
