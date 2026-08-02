@@ -287,6 +287,20 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           box-shadow: none !important;
           border: none !important;
         }
+        /* Style Ecwid footer links/labels/icons to be black and American Typewriter */
+        .ec-size .ec-store .ec-footer,
+        .ec-size .ec-store .ec-footer *,
+        .ec-size .ec-store [class*="footer"],
+        .ec-size .ec-store [class*="footer"] * {
+          font-family: American Typewriter, Courier New, Courier, serif !important;
+          color: #000000 !important;
+        }
+        .ec-size .ec-store .ec-footer svg,
+        .ec-size .ec-store .ec-footer svg *,
+        .ec-size .ec-store [class*="footer"] svg,
+        .ec-size .ec-store [class*="footer"] svg * {
+          stroke: #000000 !important;
+        }
       `}</style>
 
       {/* Scrollable content area */}
