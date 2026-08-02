@@ -234,7 +234,6 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           height: auto !important;
         }
         .ec-breadcrumbs,
-        .ec-store__category-name,
         .grid-product__sorting,
         .ec-store__sorting,
         .ec-filters__sorting,
@@ -300,6 +299,15 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         .ec-size .ec-store [class*="footer"] svg,
         .ec-size .ec-store [class*="footer"] svg * {
           stroke: #000000 !important;
+        }
+        /* Style Ecwid category titles to be black and American Typewriter */
+        .ec-store__category-name,
+        .ec-store__category-title,
+        .ec-store .ec-header-h2,
+        .ec-store h1,
+        .ec-store h2 {
+          font-family: American Typewriter, Courier New, Courier, serif !important;
+          color: #000000 !important;
         }
       `}</style>
 
