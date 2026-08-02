@@ -434,7 +434,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               inputEl.value = '';
             }
           }}
-          className="w-full max-w-[91%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
+          className="w-full max-w-[98%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
         >
           <div className="flex justify-end items-center gap-2.5 mb-1 select-none">
             {/* PAUSE button inside input field */}
