@@ -230,8 +230,6 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         .ec-filters__sorting,
         [class*="sorting"],
         [class*="sort-by"],
-        .ec-footer,
-        .ec-store__footer,
         .ecwid-powered-by,
         [class*="powered-by"],
         [class*="lightspeed"],
