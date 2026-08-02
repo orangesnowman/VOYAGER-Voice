@@ -203,6 +203,9 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
     <div className="flex-1 flex flex-col bg-[#FAF5EC] h-full overflow-hidden animate-fade-in font-sans text-[#231d17]">
       {/* Target custom circular count badge overrides */}
       <style>{`
+        .store-header-title {
+          font-family: "American Typewriter", "Courier New", Courier, serif !important;
+        }
         .ec-cart-widget [class*="counter"], 
         .ec-cart-widget span[class*="count"],
         .ecwid-minicart-count {
@@ -297,7 +300,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
             <div className="flex items-center gap-3 select-none">
               <span 
                 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                className="text-[42px] md:text-[52.5px] font-normal tracking-tight text-[#1a202c] !font-serif block leading-none"
+                className="store-header-title text-[42px] md:text-[52.5px] font-normal tracking-tight text-[#1a202c] !font-serif block leading-none"
               >
                 {headerTitle}
               </span>
