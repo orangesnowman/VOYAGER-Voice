@@ -538,7 +538,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                 <select
                   value={selectedCurrency}
                   onChange={(e) => handleCurrencyChange(e.target.value)}
-                  className="bg-transparent border border-black/15 text-[11px] font-bold py-0.5 px-1 rounded cursor-pointer focus:outline-none text-black/80 uppercase ml-1"
+                  className="bg-transparent border-none text-[11px] font-bold py-0.5 px-0 cursor-pointer focus:outline-none text-black/80 uppercase ml-0.5"
+                  style={{ border: 'none', background: 'transparent' }}
                 >
                   <option value="USD">Dólar ($)</option>
                   <option value="CRC">Costa Rica (₡)</option>
