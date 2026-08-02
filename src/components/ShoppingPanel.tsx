@@ -532,14 +532,14 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               </button>
 
               {/* Currency Selector integrated directly into the submenu list */}
-              <div className="flex items-center gap-1.5 transition-colors uppercase text-black/80">
-                <Coins className="w-4.5 h-4.5 text-black/80" />
+              <div className="flex items-center gap-0.5 transition-colors uppercase text-black/80">
+                <Coins className="w-4.5 h-4.5 text-black/80 mr-1" />
                 <span>{selectedLang === 'EN' ? 'CURRENCY:' : 'MONEDA:'}</span>
                 <select
                   value={selectedCurrency}
                   onChange={(e) => handleCurrencyChange(e.target.value)}
-                  className="bg-transparent border-none text-[11px] font-bold py-0.5 px-0 cursor-pointer focus:outline-none text-black/80 uppercase ml-0.5"
-                  style={{ border: 'none', background: 'transparent' }}
+                  className="bg-transparent border-none text-[11px] font-bold py-0.5 pl-0 pr-0 cursor-pointer focus:outline-none text-black/80 uppercase"
+                  style={{ border: 'none', background: 'transparent', paddingLeft: 0, marginLeft: '-2px' }}
                 >
                   <option value="USD">Dólar ($)</option>
                   <option value="CRC">Costa Rica (₡)</option>
