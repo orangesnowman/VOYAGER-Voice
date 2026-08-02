@@ -312,13 +312,13 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       `}</style>
 
       {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto px-3 pt-4 pb-4 flex flex-col gap-3 min-h-0">
+      <div className="flex-1 overflow-y-auto px-3 pt-2 pb-4 flex flex-col gap-3 min-h-0">
         
         {/* THE MAIN WELCOME STATEMENT CARD */}
         <div className="space-y-3.5 text-left flex flex-col flex-shrink-0 p-0">
           
           {/* Header & Navigation Row */}
-          <div className="flex flex-col gap-3 pt-[7px]">
+          <div className="flex flex-col gap-3 pt-0">
             <div className="flex items-center gap-3 select-none">
               <span 
                 style={{ fontFamily: 'American Typewriter, Courier New, Courier, serif' }} 
