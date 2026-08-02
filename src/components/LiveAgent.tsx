@@ -2799,7 +2799,42 @@ Pregunta del usuario: "${text}"]`;
                                 onSubmit={handleSendMessage} 
                                 className="w-full max-w-[92%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
                             >
-                                <div className="flex justify-end mb-1 select-none">
+                                <div className="flex justify-between items-center mb-1 select-none">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (!isConnected) return;
+                                            if (isPaused) {
+                                                resume();
+                                                if (window.speechSynthesis && window.speechSynthesis.paused) {
+                                                    window.speechSynthesis.resume();
+                                                }
+                                            } else {
+                                                pause();
+                                                if (window.speechSynthesis && window.speechSynthesis.speaking) {
+                                                    window.speechSynthesis.pause();
+                                                }
+                                            }
+                                        }}
+                                        disabled={!isConnected}
+                                        className={`flex items-center gap-1 group cursor-pointer transition-all duration-300 ${
+                                            !isConnected ? 'opacity-30 cursor-not-allowed' : 'hover:scale-105 active:scale-95'
+                                        }`}
+                                    >
+                                        {!isPaused && (
+                                            <span 
+                                                style={{ fontFamily: "'Lato', sans-serif" }} 
+                                                className="text-[9px] font-black tracking-wider transition-all duration-300 text-[#1A365D] group-hover:text-red-600"
+                                            >
+                                                PAUSA
+                                            </span>
+                                        )}
+                                        {isPaused ? (
+                                            <Play fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
+                                        ) : (
+                                            <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-[#1A365D] group-hover:text-red-600 transition-all duration-300" />
+                                        )}
+                                    </button>
                                     <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
                                 </div>
                                 <input
