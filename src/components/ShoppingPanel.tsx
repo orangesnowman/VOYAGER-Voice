@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Bot, User, Pause, Play, Store, IdCard, ShoppingCart } from 'lucide-react';
 import { parseAndRenderEmojis } from './VoyagerEmoji';
 
@@ -33,6 +33,131 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
     selectedLang === 'EN' ? 'Store' : 'La Tienda'
   );
   const [activeTab, setActiveTab] = useState<'shop' | 'account' | 'cart'>('shop');
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
+  const [exchangeRates, setExchangeRates] = useState({
+    USD: 1.0,
+    CRC: 512.0,
+    GTQ: 7.73,
+    EUR: 0.92
+  });
+
+  // Synchronize dynamic currency rates and detect locale by IP
+  useEffect(() => {
+    const fetchRatesAndLocation = async () => {
+      // 1. Fetch rates
+      try {
+        const ratesRes = await fetch('https://open.er-api.com/v6/latest/USD');
+        if (ratesRes.ok) {
+          const ratesData = await ratesRes.json();
+          if (ratesData.rates) {
+            setExchangeRates({
+              USD: 1.0,
+              CRC: ratesData.rates.CRC || 512.0,
+              GTQ: ratesData.rates.GTQ || 7.73,
+              EUR: ratesData.rates.EUR || 0.92
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching exchange rates:', err);
+      }
+
+      // 2. Geolocation by IP
+      const cachedCurrency = localStorage.getItem('voyager_selected_currency');
+      if (cachedCurrency) {
+        setSelectedCurrency(cachedCurrency);
+        return;
+      }
+
+      try {
+        const geoRes = await fetch('https://ip-api.com/json/');
+        if (geoRes.ok) {
+          const geoData = await geoRes.json();
+          const countryCode = geoData.countryCode;
+          if (countryCode === 'CR') {
+            setSelectedCurrency('CRC');
+            localStorage.setItem('voyager_selected_currency', 'CRC');
+          } else if (countryCode === 'GT') {
+            setSelectedCurrency('GTQ');
+            localStorage.setItem('voyager_selected_currency', 'GTQ');
+          } else if (['ES', 'FR', 'DE', 'IT', 'NL', 'BE', 'GR', 'PT', 'IE'].includes(countryCode)) {
+            setSelectedCurrency('EUR');
+            localStorage.setItem('voyager_selected_currency', 'EUR');
+          } else {
+            setSelectedCurrency('USD');
+            localStorage.setItem('voyager_selected_currency', 'USD');
+          }
+        }
+      } catch (err) {
+        console.error('Error detecting location by IP:', err);
+      }
+    };
+
+    fetchRatesAndLocation();
+  }, []);
+
+  const handleCurrencyChange = (currency: string) => {
+    setSelectedCurrency(currency);
+    localStorage.setItem('voyager_selected_currency', currency);
+  };
+
+  const convertPrices = useCallback(() => {
+    if (selectedCurrency === 'USD') {
+      const elements = document.querySelectorAll('[data-original-price]');
+      elements.forEach((el: any) => {
+        el.textContent = el.dataset.originalPrice;
+        delete el.dataset.originalPrice;
+      });
+      return;
+    }
+
+    const rate = exchangeRates[selectedCurrency as keyof typeof exchangeRates] || 1.0;
+    
+    // Target common Ecwid price elements
+    const priceElements = document.querySelectorAll(
+      '.ec-price, .grid-product__price-value, .ec-cart-summary__price, .ec-store__product-price, .ec-cart-item__price, .ec-cart-item__title-price, .ec-cart-summary__val, .ec-cart-summary__row--total, [class*="price-value"], .ec-store__product-price-value, [class*="price"] span, [class*="amount"]'
+    );
+
+    priceElements.forEach((el: any) => {
+      if (el.children.length > 0 && !el.classList.contains('ec-price')) return;
+
+      let rawText = el.textContent || '';
+      
+      if (el.dataset.originalPrice) {
+        rawText = el.dataset.originalPrice;
+      } else {
+        if (rawText.includes('$') || /^[0-9.,]+$/.test(rawText.replace(/[^0-9.,]/g, ''))) {
+          el.dataset.originalPrice = rawText;
+        } else {
+          return;
+        }
+      }
+
+      const numValue = parseFloat(rawText.replace(/[^0-9.]/g, ''));
+      if (isNaN(numValue)) return;
+
+      const converted = numValue * rate;
+
+      let formatted = '';
+      if (selectedCurrency === 'CRC') {
+        formatted = `₡${converted.toLocaleString('es-CR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      } else if (selectedCurrency === 'GTQ') {
+        formatted = `Q ${converted.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      } else if (selectedCurrency === 'EUR') {
+        formatted = `€${converted.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      } else {
+        formatted = `$${converted.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+
+      el.textContent = formatted;
+    });
+  }, [selectedCurrency, exchangeRates]);
+
+  useEffect(() => {
+    convertPrices();
+    const interval = setInterval(convertPrices, 300);
+    return () => clearInterval(interval);
+  }, [convertPrices]);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -367,44 +492,67 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               </span>
             </div>
 
-            <div className="flex items-center gap-5 text-[11.2px] font-extrabold uppercase tracking-wider select-none mt-1">
-              <button 
-                onClick={() => handleNavClick('shop')} 
-                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === 'shop' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
-                }`}
-              >
-                <Store className={`w-4.5 h-4.5 ${activeTab === 'shop' ? 'text-red-600' : 'text-black/80'}`} />
-                <span>{selectedLang === 'EN' ? 'STORE' : 'TIENDA'}</span>
-              </button>
+            <div className="flex flex-col gap-3 mt-1.5 md:flex-row md:items-center md:justify-between select-none">
+              <div className="flex items-center gap-5 text-[11.2px] font-extrabold uppercase tracking-wider">
+                <button 
+                  onClick={() => handleNavClick('shop')} 
+                  className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                    activeTab === 'shop' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
+                  }`}
+                >
+                  <Store className={`w-4.5 h-4.5 ${activeTab === 'shop' ? 'text-red-600' : 'text-black/80'}`} />
+                  <span>{selectedLang === 'EN' ? 'STORE' : 'TIENDA'}</span>
+                </button>
 
-              <button 
-                onClick={() => handleNavClick('account')} 
-                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === 'account' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
-                }`}
-              >
-                <IdCard className={`w-5 h-5 ${activeTab === 'account' ? 'text-red-600' : 'text-black/80'}`} />
-                <span>{selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}</span>
-              </button>
+                <button 
+                  onClick={() => handleNavClick('account')} 
+                  className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                    activeTab === 'account' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
+                  }`}
+                >
+                  <IdCard className={`w-5 h-5 ${activeTab === 'account' ? 'text-red-600' : 'text-black/80'}`} />
+                  <span>{selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}</span>
+                </button>
 
-              <button 
-                onClick={() => handleNavClick('cart')} 
-                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === 'cart' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
-                }`}
-              >
-                <div className="relative flex items-center justify-center w-6 h-6">
-                  <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
-                  <div className="ec-cart-widget hidden" />
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[8px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-1 border border-white">
-                      {cartCount}
-                    </span>
-                  )}
-                </div>
-                <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
-              </button>
+                <button 
+                  onClick={() => handleNavClick('cart')} 
+                  className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                    activeTab === 'cart' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
+                  }`}
+                >
+                  <div className="relative flex items-center justify-center w-6 h-6">
+                    <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
+                    <div className="ec-cart-widget hidden" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[8px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-1 border border-white">
+                        {cartCount}
+                      </span>
+                    )}
+                  </div>
+                  <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
+                </button>
+              </div>
+
+              {/* Currency Selector Dropdown */}
+              <div className="flex items-center gap-1.5 self-start md:self-auto">
+                <span 
+                  style={{ fontFamily: 'American Typewriter, Courier New, Courier, serif' }}
+                  className="text-[10px] font-black uppercase tracking-wider text-[#1a202c]"
+                >
+                  {selectedLang === 'EN' ? 'Currency:' : 'Moneda:'}
+                </span>
+                <select
+                  value={selectedCurrency}
+                  onChange={(e) => handleCurrencyChange(e.target.value)}
+                  style={{ fontFamily: 'American Typewriter, Courier New, Courier, serif' }}
+                  className="bg-transparent border-2 border-black text-[11px] font-bold py-1 px-1.5 rounded-lg cursor-pointer focus:outline-none text-[#1a202c]"
+                >
+                  <option value="USD">Dólar ($)</option>
+                  <option value="CRC">Costa Rica (₡)</option>
+                  <option value="GTQ">Guatemala (Q)</option>
+                  <option value="EUR">Euros (€)</option>
+                </select>
+              </div>
             </div>
           </div>
 
