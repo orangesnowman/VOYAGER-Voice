@@ -204,7 +204,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         .ec-cart-widget [class*="counter"], 
         .ec-cart-widget span[class*="count"],
         .ecwid-minicart-count {
-          background: #0066cc !important;
+          background: #dc2626 !important;
           color: #ffffff !important;
           border-radius: 9999px !important;
           min-width: 18px !important;
@@ -222,6 +222,11 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           background: transparent !important;
           box-shadow: none !important;
           border: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          display: inline-block !important;
+          width: auto !important;
+          height: auto !important;
         }
         .ec-breadcrumbs,
         .ec-store__category-name,
@@ -324,8 +329,10 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                   activeTab === 'cart' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
                 }`}
               >
-                <div className="ec-cart-widget inline-block align-middle scale-90" />
-                <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
+                <div className="relative flex items-center justify-center w-6 h-6">
+                  <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
+                  <div className="ec-cart-widget absolute -top-1.5 -right-1.5 scale-[0.65]" />
+                </div>
                 <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
               </button>
             </div>
