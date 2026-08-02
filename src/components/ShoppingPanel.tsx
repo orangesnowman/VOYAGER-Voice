@@ -227,6 +227,8 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         .ec-store__category-name,
         .grid-product__sorting,
         .ec-store__sorting,
+        .ec-filters__sorting,
+        [class*="sorting"],
         [class*="sort-by"],
         .ec-cart-widget__title,
         .ec-cart-widget__text,
