@@ -535,19 +535,30 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               <div className="flex items-center gap-0.5 transition-colors uppercase text-black/80">
                 <Coins className="w-4.5 h-4.5 text-black/80 mr-1" />
                 <span>{selectedLang === 'EN' ? 'CURRENCY:' : 'MONEDA:'}</span>
-                <div className="relative flex items-center">
+                <div className="relative flex items-center gap-0.5 ml-0.5 cursor-pointer select-none">
+                  <span className="text-[11px] font-bold text-black/80 uppercase">
+                    {selectedCurrency === 'USD' 
+                      ? (selectedLang === 'EN' ? 'Dólar ($)' : 'Dólar ($)') 
+                      : selectedCurrency === 'CRC' 
+                      ? 'Costa Rica (₡)' 
+                      : selectedCurrency === 'GTQ' 
+                      ? 'Guatemala (Q)' 
+                      : 'Euros (€)'
+                    }
+                  </span>
+                  <ChevronDown className="w-2.5 h-2.5 text-black/85" />
+                  
+                  {/* Invisible native select overlay */}
                   <select
                     value={selectedCurrency}
                     onChange={(e) => handleCurrencyChange(e.target.value)}
-                    className="bg-transparent border-none text-[11px] font-bold py-0.5 pl-0 pr-2.5 cursor-pointer focus:outline-none text-black/80 uppercase appearance-none -webkit-appearance-none -moz-appearance-none"
-                    style={{ border: 'none', background: 'transparent', paddingLeft: 0, paddingRight: '10px', marginLeft: '-2px' }}
+                    className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
                   >
                     <option value="USD">Dólar ($)</option>
                     <option value="CRC">Costa Rica (₡)</option>
                     <option value="GTQ">Guatemala (Q)</option>
                     <option value="EUR">Euros (€)</option>
                   </select>
-                  <ChevronDown className="absolute right-0 w-2.5 h-2.5 text-black/85 pointer-events-none" />
                 </div>
               </div>
             </div>
