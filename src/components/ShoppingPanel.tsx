@@ -371,7 +371,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                         {!isPaused && (
                           <span 
                             style={{ fontFamily: "'Lato', sans-serif" }} 
-                            className="text-[9px] font-black tracking-wider transition-all duration-300 text-blue-600/70 group-hover:text-red-600"
+                            className="text-[9px] font-black tracking-wider transition-all duration-300 text-[#1A365D] group-hover:text-red-600"
                           >
                             {selectedLang === 'EN' ? 'PAUSE' : 'PAUSA'}
                           </span>
@@ -379,7 +379,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                         {isPaused ? (
                           <Play fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-red-600 transition-all animate-pulse" />
                         ) : (
-                          <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-blue-600/70 group-hover:text-red-600 transition-all duration-300" />
+                          <Pause fill="currentColor" stroke="none" className="w-3.5 h-3.5 text-[#1A365D] group-hover:text-red-600 transition-all duration-300" />
                         )}
                       </button>
                       <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
