@@ -309,6 +309,36 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           font-family: American Typewriter, Courier New, Courier, serif !important;
           color: #000000 !important;
         }
+        /* Align Ecwid pager buttons flush left and make them high-contrast black */
+        .ec-size .ec-store .ec-pager,
+        .ec-size .ec-store [class*="pager"],
+        .ec-size .ec-store .ec-store__pager,
+        .ec-size .ec-store [class*="product-navigation"] {
+          display: flex !important;
+          justify-content: flex-start !important;
+          margin-left: 0 !important;
+          margin-right: auto !important;
+          border: 1.5px solid #000000 !important;
+          border-radius: 9999px !important;
+          background-color: transparent !important;
+        }
+        .ec-size .ec-store .ec-pager svg,
+        .ec-size .ec-store .ec-pager svg *,
+        .ec-size .ec-store [class*="pager"] svg,
+        .ec-size .ec-store [class*="pager"] svg *,
+        .ec-size .ec-store [class*="product-navigation"] svg,
+        .ec-size .ec-store [class*="product-navigation"] svg * {
+          stroke: #000000 !important;
+          stroke-width: 2.5px !important;
+          color: #000000 !important;
+        }
+        .ec-size .ec-store .ec-pager__button,
+        .ec-size .ec-store .ec-pager__btn,
+        .ec-size .ec-store [class*="pager"] button,
+        .ec-size .ec-store [class*="pager"] a {
+          border-color: #000000 !important;
+          color: #000000 !important;
+        }
       `}</style>
 
       {/* Scrollable content area */}
