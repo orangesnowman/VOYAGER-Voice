@@ -1358,27 +1358,27 @@ ${greetingPrompt}`;
                             aria-label={selectedLang === 'EN' ? 'Settings' : 'Configura'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 group hover:scale-110 active:scale-95"
                         >
-                            <Settings className={`w-[27px] h-[27px] transition-all duration-500 ease-in-out ${
+                            <Settings className={`w-[32px] h-[32px] transition-all duration-500 ease-in-out ${
                                 rightPanelTab === 'settings' 
                                     ? 'text-red-600 rotate-90 scale-110 hover:rotate-[270deg]' 
                                     : 'text-black/65 hover:text-red-600 group-hover:text-red-600 hover:rotate-180'
                             }`} />
                         </button>
                     </div>
-                    <div className="grid grid-cols-5 gap-2 sm:gap-6 justify-items-center w-full md:w-auto max-w-md sm:max-w-xl">
+                    <div className="grid grid-cols-5 gap-3 sm:gap-7 justify-items-center w-full md:w-auto max-w-lg sm:max-w-2xl">
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('home')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Home' : 'Inicio'}
                             aria-label={selectedLang === 'EN' ? 'Home' : 'Inicio'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <Home className={`w-6 h-6 transition-all duration-300 ${
+                            <Home className={`w-7 h-7 transition-all duration-300 ${
                                 rightPanelTab === 'home' 
                                     ? 'text-red-600 scale-110' 
                                     : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
                             }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[9.6pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
                             rightPanelTab === 'home' 
                                 ? 'text-red-600 font-extrabold' 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
@@ -1386,20 +1386,20 @@ ${greetingPrompt}`;
                             {selectedLang === 'EN' ? 'HOME' : 'INICIO'}
                         </span>
                     </div>
-
+ 
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('chat')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Chat' : 'Charla'}
                             aria-label={selectedLang === 'EN' ? 'Chat' : 'Charla'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <MessageSquare className={`w-6 h-6 transition-all duration-300 ${
+                            <MessageSquare className={`w-7 h-7 transition-all duration-300 ${
                                 rightPanelTab === 'chat' 
                                     ? 'text-red-600 scale-110' 
                                     : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
                             }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[9.6pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
                             rightPanelTab === 'chat' 
                                 ? 'text-red-600 font-extrabold' 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
@@ -1407,20 +1407,20 @@ ${greetingPrompt}`;
                             {selectedLang === 'EN' ? 'CHAT' : 'CHARLA'}
                         </span>
                     </div>
-
+ 
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('teachers')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
                             aria-label={selectedLang === 'EN' ? 'Teacher' : 'La Profe'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <Apple className={`w-6 h-6 transition-all duration-300 ${
+                            <Apple className={`w-7 h-7 transition-all duration-300 ${
                                 rightPanelTab === 'teachers' 
                                     ? 'text-red-600 scale-110' 
                                     : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
                             }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[9.6pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
                             rightPanelTab === 'teachers' 
                                 ? 'text-red-600 font-extrabold' 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
@@ -1428,20 +1428,20 @@ ${greetingPrompt}`;
                             {selectedLang === 'EN' ? 'TEACHER' : 'LA PROFE'}
                         </span>
                     </div>
-
+ 
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('roadmap')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
                             aria-label={selectedLang === 'EN' ? 'Profile' : 'Perfil'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <User className={`w-6 h-6 transition-all duration-300 ${
+                            <User className={`w-7 h-7 transition-all duration-300 ${
                                 rightPanelTab === 'roadmap' 
                                     ? 'text-red-600 scale-110' 
                                     : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
                             }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[9.6pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
                             rightPanelTab === 'roadmap' 
                                 ? 'text-red-600 font-extrabold' 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
@@ -1449,20 +1449,20 @@ ${greetingPrompt}`;
                             {selectedLang === 'EN' ? 'PROFILE' : 'PERFIL'}
                         </span>
                     </div>
-
+ 
                     <div className="flex flex-col items-center justify-center text-center group cursor-pointer w-full" onClick={() => setRightPanelTab('shopping')}>
                         <button 
                             title={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
                             aria-label={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
                             className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
                         >
-                            <ShoppingCart className={`w-6 h-6 transition-all duration-300 ${
+                            <ShoppingCart className={`w-7 h-7 transition-all duration-300 ${
                                 rightPanelTab === 'shopping' 
                                     ? 'text-red-600 scale-110' 
                                     : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
                             }`} />
                         </button>
-                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[8pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
+                        <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[9.6pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
                             rightPanelTab === 'shopping' 
                                 ? 'text-red-600 font-extrabold' 
                                 : 'text-black/65 group-hover:text-red-600 font-bold'
