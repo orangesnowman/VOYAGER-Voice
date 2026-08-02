@@ -296,12 +296,12 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3 select-none">
               <Store className="w-9 h-9 text-red-600 flex-shrink-0" />
-              <h2 
+              <span 
                 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                className="text-2xl md:text-3xl font-normal tracking-tight text-[#1a202c]"
+                className="text-2xl md:text-3xl font-normal tracking-tight text-[#1a202c] !font-serif block"
               >
                 {headerTitle}
-              </h2>
+              </span>
             </div>
 
             <div className="flex items-center gap-5 text-[11.2px] font-extrabold uppercase tracking-wider select-none mt-1">
