@@ -2797,7 +2797,7 @@ Pregunta del usuario: "${text}"]`;
                         <div className="px-3 pt-2 pb-2 md:pb-2.5 bg-[#FAF5EC] flex justify-end w-full">
                             <form 
                                 onSubmit={handleSendMessage} 
-                                className="w-full max-w-[98%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
+                                className="w-full max-w-[92%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
                             >
                                 <div className="flex justify-end mb-1 select-none">
                                     <User strokeWidth={2.5} className="w-5 h-5 text-blue-600/70" />
