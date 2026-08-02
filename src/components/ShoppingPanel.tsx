@@ -312,7 +312,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       `}</style>
 
       {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto px-3 pt-8 pb-4 flex flex-col gap-3 min-h-0">
+      <div className="flex-1 overflow-y-auto px-3 pt-4 pb-4 flex flex-col gap-3 min-h-0">
         
         {/* THE MAIN WELCOME STATEMENT CARD */}
         <div className="space-y-3.5 text-left flex flex-col flex-shrink-0 p-0">
