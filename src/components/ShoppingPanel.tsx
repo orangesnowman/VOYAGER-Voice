@@ -258,6 +258,18 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           transform: scale(0.8) !important;
           transform-origin: center center !important;
         }
+        /* Force 2 products per row */
+        #my-store-108143 .grid__products {
+          display: grid !important;
+          grid-template-columns: repeat(2, 1fr) !important;
+          grid-gap: 12px !important;
+          gap: 12px !important;
+        }
+        #my-store-108143 .grid-product {
+          width: auto !important;
+          max-width: 100% !important;
+          margin: 0 !important;
+        }
       `}</style>
 
       {/* Scrollable content area */}
