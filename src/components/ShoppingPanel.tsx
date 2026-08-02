@@ -30,7 +30,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   sendText
 }) => {
   const [headerTitle, setHeaderTitle] = useState(
-    selectedLang === 'EN' ? 'STORE' : 'LA TIENDA'
+    selectedLang === 'EN' ? 'Store' : 'La Tienda'
   );
   const [activeTab, setActiveTab] = useState<'shop' | 'account' | 'cart'>('shop');
 
@@ -136,7 +136,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
       } else if (page.type === 'CART') {
         setHeaderTitle(selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO');
       } else {
-        setHeaderTitle(selectedLang === 'EN' ? 'STORE' : 'LA TIENDA');
+        setHeaderTitle(selectedLang === 'EN' ? 'Store' : 'La Tienda');
       }
     };
 
@@ -295,7 +295,6 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           {/* Header & Navigation Row */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3 select-none">
-              <Store className="w-9 h-9 text-red-600 flex-shrink-0" />
               <span 
                 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
                 className="text-2xl md:text-3xl font-normal tracking-tight text-[#1a202c] !font-serif block"
