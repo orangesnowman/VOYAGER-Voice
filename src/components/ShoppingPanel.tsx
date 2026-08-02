@@ -343,12 +343,10 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         /* Make the border of Ecwid radio buttons black */
         .ec-size .ec-store .ec-radio__circle,
         .ec-size .ec-store .ec-radio__control,
-        .ec-size .ec-store [class*="radio__circle"],
-        .ec-size .ec-store [class*="radio__control"],
-        .ec-size .ec-store [class*="radio"] [class*="circle"],
-        .ec-size .ec-store [class*="radio"] [class*="control"] {
+        .ec-size .ec-store .ec-radio__control-circle {
           border: 1.5px solid #000000 !important;
           border-color: #000000 !important;
+          border-radius: 50% !important;
         }
       `}</style>
 
