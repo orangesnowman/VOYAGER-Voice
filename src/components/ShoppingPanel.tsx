@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Bot, User, Pause, Play, Store, IdCard, ShoppingCart } from 'lucide-react';
+import { Bot, User, Pause, Play, Store, IdCard, ShoppingCart, Coins } from 'lucide-react';
 import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 interface ShoppingPanelProps {
@@ -492,60 +492,53 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               </span>
             </div>
 
-            <div className="flex flex-col gap-3 mt-1.5 md:flex-row md:items-center md:justify-between select-none">
-              <div className="flex items-center gap-5 text-[11.2px] font-extrabold uppercase tracking-wider">
-                <button 
-                  onClick={() => handleNavClick('shop')} 
-                  className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                    activeTab === 'shop' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
-                  }`}
-                >
-                  <Store className={`w-4.5 h-4.5 ${activeTab === 'shop' ? 'text-red-600' : 'text-black/80'}`} />
-                  <span>{selectedLang === 'EN' ? 'STORE' : 'TIENDA'}</span>
-                </button>
+            <div className="flex items-center gap-5 text-[11.2px] font-extrabold uppercase tracking-wider select-none mt-1.5 flex-wrap">
+              <button 
+                onClick={() => handleNavClick('shop')} 
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                  activeTab === 'shop' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
+                }`}
+              >
+                <Store className={`w-4.5 h-4.5 ${activeTab === 'shop' ? 'text-red-600' : 'text-black/80'}`} />
+                <span>{selectedLang === 'EN' ? 'STORE' : 'TIENDA'}</span>
+              </button>
 
-                <button 
-                  onClick={() => handleNavClick('account')} 
-                  className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                    activeTab === 'account' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
-                  }`}
-                >
-                  <IdCard className={`w-5 h-5 ${activeTab === 'account' ? 'text-red-600' : 'text-black/80'}`} />
-                  <span>{selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}</span>
-                </button>
+              <button 
+                onClick={() => handleNavClick('account')} 
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                  activeTab === 'account' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
+                }`}
+              >
+                <IdCard className={`w-5 h-5 ${activeTab === 'account' ? 'text-red-600' : 'text-black/80'}`} />
+                <span>{selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}</span>
+              </button>
 
-                <button 
-                  onClick={() => handleNavClick('cart')} 
-                  className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                    activeTab === 'cart' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
-                  }`}
-                >
-                  <div className="relative flex items-center justify-center w-6 h-6">
-                    <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
-                    <div className="ec-cart-widget hidden" />
-                    {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[8px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-1 border border-white">
-                        {cartCount}
-                      </span>
-                    )}
-                  </div>
-                  <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
-                </button>
-              </div>
+              <button 
+                onClick={() => handleNavClick('cart')} 
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                  activeTab === 'cart' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
+                }`}
+              >
+                <div className="relative flex items-center justify-center w-6 h-6">
+                  <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
+                  <div className="ec-cart-widget hidden" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[8px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-1 border border-white">
+                      {cartCount}
+                    </span>
+                  )}
+                </div>
+                <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
+              </button>
 
-              {/* Currency Selector Dropdown */}
-              <div className="flex items-center gap-1.5 self-start md:self-auto">
-                <span 
-                  style={{ fontFamily: 'American Typewriter, Courier New, Courier, serif' }}
-                  className="text-[10px] font-black uppercase tracking-wider text-[#1a202c]"
-                >
-                  {selectedLang === 'EN' ? 'Currency:' : 'Moneda:'}
-                </span>
+              {/* Currency Selector integrated directly into the submenu list */}
+              <div className="flex items-center gap-1.5 transition-colors uppercase text-black/80">
+                <Coins className="w-4.5 h-4.5 text-black/80" />
+                <span>{selectedLang === 'EN' ? 'CURRENCY:' : 'MONEDA:'}</span>
                 <select
                   value={selectedCurrency}
                   onChange={(e) => handleCurrencyChange(e.target.value)}
-                  style={{ fontFamily: 'American Typewriter, Courier New, Courier, serif' }}
-                  className="bg-transparent border-2 border-black text-[11px] font-bold py-1 px-1.5 rounded-lg cursor-pointer focus:outline-none text-[#1a202c]"
+                  className="bg-transparent border border-black/15 text-[11px] font-bold py-0.5 px-1 rounded cursor-pointer focus:outline-none text-black/80 uppercase ml-1"
                 >
                   <option value="USD">Dólar ($)</option>
                   <option value="CRC">Costa Rica (₡)</option>
