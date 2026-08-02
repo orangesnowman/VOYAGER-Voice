@@ -1510,7 +1510,7 @@ ${greetingPrompt}`;
 
                     </div>
                 ) : (
-                    <div className="flex-grow flex flex-col overflow-hidden p-5 md:p-8 min-h-0">
+                    <div className="flex-grow flex flex-col overflow-hidden pt-5 px-5 pb-1.5 md:pt-8 md:px-8 md:pb-2 min-h-0">
                         {/* Old sub-header bar has been removed */}
                         {rightPanelTab === 'home' ? (
                             <div className="flex-grow flex flex-col justify-between items-center text-center p-6 h-full animate-fade-in tab-content-area">
@@ -2794,7 +2794,7 @@ Pregunta del usuario: "${text}"]`;
                         </div>
 
                     {!showReviewScreen && rightPanelTab === 'chat' && hasInteracted && (
-                        <div className="px-3 pt-3 pb-6 md:pb-8 bg-[#FAF5EC] flex justify-end w-full">
+                        <div className="px-3 pt-2 pb-2 md:pb-2.5 bg-[#FAF5EC] flex justify-end w-full">
                             <form 
                                 onSubmit={handleSendMessage} 
                                 className="w-full max-w-[88%] relative rounded-2xl rounded-tr-none transition-all bg-white border-[5px] border-blue-600/30 shadow-sm animate-border-pulsate px-4 py-2.5 flex flex-col"
