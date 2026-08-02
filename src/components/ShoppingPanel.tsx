@@ -318,7 +318,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           justify-content: flex-start !important;
           margin-left: 0 !important;
           margin-right: auto !important;
-          border: 1.5px solid #000000 !important;
+          border: 3px solid #000000 !important;
           border-radius: 9999px !important;
           background-color: transparent !important;
         }
@@ -329,13 +329,14 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         .ec-size .ec-store [class*="product-navigation"] svg,
         .ec-size .ec-store [class*="product-navigation"] svg * {
           stroke: #000000 !important;
-          stroke-width: 2.5px !important;
+          stroke-width: 4px !important;
           color: #000000 !important;
         }
         .ec-size .ec-store .ec-pager__button,
         .ec-size .ec-store .ec-pager__btn,
         .ec-size .ec-store [class*="pager"] button,
         .ec-size .ec-store [class*="pager"] a {
+          border: 3px solid #000000 !important;
           border-color: #000000 !important;
           color: #000000 !important;
         }
