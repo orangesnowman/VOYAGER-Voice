@@ -278,6 +278,45 @@ const LiveAgent: React.FC<LiveAgentProps> = ({ isWidgetMode = false, onClose }) 
   const [isFadingMascot, setIsFadingMascot] = useState<boolean>(false);
   const [activePolicyModal, setActivePolicyModal] = useState<'privacy' | 'terms' | 'copyright' | null>(null);
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [cartCount, setCartCount] = useState<number>(0);
+
+  useEffect(() => {
+    const handleCartCount = () => {
+        const win = window as any;
+        if (win.Ecwid && win.Ecwid.Cart) {
+            win.Ecwid.Cart.calculateTotalQuantity((qty: number) => {
+                setCartCount(qty);
+            });
+        }
+    };
+
+    const win = window as any;
+    if (win.Ecwid && win.Ecwid.OnCartChanged) {
+        win.Ecwid.OnCartChanged.add((cart: any) => {
+            if (cart && typeof cart.productsQuantity === 'number') {
+                setCartCount(cart.productsQuantity);
+            } else {
+                handleCartCount();
+            }
+        });
+        handleCartCount();
+    } else {
+        const interval = setInterval(() => {
+            if (win.Ecwid && win.Ecwid.OnCartChanged) {
+                clearInterval(interval);
+                win.Ecwid.OnCartChanged.add((cart: any) => {
+                    if (cart && typeof cart.productsQuantity === 'number') {
+                        setCartCount(cart.productsQuantity);
+                    } else {
+                        handleCartCount();
+                    }
+                });
+                handleCartCount();
+            }
+        }, 1000);
+        return () => clearInterval(interval);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
@@ -1472,13 +1511,18 @@ ${greetingPrompt}`;
                         <button 
                             title={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
                             aria-label={selectedLang === 'EN' ? 'Store' : 'La Tienda'}
-                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300"
+                            className="p-1 cursor-pointer flex items-center justify-center transition-all duration-300 relative"
                         >
                             <ShoppingCart className={`w-[27px] h-[27px] transition-all duration-300 ${
                                 rightPanelTab === 'shopping' 
                                     ? 'text-red-600 scale-110' 
                                     : 'text-black/65 group-hover:text-red-600 group-hover:scale-110'
                             }`} />
+                            {cartCount > 0 && (
+                                <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[9px] font-bold rounded-full min-w-[16px] h-[16px] flex items-center justify-center px-1 border border-white">
+                                    {cartCount}
+                                </span>
+                            )}
                         </button>
                         <span style={{ fontFamily: "'Lato', sans-serif" }} className={`text-[9.2pt] tracking-wider uppercase mt-1 transition-colors duration-300 whitespace-nowrap ${
                             rightPanelTab === 'shopping' 
