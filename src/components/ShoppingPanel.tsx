@@ -282,31 +282,31 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               <button 
                 onClick={() => handleNavClick('shop')} 
                 className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === 'shop' ? 'text-black font-black' : 'text-neutral-400 hover:text-red-600'
+                  activeTab === 'shop' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
                 }`}
               >
-                <Store className={`w-4 h-4 ${activeTab === 'shop' ? 'text-red-600' : 'text-neutral-400'}`} />
+                <Store className={`w-4 h-4 ${activeTab === 'shop' ? 'text-red-600' : 'text-black/80'}`} />
                 <span>{selectedLang === 'EN' ? 'STORE' : 'TIENDA'}</span>
               </button>
 
               <button 
                 onClick={() => handleNavClick('account')} 
                 className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === 'account' ? 'text-black font-black' : 'text-neutral-400 hover:text-red-600'
+                  activeTab === 'account' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
                 }`}
               >
-                <IdCard className={`w-4.5 h-4.5 ${activeTab === 'account' ? 'text-red-600' : 'text-neutral-400'}`} />
+                <IdCard className={`w-4.5 h-4.5 ${activeTab === 'account' ? 'text-red-600' : 'text-black/80'}`} />
                 <span>{selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}</span>
               </button>
 
               <button 
                 onClick={() => handleNavClick('cart')} 
                 className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === 'cart' ? 'text-black font-black' : 'text-neutral-400 hover:text-red-600'
+                  activeTab === 'cart' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
                 }`}
               >
                 <div className="ec-cart-widget inline-block align-middle scale-90" />
-                <ShoppingCart className={`w-4 h-4 ${activeTab === 'cart' ? 'text-red-600' : 'text-neutral-400'}`} />
+                <ShoppingCart className={`w-4 h-4 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
                 <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
               </button>
             </div>
