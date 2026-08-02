@@ -8,6 +8,7 @@ interface ShoppingPanelProps {
   chatMessages: any[];
   isPaused: boolean;
   isConnected: boolean;
+  cartCount: number;
   pause: () => void;
   resume: () => void;
   onUpgradeSuccess: () => void;
@@ -21,6 +22,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
   chatMessages,
   isPaused,
   isConnected,
+  cartCount,
   pause,
   resume,
   onUpgradeSuccess,
@@ -331,7 +333,12 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               >
                 <div className="relative flex items-center justify-center w-6 h-6">
                   <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
-                  <div className="ec-cart-widget absolute -top-1.5 -right-1.5 scale-[0.65]" />
+                  <div className="ec-cart-widget hidden" />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[8px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-1 border border-white">
+                      {cartCount}
+                    </span>
+                  )}
                 </div>
                 <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
               </button>

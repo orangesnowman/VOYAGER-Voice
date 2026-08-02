@@ -2787,6 +2787,7 @@ Pregunta del usuario: "${text}"]`;
                         {/* Always mount ShoppingPanel to prevent script reloading & duplicate minicart widgets */}
                         <div className={rightPanelTab === 'shopping' ? 'flex-grow flex flex-col overflow-hidden h-full min-h-0' : 'hidden'}>
                             <ShoppingPanel
+                                cartCount={cartCount}
                                 selectedLang={selectedLang}
                                 userPlan={(() => {
                                     const saved = localStorage.getItem('voyager_user_account');
