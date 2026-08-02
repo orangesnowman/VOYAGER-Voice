@@ -297,7 +297,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
             <div className="flex items-center gap-3 select-none">
               <span 
                 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
-                className="text-2xl md:text-3xl font-normal tracking-tight text-[#1a202c] !font-serif block"
+                className="text-[42px] md:text-[52.5px] font-normal tracking-tight text-[#1a202c] !font-serif block leading-none"
               >
                 {headerTitle}
               </span>
