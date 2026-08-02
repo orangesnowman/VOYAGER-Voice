@@ -278,35 +278,35 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               </h2>
             </div>
 
-            <div className="flex items-center gap-6 text-[12.5px] font-extrabold uppercase tracking-wider select-none mt-1">
+            <div className="flex items-center gap-5 text-[11.2px] font-extrabold uppercase tracking-wider select-none mt-1">
               <button 
                 onClick={() => handleNavClick('shop')} 
-                className={`flex items-center gap-2 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
                   activeTab === 'shop' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
                 }`}
               >
-                <Store className={`w-5 h-5 ${activeTab === 'shop' ? 'text-red-600' : 'text-black/80'}`} />
+                <Store className={`w-4.5 h-4.5 ${activeTab === 'shop' ? 'text-red-600' : 'text-black/80'}`} />
                 <span>{selectedLang === 'EN' ? 'STORE' : 'TIENDA'}</span>
               </button>
 
               <button 
                 onClick={() => handleNavClick('account')} 
-                className={`flex items-center gap-2 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
                   activeTab === 'account' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
                 }`}
               >
-                <IdCard className={`w-5.5 h-5.5 ${activeTab === 'account' ? 'text-red-600' : 'text-black/80'}`} />
+                <IdCard className={`w-5 h-5 ${activeTab === 'account' ? 'text-red-600' : 'text-black/80'}`} />
                 <span>{selectedLang === 'EN' ? 'MY ACCOUNT' : 'MI CUENTA'}</span>
               </button>
 
               <button 
                 onClick={() => handleNavClick('cart')} 
-                className={`flex items-center gap-2 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
+                className={`flex items-center gap-1.5 transition-colors uppercase cursor-pointer bg-transparent border-none p-0 ${
                   activeTab === 'cart' ? 'text-black font-black' : 'text-black/80 hover:text-red-600'
                 }`}
               >
-                <div className="ec-cart-widget inline-block align-middle scale-95" />
-                <ShoppingCart className={`w-5 h-5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
+                <div className="ec-cart-widget inline-block align-middle scale-90" />
+                <ShoppingCart className={`w-4.5 h-4.5 ${activeTab === 'cart' ? 'text-red-600' : 'text-black/80'}`} />
                 <span>{selectedLang === 'EN' ? 'MY CART' : 'MI CARRITO'}</span>
               </button>
             </div>
