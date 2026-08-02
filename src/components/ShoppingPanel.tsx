@@ -546,7 +546,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                       : 'Euros (€)'
                     }
                   </span>
-                  <ChevronDown className="w-2.5 h-2.5 text-black/85" />
+                  <ChevronDown strokeWidth={3.5} className="w-3.5 h-3.5 text-black/90" />
                   
                   {/* Invisible native select overlay */}
                   <select
