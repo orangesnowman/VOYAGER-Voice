@@ -318,7 +318,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
         <div className="space-y-3.5 text-left flex flex-col flex-shrink-0 p-0">
           
           {/* Header & Navigation Row */}
-          <div className="flex flex-col gap-3 pt-2.5">
+          <div className="flex flex-col gap-3 pt-[7px]">
             <div className="flex items-center gap-3 select-none">
               <span 
                 style={{ fontFamily: 'American Typewriter, Courier New, Courier, serif' }} 
