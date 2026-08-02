@@ -252,12 +252,6 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           display: none !important;
           visibility: hidden !important;
         }
-        .ec-size .grid-product__image-wrap,
-        .ec-size .grid-product__picture,
-        .ec-size .grid-product__image {
-          transform: scale(0.8) !important;
-          transform-origin: center center !important;
-        }
         /* Force 2 products per row */
         #my-store-108143 .grid__products {
           display: grid !important;
@@ -269,6 +263,21 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           width: auto !important;
           max-width: 100% !important;
           margin: 0 !important;
+        }
+        /* Make product cards background transparent */
+        #my-store-108143 .grid-product__wrap,
+        #my-store-108143 .grid-product__card,
+        #my-store-108143 .grid-product,
+        #my-store-108143 .grid-product__image-wrap,
+        #my-store-108143 .grid-product__picture,
+        #my-store-108143 .grid-product__image,
+        #my-store-108143 .grid-product__spacer,
+        #my-store-108143 .grid-product__shadow,
+        #my-store-108143 .grid-product__bg {
+          background: transparent !important;
+          background-color: transparent !important;
+          box-shadow: none !important;
+          border: none !important;
         }
       `}</style>
 
