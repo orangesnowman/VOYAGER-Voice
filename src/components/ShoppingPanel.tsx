@@ -295,7 +295,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
           {/* Header & Navigation Row */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-3 select-none">
-              <Bot className="w-9 h-9 text-red-600 flex-shrink-0" />
+              <Store className="w-9 h-9 text-red-600 flex-shrink-0" />
               <h2 
                 style={{ fontFamily: '"American Typewriter", "Courier New", Courier, serif' }} 
                 className="text-2xl md:text-3xl font-normal tracking-tight text-[#1a202c]"
