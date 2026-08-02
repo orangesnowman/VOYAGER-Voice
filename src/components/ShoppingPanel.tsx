@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Bot, User, Pause, Play, Store, IdCard, ShoppingCart, Coins } from 'lucide-react';
+import { Bot, User, Pause, Play, Store, IdCard, ShoppingCart, Coins, ChevronDown } from 'lucide-react';
 import { parseAndRenderEmojis } from './VoyagerEmoji';
 
 interface ShoppingPanelProps {
@@ -535,17 +535,20 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               <div className="flex items-center gap-0.5 transition-colors uppercase text-black/80">
                 <Coins className="w-4.5 h-4.5 text-black/80 mr-1" />
                 <span>{selectedLang === 'EN' ? 'CURRENCY:' : 'MONEDA:'}</span>
-                <select
-                  value={selectedCurrency}
-                  onChange={(e) => handleCurrencyChange(e.target.value)}
-                  className="bg-transparent border-none text-[11px] font-bold py-0.5 pl-0 pr-0 cursor-pointer focus:outline-none text-black/80 uppercase"
-                  style={{ border: 'none', background: 'transparent', paddingLeft: 0, marginLeft: '-2px' }}
-                >
-                  <option value="USD">Dólar ($)</option>
-                  <option value="CRC">Costa Rica (₡)</option>
-                  <option value="GTQ">Guatemala (Q)</option>
-                  <option value="EUR">Euros (€)</option>
-                </select>
+                <div className="relative flex items-center">
+                  <select
+                    value={selectedCurrency}
+                    onChange={(e) => handleCurrencyChange(e.target.value)}
+                    className="bg-transparent border-none text-[11px] font-bold py-0.5 pl-0 pr-2.5 cursor-pointer focus:outline-none text-black/80 uppercase appearance-none -webkit-appearance-none -moz-appearance-none"
+                    style={{ border: 'none', background: 'transparent', paddingLeft: 0, paddingRight: '10px', marginLeft: '-2px' }}
+                  >
+                    <option value="USD">Dólar ($)</option>
+                    <option value="CRC">Costa Rica (₡)</option>
+                    <option value="GTQ">Guatemala (Q)</option>
+                    <option value="EUR">Euros (€)</option>
+                  </select>
+                  <ChevronDown className="absolute right-0 w-2.5 h-2.5 text-black/85 pointer-events-none" />
+                </div>
               </div>
             </div>
           </div>
