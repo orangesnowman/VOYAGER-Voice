@@ -93,6 +93,13 @@ export function useConversationTranscript(activeTab: string = 'chat') {
   }, [activeTab]);
 
   const updateUserVoiceTranscription = useCallback((transcriptionText: string) => {
+    // Language limit filter: block non-English/non-Spanish scripts (Korean, Chinese, Japanese, Cyrillic, Arabic, etc.)
+    const hasNonLatin = /[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f\u3040-\u30ff\u4e00-\u9fff\u0400-\u04ff\u0600-\u06ff]/g.test(transcriptionText);
+    if (hasNonLatin) {
+      console.warn("Language limit filter: blocked non-Latin voice transcription:", transcriptionText);
+      return;
+    }
+
     setChatMessages(prev => {
       const last = prev[prev.length - 1];
       if (last && last.sender === 'user' && last.id.startsWith('msg_voice_trans_') && (Date.now() - last.timeMs < 6000)) {

@@ -280,6 +280,17 @@ async function startServer() {
               const transcription = message.serverContent.inputTranscription;
               if (transcription.text) {
                 let text = transcription.text;
+                
+                // CRITICAL LANGUAGE LIMIT FILTER: Block non-English/non-Spanish scripts (Korean, Chinese, Japanese, Cyrillic, Arabic, etc.)
+                const hasNonLatin = /[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f\u3040-\u30ff\u4e00-\u9fff\u0400-\u04ff\u0600-\u06ff]/g.test(text);
+                if (hasNonLatin) {
+                  logToFile(`Language limit filter: blocked transcription containing non-Latin characters: "${text}"`);
+                  if (transcription.finished) {
+                    lastUserTranscription = "";
+                  }
+                  return;
+                }
+
                 let delta = "";
                 if (text.startsWith(lastUserTranscription)) {
                   delta = text.slice(lastUserTranscription.length);
