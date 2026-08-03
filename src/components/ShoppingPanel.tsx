@@ -532,11 +532,11 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
               </button>
 
               {/* Currency Selector integrated directly into the submenu list */}
-              <div className="flex items-center gap-0.5 transition-colors uppercase text-black/80">
-                <Coins className="w-4.5 h-4.5 text-black/80 mr-1" />
-                <span>{selectedLang === 'EN' ? 'CURRENCY:' : 'MONEDA:'}</span>
+              <div className="flex items-center gap-0.5 transition-colors uppercase text-black/80 hover:text-red-600 group cursor-pointer relative">
+                <Coins className="w-4.5 h-4.5 text-black/80 group-hover:text-red-600 transition-colors mr-1" />
+                <span className="transition-colors group-hover:text-red-600">{selectedLang === 'EN' ? 'CURRENCY:' : 'MONEDA:'}</span>
                 <div className="relative flex items-center gap-0.5 ml-0.5 cursor-pointer select-none">
-                  <span className="text-[11px] font-bold text-black/80 uppercase">
+                  <span className="text-[11px] font-bold text-black/80 uppercase transition-colors group-hover:text-red-600">
                     {selectedCurrency === 'USD' 
                       ? (selectedLang === 'EN' ? 'Dólar ($)' : 'Dólar ($)') 
                       : selectedCurrency === 'CRC' 
@@ -546,7 +546,7 @@ export const ShoppingPanel: React.FC<ShoppingPanelProps> = ({
                       : 'Euros (€)'
                     }
                   </span>
-                  <ChevronDown strokeWidth={3.5} className="w-3.5 h-3.5 text-black/90" />
+                  <ChevronDown strokeWidth={3.5} className="w-3.5 h-3.5 text-black/90 group-hover:text-red-600 transition-colors" />
                   
                   {/* Invisible native select overlay */}
                   <select
